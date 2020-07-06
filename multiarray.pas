@@ -1,6 +1,6 @@
-unit ndarray;
+unit multiarray;
 
-{$mode delphi}
+{$mode objfpc}
 {$H+}
 {$modeSwitch advancedRecords}
 
@@ -13,10 +13,10 @@ type
   TLongVector = array of longint;
   TSingleVector = array of single;
   TUFunc = function(a: single): single;
-  TBFunc<T> = function(a, b: T): T;
+  TBFunc = function(a, b: single): single;
 
 type
-  TFTensor = record
+  generic TTensor<_T> = record
   private
     FIsContiguous: boolean;
     function GetNDims: integer;
@@ -25,56 +25,68 @@ type
     function OffsetToStrided(Offset: longint): longint;
     function ShapeToStrides(AShape: array of longint): TLongVector;
   public
-    Data:  array of single;
+    Data:  array of _T;
     Shape: TLongVector;
     Strides: TLongVector;
-    function Contiguous: TFTensor;
-    function Get(i: longint): single; overload;
-    function Get(i: array of integer): single; overload;
-    function Reshape(NewShape: array of longint): TFTensor;
+    function Contiguous: TTensor;
+    function Copy(): TTensor;
+    function Get(i: longint): _T; overload;
+    function Get(i: array of integer): _T; overload;
+    function Reshape(NewShape: array of longint): TTensor;
+    function T: TTensor;
+    procedure Put(i: array of integer; x: _T);
     property IsContiguous: boolean read FIsContiguous write FIsContiguous;
     property NDims: integer read GetNDims;
     property Size: longint read GetSize;
-
-    class operator Add(A, B: TFTensor): TFTensor;
-    class operator Subtract(A, B: TFTensor): TFTensor;
+    property Items[i: array of longint]: _T read Get write Put; default;
   end;
+
+  TMultiArray = specialize TTensor<single>;
 
   TBroadcastResult = record
-    A, B: TFTensor;
+    A, B: TMultiArray;
   end;
 
 
-  function BroadcastArrays(A, B: TFTensor): TBroadcastResult;
-  function CreateEmptyFTensor(Contiguous: boolean = True): TFTensor;
-  function CreateFTensor(AData: array of single): TFTensor;
-  function AsStrided(A: TFTensor; Shape, Strides: array of longint): TFTensor;
-  function ApplyBFunc(A, B: TFTensor; BFunc: TBFunc<single>): TFTensor;
+  function BroadcastArrays(A, B: TMultiArray): TBroadcastResult;
+  function CreateEmptyFTensor(Contiguous: boolean = True): TMultiArray;
+  function CreateMultiArray(AData: array of single): TMultiArray;
+  function CreateMultiArray(AData: single): TMultiArray;
+  function AsStrided(A: TMultiArray; Shape, Strides: array of longint): TMultiArray;
+  function ApplyBFunc(A, B: TMultiArray; BFunc: TBFunc): TMultiArray;
+  function ApplyUFunc(A: TMultiArray; UFunc: TUFunc): TMultiArray;
   function DynArrayToVector(A: array of longint): TLongVector;
-  procedure PrintTensor(A: TFTensor);
 
-  function Prod<T>(Data: array of T): T;
-  function Reverse<T>(Data: T): T;
-  function VectorsEqual<T>(A, B: T): boolean;
-  procedure PrintVector<T>(Data: T);
+  procedure PrintMultiArray(A: TMultiArray);
+
+  generic function CopyVector<T>(v: T): T;
+  generic function Prod<T>(Data: array of T): T;
+  generic function Reverse<T>(Data: T): T;
+  generic function VectorsEqual<T>(A, B: T): boolean;
+  generic procedure PrintVector<T>(Data: T);
 
   { Arithmetic function wrappers }
   function Add(a, b: single): single;
   function Multiply(a, b: single): single;
   function Subtract(a, b: single): single;
 
+  operator + (A, B: TMultiArray) C: TMultiArray;
+  operator * (A, B: TMultiArray) C: TMultiArray;
+  operator := (A: single) B: TMultiArray;
+  operator explicit(A: single) B: TMultiArray;
+
 implementation
 
-  function BroadcastArrays(A, B: TFTensor): TBroadcastResult;
+  function BroadcastArrays(A, B: TMultiArray): TBroadcastResult;
   var
     AdjShapeA, AdjShapeB, AdjStridesA, AdjStridesB: TLongVector;
     i, NewNDims: integer;
   begin
     NewNDims := Max(A.NDims, B.NDims);
-    AdjShapeA := Reverse<TLongVector>(A.Shape);
-    AdjShapeB := Reverse<TLongVector>(B.Shape);
-    AdjStridesA := Reverse<TLongVector>(A.Strides);
-    AdjStridesB := Reverse<TLongVector>(B.Strides);
+    AdjShapeA := specialize Reverse<TLongVector>(A.Shape);
+    AdjShapeB := specialize Reverse<TLongVector>(B.Shape);
+    AdjStridesA := specialize Reverse<TLongVector>(A.Strides);
+    AdjStridesB := specialize Reverse<TLongVector>(B.Strides);
 
     { Broadcast dimension is always max(A.NDims, B.NDims) }
     if A.NDims < NewNDims then
@@ -105,18 +117,18 @@ implementation
           raise Exception.Create('Broadcasting failed.');
       end;
 
-    Result.A := AsStrided(A, Reverse<TLongVector>(AdjShapeA),
-                             Reverse<TLongVector>(AdjStridesA));
-    Result.B := AsStrided(B, Reverse<TLongVector>(AdjShapeB),
-                             Reverse<TLongVector>(AdjStridesB));
+    Result.A := AsStrided(A, specialize Reverse<TLongVector>(AdjShapeA),
+                             specialize Reverse<TLongVector>(AdjStridesA));
+    Result.B := AsStrided(B, specialize Reverse<TLongVector>(AdjShapeB),
+                             specialize Reverse<TLongVector>(AdjStridesB));
   end;
 
-  function CreateEmptyFTensor(Contiguous: boolean = True):TFTensor;
+  function CreateEmptyFTensor(Contiguous: boolean = True):TMultiArray;
   begin
     Result.IsContiguous := Contiguous;
   end;
 
-  function CreateFTensor(AData: array of single): TFTensor;
+  function CreateMultiArray(AData: array of single): TMultiArray;
   var
     i: longint;
   begin
@@ -129,7 +141,12 @@ implementation
     Result.Strides := Result.ShapeToStrides(Result.Shape);
   end;
 
-  function AsStrided(A: TFTensor; Shape, Strides: array of longint): TFTensor;
+  function CreateMultiArray(AData: single): TMultiArray;
+  begin
+    Result := CreateMultiArray([AData]);
+  end;
+
+  function AsStrided(A: TMultiArray; Shape, Strides: array of longint): TMultiArray;
   begin
     Result := CreateEmptyFTensor(false);
     Result.Data := A.Data;
@@ -137,12 +154,12 @@ implementation
     Result.Strides := DynArrayToVector(Strides);
   end;
 
-  function ApplyBFunc(A, B: TFTensor; BFunc: TBFunc<single>): TFTensor;
+  function ApplyBFunc(A, B: TMultiArray; BFunc: TBFunc): TMultiArray;
   var
     i: longint;
     BcastResult: TBroadcastResult;
   begin
-    if not(VectorsEqual<TLongVector>(A.Shape, B.Shape)) then
+    if not(specialize VectorsEqual<TLongVector>(A.Shape, B.Shape)) then
     begin
       BcastResult := BroadcastArrays(A, B);
       A := BcastResult.A;
@@ -157,6 +174,15 @@ implementation
       Result.Data[i] := BFunc(A.Get(i), B.Get(i));
   end;
 
+  function ApplyUFunc(A: TMultiArray; UFunc: TUFunc): TMultiArray;
+  var
+    i: longint;
+  begin
+    Result := A.Copy();
+    for i := 0 to High(A.Data) do
+      Result.Data[i] := UFunc(Result.Data[i]);
+  end;
+
   function DynArrayToVector(A: array of longint): TLongVector;
   var
     i: longint;
@@ -167,7 +193,7 @@ implementation
       Result[i] := A[i];
   end;
 
-  procedure PrintTensor(A: TFTensor);
+  procedure PrintMultiArray(A: TMultiArray);
   var
     r, c, i: longint;
   begin
@@ -184,7 +210,7 @@ implementation
       begin
         for c := 0 to A.Shape[1] - 1 do
         begin
-          Write(A.Get([r, c]));
+          Write(A.Get([r, c]) : 5 : 2);
           if c < A.Shape[1] - 1 then Write(' ');
         end;
         WriteLn;
@@ -192,7 +218,16 @@ implementation
     end;
   end;
 
-  function Prod<T>(Data: array of T): T;
+  generic function CopyVector<T>(v: T): T;
+  var
+    i: longint;
+  begin
+    SetLength(Result, Length(v));
+    for i := 0 to High(v) do
+      Result[i] := v[i];
+  end;
+
+  generic function Prod<T>(Data: array of T): T;
   var
     x: T;
   begin
@@ -201,7 +236,7 @@ implementation
       Result := Result * x;
   end;
 
-  function Reverse<T>(Data: T): T;
+  generic function Reverse<T>(Data: T): T;
   var
     i: longint;
   begin
@@ -211,7 +246,7 @@ implementation
       Result[High(Data) - i] := Data[i];
   end;
 
-  function VectorsEqual<T>(A, B: T): boolean;
+  generic function VectorsEqual<T>(A, B: T): boolean;
   var
     i: longint;
   begin
@@ -221,7 +256,7 @@ implementation
       Result := Result and (A[i] = B[i]);
   end;
 
-  procedure PrintVector<T>(Data: T);
+  generic procedure PrintVector<T>(Data: T);
   var
     i: longint;
   begin
@@ -234,7 +269,7 @@ implementation
     WriteLn;
   end;
 
-  function TFTensor.ShapeToStrides(AShape: array of longint): TLongVector;
+  generic function TTensor<_T>.ShapeToStrides(AShape: array of longint): TLongVector;
   var
     k, j, prod: integer;
   begin
@@ -250,7 +285,7 @@ implementation
     end;
   end;
 
-  function TFTensor.OffsetToStrided(Offset: longint): longint;
+  generic function TTensor<_T>.OffsetToStrided(Offset: longint): longint;
   var
     r, c: longint;
   begin
@@ -266,17 +301,17 @@ implementation
     end;
   end;
 
-  function TFTensor.GetNDims: integer;
+  generic function TTensor<_T>.GetNDims: integer;
   begin
     Exit(Length(Shape));
   end;
 
-  function TFTensor.GetSize: longint;
+  generic function TTensor<_T>.GetSize: longint;
   begin
-    Exit(Prod<longint>(Shape));
+    Exit(specialize Prod<longint>(Shape));
   end;
 
-  function TFTensor.IndexToStridedOffset(Index: array of longint): longint;
+  function TTensor.IndexToStridedOffset(Index: array of longint): longint;
   var
     i: integer;
   begin
@@ -285,43 +320,58 @@ implementation
       Result := Result + (Strides[i] * Index[i]);
   end;
 
-  function TFTensor.Contiguous: TFTensor;
+  function TTensor.Contiguous: TTensor;
   begin
     if IsContiguous then Exit(self);
   end;
 
-  function TFTensor.Get(i: longint): single; overload;
+  function TTensor.Copy(): TTensor;
+  var
+    i: longint;
+  begin
+    Result.IsContiguous := self.IsContiguous;
+    SetLength(Result.Data, length(Self.Data));
+    for i := 0 to High(self.Data) do
+      Result.Data[i] := self.Data[i];
+    Result.Shape := specialize CopyVector<TLongVector>(self.Shape);
+    Result.Strides := specialize CopyVector<TLongVector>(self.Strides);
+  end;
+
+  function TTensor.Get(i: longint): single; overload;
   begin
     if IsContiguous then Exit(Data[i]);
     Exit(Data[OffsetToStrided(i)]);
   end;
 
-  function TFTensor.Get(i: array of integer): single; overload;
+  function TTensor.Get(i: array of integer): single; overload;
   begin
-    Assert(length(i) = length(Shape), 'Index dimension does not match array dimension.');
+    Assert(length(i) = length(Shape), 'Index out of bounds.');
     Exit(Data[IndexToStridedOffset(i)]);
   end;
 
-  function TFTensor.Reshape(NewShape: array of longint): TFTensor;
+  function TTensor.Reshape(NewShape: array of longint): TTensor;
   var
     i: integer;
   begin
-    Assert((Prod<longint>(NewShape)) = (Prod<longint>(Shape)), 'Impossible reshape.');
-    SetLength(Shape, Length(NewShape));
+    Assert((specialize Prod<longint>(NewShape)) = (specialize Prod<longint>(Shape)), 'Impossible reshape.');
+    Result.IsContiguous := False;
+    Result.Data := self.Data;
+    SetLength(Result.Shape, Length(NewShape));
     for i := 0 to Length(NewShape) - 1 do
-      Shape[i] := NewShape[i];
-    Strides := ShapeToStrides(Shape);
-    Exit(self);
+      Result.Shape[i] := NewShape[i];
+    Result.Strides := ShapeToStrides(Result.Shape);
   end;
 
-  class operator TFTensor.Add(A, B: TFTensor): TFTensor;
+  function TTensor.T: TTensor;
   begin
-    Exit(ApplyBFunc(A, B, @Add))
+    Result := Self.Copy();
+    Result.Shape := specialize Reverse<TLongVector>(Self.Shape);
+    Result.Strides := specialize Reverse<TLongVector>(Self.Strides);
   end;
 
-  class operator TFTensor.Subtract(A, B: TFTensor): TFTensor;
+  procedure TTensor.Put(i: array of integer; x: _T);
   begin
-    Result := ApplyBFunc(A, B, @Subtract)
+    Data[Self.IndexToStridedOffset(i)] := x;
   end;
 
   function Add(a, b: single): single;
@@ -337,6 +387,26 @@ implementation
   function Subtract(a, b: single): single;
   begin
     Exit(a - b);
+  end;
+
+  operator +(A, B: TMultiArray) C: TMultiArray;
+  begin
+    C := ApplyBFunc(A, B, @Add);
+  end;
+
+  operator *(A, B: TMultiArray) C: TMultiArray;
+  begin
+    C := ApplyBFunc(A, B, @Multiply);
+  end;
+
+  operator :=(A: single) B: TMultiArray;
+  begin
+    B := CreateMultiArray(A);
+  end;
+
+  operator explicit(A: single) B: TMultiArray;
+  begin
+    B := CreateMultiArray(A);
   end;
 
 end.
