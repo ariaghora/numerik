@@ -23,13 +23,12 @@ type
     function GetSize: longint;
     function IndexToStridedOffset(Index: array of longint): longint;
     function OffsetToStrided(Offset: longint): longint;
-    function ShapeToStrides(AShape: array of longint): TLongVector;
   public
     Data:  array of _T;
     Shape: TLongVector;
     Strides: TLongVector;
     function Contiguous: TTensor;
-    function Copy(): TTensor;
+    function Copy: TTensor;
     function Get(i: longint): _T; overload;
     function Get(i: array of integer): _T; overload;
     function Reshape(NewShape: array of longint): TTensor;
@@ -48,6 +47,7 @@ type
   end;
 
 
+  function AllocateMultiArray(Size: longint): TMultiArray;
   function BroadcastArrays(A, B: TMultiArray): TBroadcastResult;
   function CreateEmptyFTensor(Contiguous: boolean = True): TMultiArray;
   function CreateMultiArray(AData: array of single): TMultiArray;
@@ -56,6 +56,7 @@ type
   function ApplyBFunc(A, B: TMultiArray; BFunc: TBFunc): TMultiArray;
   function ApplyUFunc(A: TMultiArray; UFunc: TUFunc): TMultiArray;
   function DynArrayToVector(A: array of longint): TLongVector;
+  function ShapeToStrides(AShape: array of longint): TLongVector;
 
   procedure PrintMultiArray(A: TMultiArray);
 
@@ -76,6 +77,15 @@ type
   operator explicit(A: single) B: TMultiArray;
 
 implementation
+
+  function AllocateMultiArray(Size: longint): TMultiArray;
+  begin
+    SetLength(Result.Data, Size);
+    SetLength(Result.Shape, 1);
+    Result.IsContiguous := True;
+    Result.Shape[0] := Size;
+    Result.Strides := ShapeToStrides(Result.Shape);
+  end;
 
   function BroadcastArrays(A, B: TMultiArray): TBroadcastResult;
   var
@@ -138,7 +148,7 @@ implementation
       Result.Data[i] := AData[i];
     SetLength(Result.Shape, 1);
     Result.Shape[0] := Length(AData);
-    Result.Strides := Result.ShapeToStrides(Result.Shape);
+    Result.Strides := ShapeToStrides(Result.Shape);
   end;
 
   function CreateMultiArray(AData: single): TMultiArray;
@@ -269,7 +279,7 @@ implementation
     WriteLn;
   end;
 
-  generic function TTensor<_T>.ShapeToStrides(AShape: array of longint): TLongVector;
+  function ShapeToStrides(AShape: array of longint): TLongVector;
   var
     k, j, prod: integer;
   begin
@@ -325,7 +335,7 @@ implementation
     if IsContiguous then Exit(self);
   end;
 
-  function TTensor.Copy(): TTensor;
+  function TTensor.Copy: TTensor;
   var
     i: longint;
   begin
