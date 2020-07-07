@@ -7,7 +7,7 @@ unit multiarray;
 interface
 
 uses
-  Classes, SysUtils, math;
+  Classes, SysUtils, math, StrUtils;
 
 type
   TLongVector = array of longint;
@@ -25,6 +25,7 @@ type
     function IndexToStridedOffset(Index: array of longint): longint;
     function OffsetToStrided(Offset: longint): longint;
   public
+    FDataOffset: longint;
     Data:  array of single;
     Indices: array of array of longint;
     Shape: TLongVector;
@@ -32,7 +33,8 @@ type
     function Contiguous: TMultiArray;
     function Copy: TMultiArray;
     function Get(i: longint): single; overload;
-    function Get(i: array of integer): single; overload;
+    function Get(idx: array of integer): TMultiArray; overload;
+    //function Get(idx: array of integer): single; overload;
     function Reshape(NewShape: array of longint): TMultiArray;
     function Slice(idx: array of TLongVector): TMultiArray;
     function T: TMultiArray;
@@ -41,7 +43,7 @@ type
     property IsContiguous: boolean read FIsContiguous write FIsContiguous;
     property NDims: integer read GetNDims;
     property Size: longint read GetSize;
-    property Items[i: array of longint]: single read Get write Put; default;
+    //property Items[i: array of longint]: single read Get write Put; default;
   end;
 
   TBroadcastResult = record
@@ -64,9 +66,11 @@ type
   function Range(Start, Stop: longint): TLongVector; overload;
   function ShapeToStrides(AShape: array of longint): TLongVector;
 
+  procedure PrintMatrix(A: TMultiArray);
   procedure PrintMultiArray(A: TMultiArray);
 
   generic function CopyVector<T>(v: T): T;
+  generic function SliceVector<T>(v: T; start, stop: longint): T;
   generic function Prod<T>(Data: array of T): T;
   generic function Reverse<T>(Data: T): T;
   generic function VectorsEqual<T>(A, B: T): boolean;
@@ -88,6 +92,7 @@ type
   operator / (A, B: TMultiArray) C: TMultiArray;
   operator ** (A, B: TMultiArray) C: TMultiArray;
   operator := (A: single) B: TMultiArray;
+  operator := (A: array of single) B: TMultiArray;
   operator explicit(A: single) B: TMultiArray;
 
   operator :=(A: array of longint) B: TLongVector;
@@ -154,8 +159,10 @@ implementation
 
     Result.A := AsStrided(A, specialize Reverse<TLongVector>(AdjShapeA),
                              specialize Reverse<TLongVector>(AdjStridesA));
+    Result.A.ResetIndices;
     Result.B := AsStrided(B, specialize Reverse<TLongVector>(AdjShapeB),
                              specialize Reverse<TLongVector>(AdjStridesB));
+    Result.B.ResetIndices;
   end;
 
   function CreateEmptyFTensor(Contiguous: boolean = True):TMultiArray;
@@ -232,29 +239,52 @@ implementation
       Result[i] := A[i];
   end;
 
-  procedure PrintMultiArray(A: TMultiArray);
+  procedure PrintMatrix(A: TMultiArray);
   var
-    r, c, i: longint;
+    r, c: longint;
   begin
-    if A.NDims = 1 then
-    begin
-      for i := 0 to A.Size - 1 do
-        Write(A.Get(i), ' ');
-      WriteLn;
-    end;
+    if A.NDims > 2 then
+      raise Exception.Create('Cannot print array with NDims > 2');
 
-    if A.NDims = 2 then
+    for r := 0 to A.Shape[0] - 1 do
     begin
-      for r := 0 to A.Shape[0] - 1 do
+      for c := 0 to A.Shape[1] - 1 do
       begin
-        for c := 0 to A.Shape[1] - 1 do
-        begin
-          Write(A.Get(r * A.Shape[1] + c) : 5 : 2);
-          if c < A.Shape[1] - 1 then Write(' ');
-        end;
-        WriteLn;
+        Write(A.Get(r * A.Shape[1] + c) : 5 : 2);
+        if c < A.Shape[1] - 1 then Write(' ');
       end;
+
+      if r < (A.Shape[0] - 1) then
+        WriteLn;
     end;
+  end;
+
+  procedure PrintMultiArray(A: TMultiArray);
+    procedure Pr(A: TMultiArray; Shape: TLongVector);
+    var
+      i: longint;
+    begin
+      if Length(Shape) < 2 then
+      begin
+        for i := 0 to A.Size - 1 do
+          Write(A.Get(i) : 5 : 2);
+      end
+      else
+      if Length(Shape) = 2 then
+      begin
+        PrintMatrix(A);
+      end
+      else
+      begin
+        for i := 0 to Shape[0] - 1 do
+        begin
+          Pr(A.Get([i]), specialize SliceVector<TLongVector>(Shape, 1, Length(Shape)));
+        end;
+      end;
+      WriteLn(DupeString(sLineBreak, Length(Shape) - 1));
+    end;
+  begin
+    Pr(A, A.Shape);
   end;
 
   generic function CopyVector<T>(v: T): T;
@@ -264,6 +294,15 @@ implementation
     SetLength(Result, Length(v));
     for i := 0 to High(v) do
       Result[i] := v[i];
+  end;
+
+  generic function SliceVector<T>(v: T; start, stop: longint): T;
+  var
+    i: longint;
+  begin
+    SetLength(Result, stop - start);
+    for i := start to stop - 1 do
+      Result[i - start] := v[i];
   end;
 
   generic function Prod<T>(Data: array of T): T;
@@ -368,14 +407,14 @@ implementation
     if Length(Data) = 1 then Exit(0);
 
     { A vector }
-    if NDims = 1 then Exit(Offset);
+    if NDims = 1 then Exit(Offset + FDataOffset);
 
     { Higher rank }
     if NDims = 2 then
     begin
       r := Indices[0][Offset div Shape[1]];
       c := Indices[1][Offset mod Shape[1]];
-      Exit(IndexToStridedOffset([r, c]));
+      Exit(IndexToStridedOffset([r, c]) + FDataOffset);
     end;
   end;
 
@@ -437,11 +476,48 @@ implementation
     Exit(Data[OffsetToStrided(i)]);
   end;
 
-  function TMultiArray.Get(i: array of integer): single; overload;
+  function TMultiArray.Get(idx: array of integer): TMultiArray;
+  var
+    i, Offset: longint;
+    NewIdx, NewShape, NewStrides: TLongVector;
   begin
-    Assert(length(i) = length(Shape), 'Index out of bounds.');
-    Exit(Data[IndexToStridedOffset(i)]);
+    if Length(idx) < Self.NDims then
+    begin
+      SetLength(NewIdx, Self.NDims);
+      for i := 0 to High(idx) do
+        NewIdx[i] := idx[i];
+
+      SetLength(NewShape, Self.NDims - Length(idx));
+      for i := Length(idx) to High(Self.Shape) do
+        NewShape[i - Length(idx)] := Self.Shape[i];
+
+      SetLength(NewStrides, Self.NDims - Length(idx));
+      for i := Length(idx) to High(Self.Strides) do
+        NewStrides[i - Length(idx)] := Self.Strides[i];
+    end
+    else
+    begin
+      NewIdx := Idx;
+      NewShape := [1];
+      NewStrides := [1];
+    end;
+
+    Offset := IndexToStridedOffset(NewIdx);
+
+    Result := CreateEmptyFTensor(Self.IsContiguous);
+    Result.Data := Self.Data;
+    Result.Shape := NewShape;
+    Result.Strides := NewStrides;
+    Result.FDataOffset := Self.FDataOffset + Offset;
+    Result.ResetIndices;
+
   end;
+
+  //function TMultiArray.Get(idx: array of integer): single; overload;
+  //begin
+  //  Assert(length(idx) = length(Shape), 'Index out of bounds.');
+  //  Exit(Data[IndexToStridedOffset(idx)]);
+  //end;
 
   function TMultiArray.Reshape(NewShape: array of longint): TMultiArray;
   var
@@ -573,6 +649,11 @@ implementation
   end;
 
   operator :=(A: single) B: TMultiArray;
+  begin
+    B := CreateMultiArray(A);
+  end;
+
+  operator := (A: array of single) B: TMultiArray;
   begin
     B := CreateMultiArray(A);
   end;
