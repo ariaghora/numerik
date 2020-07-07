@@ -12,7 +12,7 @@ uses
 type
   TLongVector = array of longint;
   TSingleVector = array of single;
-  TUFunc = function(a: single): single;
+  TUFunc = function(a: single; params: array of single): single;
   TBFunc = function(a, b: single): single;
 
 type
@@ -46,7 +46,6 @@ type
     A, B: TMultiArray;
   end;
 
-
   function AllocateMultiArray(Size: longint): TMultiArray;
   function BroadcastArrays(A, B: TMultiArray): TBroadcastResult;
   function CreateEmptyFTensor(Contiguous: boolean = True): TMultiArray;
@@ -54,7 +53,7 @@ type
   function CreateMultiArray(AData: single): TMultiArray;
   function AsStrided(A: TMultiArray; Shape, Strides: array of longint): TMultiArray;
   function ApplyBFunc(A, B: TMultiArray; BFunc: TBFunc): TMultiArray;
-  function ApplyUFunc(A: TMultiArray; UFunc: TUFunc): TMultiArray;
+  function ApplyUFunc(A: TMultiArray; UFunc: TUFunc; Params: array of single): TMultiArray;
   function DynArrayToVector(A: array of longint): TLongVector;
   function ShapeToStrides(AShape: array of longint): TLongVector;
 
@@ -66,13 +65,16 @@ type
   generic function VectorsEqual<T>(A, B: T): boolean;
   generic procedure PrintVector<T>(Data: T);
 
-  { Arithmetic function wrappers }
-  function Add(a, b: single): single;
-  function Multiply(a, b: single): single;
-  function Subtract(a, b: single): single;
+  { Basic arithmetic function wrappers }
+  function _Add(a, b: single): single;
+  function _Multiply(a, b: single): single;
+  function _Power(base, exponent: single): single;
+  function _Subtract(a, b: single): single;
 
+  function Power(A, B: TMultiArray): TMultiArray; overload;
   operator + (A, B: TMultiArray) C: TMultiArray;
   operator * (A, B: TMultiArray) C: TMultiArray;
+  operator ** (A, B: TMultiArray) C: TMultiArray;
   operator := (A: single) B: TMultiArray;
   operator explicit(A: single) B: TMultiArray;
 
@@ -184,13 +186,13 @@ implementation
       Result.Data[i] := BFunc(A.Get(i), B.Get(i));
   end;
 
-  function ApplyUFunc(A: TMultiArray; UFunc: TUFunc): TMultiArray;
+  function ApplyUFunc(A: TMultiArray; UFunc: TUFunc; Params: array of single): TMultiArray;
   var
     i: longint;
   begin
     Result := A.Copy();
     for i := 0 to High(A.Data) do
-      Result.Data[i] := UFunc(Result.Data[i]);
+      Result.Data[i] := UFunc(Result.Data[i], Params);
   end;
 
   function DynArrayToVector(A: array of longint): TLongVector;
@@ -384,29 +386,44 @@ implementation
     Data[Self.IndexToStridedOffset(i)] := x;
   end;
 
-  function Add(a, b: single): single;
+  function _Add(a, b: single): single;
   begin
     Exit(a + b);
   end;
 
-  function Multiply(a, b: single): single;
+  function _Multiply(a, b: single): single;
   begin
     Exit(a * b);
   end;
 
-  function Subtract(a, b: single): single;
+  function _Power(base, exponent: single): single;
+  begin
+    Exit(Power(base, exponent));
+  end;
+
+  function _Subtract(a, b: single): single;
   begin
     Exit(a - b);
   end;
 
+  function Power(A, B: TMultiArray): TMultiArray;
+  begin
+    Exit(ApplyBFunc(A, B, @_Power));
+  end;
+
   operator +(A, B: TMultiArray) C: TMultiArray;
   begin
-    C := ApplyBFunc(A, B, @Add);
+    C := ApplyBFunc(A, B, @_Add);
   end;
 
   operator *(A, B: TMultiArray) C: TMultiArray;
   begin
-    C := ApplyBFunc(A, B, @Multiply);
+    C := ApplyBFunc(A, B, @_Multiply);
+  end;
+
+  operator ** (A, B: TMultiArray) C: TMultiArray;
+  begin
+    C := Power(A, B);
   end;
 
   operator :=(A: single) B: TMultiArray;
