@@ -25,6 +25,7 @@ type
     function OffsetToStrided(Offset: longint): longint;
   public
     Data:  array of _T;
+    Indices: array of array of longint;
     Shape: TLongVector;
     Strides: TLongVector;
     function Contiguous: TTensor;
@@ -32,8 +33,10 @@ type
     function Get(i: longint): _T; overload;
     function Get(i: array of integer): _T; overload;
     function Reshape(NewShape: array of longint): TTensor;
+    function Slice(idx: array of TLongVector): TTensor;
     function T: TTensor;
     procedure Put(i: array of integer; x: _T);
+    procedure ResetIndices;
     property IsContiguous: boolean read FIsContiguous write FIsContiguous;
     property NDims: integer read GetNDims;
     property Size: longint read GetSize;
@@ -46,15 +49,18 @@ type
     A, B: TMultiArray;
   end;
 
+  function All: TLongVector;
   function AllocateMultiArray(Size: longint): TMultiArray;
+  function ApplyBFunc(A, B: TMultiArray; BFunc: TBFunc): TMultiArray;
+  function ApplyUFunc(A: TMultiArray; UFunc: TUFunc; Params: array of single): TMultiArray;
+  function AsStrided(A: TMultiArray; Shape, Strides: array of longint): TMultiArray;
   function BroadcastArrays(A, B: TMultiArray): TBroadcastResult;
   function CreateEmptyFTensor(Contiguous: boolean = True): TMultiArray;
   function CreateMultiArray(AData: array of single): TMultiArray;
   function CreateMultiArray(AData: single): TMultiArray;
-  function AsStrided(A: TMultiArray; Shape, Strides: array of longint): TMultiArray;
-  function ApplyBFunc(A, B: TMultiArray; BFunc: TBFunc): TMultiArray;
-  function ApplyUFunc(A: TMultiArray; UFunc: TUFunc; Params: array of single): TMultiArray;
   function DynArrayToVector(A: array of longint): TLongVector;
+  function Range(Start, Stop, step: longint): TLongVector; overload;
+  function Range(Start, Stop: longint): TLongVector; overload;
   function ShapeToStrides(AShape: array of longint): TLongVector;
 
   procedure PrintMultiArray(A: TMultiArray);
@@ -78,7 +84,17 @@ type
   operator := (A: single) B: TMultiArray;
   operator explicit(A: single) B: TMultiArray;
 
+  operator :=(A: array of longint) B: TLongVector;
+  operator explicit(A: array of longint) B: TLongVector;
+  operator :=(A: TLongVector) B: TSingleVector;
+  operator explicit(A: TLongVector) B: TSingleVector;
+
 implementation
+
+  function All: TLongVector;
+  begin
+    Exit([]);
+  end;
 
   function AllocateMultiArray(Size: longint): TMultiArray;
   begin
@@ -87,6 +103,7 @@ implementation
     Result.IsContiguous := True;
     Result.Shape[0] := Size;
     Result.Strides := ShapeToStrides(Result.Shape);
+    Result.ResetIndices;
   end;
 
   function BroadcastArrays(A, B: TMultiArray): TBroadcastResult;
@@ -151,6 +168,7 @@ implementation
     SetLength(Result.Shape, 1);
     Result.Shape[0] := Length(AData);
     Result.Strides := ShapeToStrides(Result.Shape);
+    Result.ResetIndices;
   end;
 
   function CreateMultiArray(AData: single): TMultiArray;
@@ -164,6 +182,7 @@ implementation
     Result.Data := A.Data;
     Result.Shape := DynArrayToVector(Shape);
     Result.Strides := DynArrayToVector(Strides);
+    Result.Indices := A.Indices;
   end;
 
   function ApplyBFunc(A, B: TMultiArray; BFunc: TBFunc): TMultiArray;
@@ -184,6 +203,7 @@ implementation
     Result := Result.Reshape(A.Shape); // should be reset strides
     for i := 0 to A.Size - 1 do
       Result.Data[i] := BFunc(A.Get(i), B.Get(i));
+    Result.ResetIndices;
   end;
 
   function ApplyUFunc(A: TMultiArray; UFunc: TUFunc; Params: array of single): TMultiArray;
@@ -193,6 +213,7 @@ implementation
     Result := A.Copy();
     for i := 0 to High(A.Data) do
       Result.Data[i] := UFunc(Result.Data[i], Params);
+    Result.ResetIndices;
   end;
 
   function DynArrayToVector(A: array of longint): TLongVector;
@@ -222,7 +243,7 @@ implementation
       begin
         for c := 0 to A.Shape[1] - 1 do
         begin
-          Write(A.Get([r, c]) : 5 : 2);
+          Write(A.Get(r * A.Shape[1] + c) : 5 : 2);
           if c < A.Shape[1] - 1 then Write(' ');
         end;
         WriteLn;
@@ -281,6 +302,28 @@ implementation
     WriteLn;
   end;
 
+  function Range(start, stop, step: longint): TLongVector;
+  var
+    idx, num, Size: longint;
+  begin
+    Size := Ceil(Float(stop - start) / step);
+    SetLength(Result, Size);
+
+    num := start;
+    idx := 0;
+    while num < stop do
+    begin
+      Result[idx] := num;
+      Inc(idx);
+      Inc(num, step);
+    end;
+  end;
+
+  function Range(Start, Stop: longint): TLongVector;
+  begin
+    Exit(Range(Start, Stop, 1));
+  end;
+
   function ShapeToStrides(AShape: array of longint): TLongVector;
   var
     k, j, prod: integer;
@@ -304,11 +347,19 @@ implementation
     if NDims > 2 then
       raise ENotImplemented.Create('Item access with not implemented yet with NDims > 2.');
 
+    { A scalar }
+    if Length(Data) = 1 then Exit(0);
+
+    { A vector }
     if NDims = 1 then Exit(Offset);
+
+    { Higher rank }
     if NDims = 2 then
     begin
-      r := Offset div Shape[1];
-      c := Offset mod Shape[1];
+      r := Indices[0][Offset div Shape[1]];
+      c := Indices[1][Offset mod Shape[1]];
+      //r := Offset div Shape[1];
+      //c := Offset mod Shape[1];
       Exit(IndexToStridedOffset([r, c]));
     end;
   end;
@@ -333,13 +384,19 @@ implementation
   end;
 
   function TTensor.Contiguous: TTensor;
+  var
+    i: integer;
   begin
     if IsContiguous then Exit(self);
+    Result := AllocateMultiArray(Self.Size).Reshape(Self.Shape);
+    SetLength(Result.Data, Self.Size);
+    for i := 0 to Self.Size - 1 do
+      Result.Data[i] := Self.Get(i);
   end;
 
   function TTensor.Copy: TTensor;
   var
-    i: longint;
+    i, j: longint;
   begin
     Result.IsContiguous := self.IsContiguous;
     SetLength(Result.Data, length(Self.Data));
@@ -347,6 +404,16 @@ implementation
       Result.Data[i] := self.Data[i];
     Result.Shape := specialize CopyVector<TLongVector>(self.Shape);
     Result.Strides := specialize CopyVector<TLongVector>(self.Strides);
+
+    for i := 0 to NDims - 1 do
+    begin
+      SetLength(Result.Indices, Length(Self.Indices));
+      for j := 0 to Length(self.Indices[i]) - 1 do
+      begin
+        SetLength(Result.Indices[i], Length(self.Indices[i]));
+        Result.Indices[i][j] := self.Indices[i][j];
+      end;
+    end;
   end;
 
   function TTensor.Get(i: longint): single; overload;
@@ -372,18 +439,57 @@ implementation
     for i := 0 to Length(NewShape) - 1 do
       Result.Shape[i] := NewShape[i];
     Result.Strides := ShapeToStrides(Result.Shape);
+    Result.ResetIndices;
+  end;
+
+  function TTensor.Slice(idx: array of TLongVector): TTensor;
+  var
+    i: integer;
+  begin
+    if Length(idx) > Self.NDims then
+      raise Exception.Create('Invalid slicing: Len(idx) > Self.NDims');
+    Result := Self.Copy;
+    for i := 0 to High(idx) do
+    begin
+      if Length(idx[i]) > 0 then
+      begin
+        Result.Indices[i] := specialize CopyVector<TLongVector>(idx[i]);
+        Result.Shape[i] := Length(idx[i]);
+      end
+    end;
+    Result := Result.Contiguous;
   end;
 
   function TTensor.T: TTensor;
+  var
+    i: integer;
+    NewIndices: array of array of longint;
   begin
     Result := Self.Copy();
     Result.Shape := specialize Reverse<TLongVector>(Self.Shape);
     Result.Strides := specialize Reverse<TLongVector>(Self.Strides);
+    SetLength(NewIndices, Length(Result.Indices));
+    for i := 0 to High(Result.Indices) do
+      NewIndices[i] := Result.Indices[High(Result.Indices) - i];
+    Result.Indices := NewIndices;
   end;
 
   procedure TTensor.Put(i: array of integer; x: _T);
   begin
     Data[Self.IndexToStridedOffset(i)] := x;
+  end;
+
+  procedure TTensor.ResetIndices;
+  var
+    i, j: integer;
+  begin
+    SetLength(Indices, NDims);
+    for i := 0 to NDims - 1 do
+    begin
+      SetLength(Indices[i], Shape[i]);
+      for j := 0 to Shape[i] - 1 do
+        Indices[i][j] := j;
+    end;
   end;
 
   function _Add(a, b: single): single;
@@ -434,6 +540,32 @@ implementation
   operator explicit(A: single) B: TMultiArray;
   begin
     B := CreateMultiArray(A);
+  end;
+
+  operator :=(A: array of longint) B: TLongVector;
+  begin
+    B := DynArrayToVector(A);
+  end;
+
+  operator explicit(A: array of longint) B: TLongVector;
+  begin
+    B := DynArrayToVector(A);
+  end;
+
+  operator :=(A: TLongVector) B: TSingleVector;
+  var
+    i: longint;
+  begin
+    SetLength(B, Length(A));
+    for i := 0 to High(A) do B[i] := A[i];
+  end;
+
+  operator explicit(A: TLongVector) B: TSingleVector;
+  var
+    i: longint;
+  begin
+    SetLength(B, Length(A));
+    for i := 0 to High(A) do B[i] := A[i];
   end;
 
 end.
