@@ -4,5 +4,5 @@ Numerik is a numerical library for object pascal. It supports:
 - Familiar pascal style math API
 
 ### TODO:
-- [ ] Fancy indexing
+- [x] Array slicing
 - [ ] BLAS support
