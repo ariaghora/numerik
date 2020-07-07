@@ -74,13 +74,18 @@ type
 
   { Basic arithmetic function wrappers }
   function _Add(a, b: single): single;
+  function _Divide(a, b: single): single;
   function _Multiply(a, b: single): single;
+  function _Negate(a: single; params: array of single): single;
   function _Power(base, exponent: single): single;
   function _Subtract(a, b: single): single;
 
   function Power(A, B: TMultiArray): TMultiArray; overload;
   operator + (A, B: TMultiArray) C: TMultiArray;
+  operator - (A: TMultiArray) B: TMultiArray;
+  operator - (A, B: TMultiArray) C: TMultiArray;
   operator * (A, B: TMultiArray) C: TMultiArray;
+  operator / (A, B: TMultiArray) C: TMultiArray;
   operator ** (A, B: TMultiArray) C: TMultiArray;
   operator := (A: single) B: TMultiArray;
   operator explicit(A: single) B: TMultiArray;
@@ -507,9 +512,19 @@ implementation
     Exit(a + b);
   end;
 
+  function _Divide(a, b: single): single;
+  begin
+    Exit(a / b);
+  end;
+
   function _Multiply(a, b: single): single;
   begin
     Exit(a * b);
+  end;
+
+  function _Negate(a: single; params: array of single): single;
+  begin
+    Exit(-a);
   end;
 
   function _Power(base, exponent: single): single;
@@ -532,9 +547,24 @@ implementation
     C := ApplyBFunc(A, B, @_Add);
   end;
 
+  operator - (A: TMultiArray) B: TMultiArray;
+  begin
+    B := ApplyUFunc(A, @_Negate, []);
+  end;
+
+  operator - (A, B: TMultiArray) C: TMultiArray;
+  begin
+    C := ApplyBFunc(A, B, @_Subtract);
+  end;
+
   operator *(A, B: TMultiArray) C: TMultiArray;
   begin
     C := ApplyBFunc(A, B, @_Multiply);
+  end;
+
+  operator / (A, B: TMultiArray) C: TMultiArray;
+  begin
+    C := ApplyBFunc(A, B, @_Divide);
   end;
 
   operator ** (A, B: TMultiArray) C: TMultiArray;
