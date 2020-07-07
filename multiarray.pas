@@ -12,11 +12,12 @@ uses
 type
   TLongVector = array of longint;
   TSingleVector = array of single;
+  TGenFunc = function(Params: array of single): single;
   TUFunc = function(a: single; params: array of single): single;
   TBFunc = function(a, b: single): single;
 
 type
-  generic TTensor<_T> = record
+  TMultiArray = record
   private
     FIsContiguous: boolean;
     function GetNDims: integer;
@@ -24,26 +25,24 @@ type
     function IndexToStridedOffset(Index: array of longint): longint;
     function OffsetToStrided(Offset: longint): longint;
   public
-    Data:  array of _T;
+    Data:  array of single;
     Indices: array of array of longint;
     Shape: TLongVector;
     Strides: TLongVector;
-    function Contiguous: TTensor;
-    function Copy: TTensor;
-    function Get(i: longint): _T; overload;
-    function Get(i: array of integer): _T; overload;
-    function Reshape(NewShape: array of longint): TTensor;
-    function Slice(idx: array of TLongVector): TTensor;
-    function T: TTensor;
-    procedure Put(i: array of integer; x: _T);
+    function Contiguous: TMultiArray;
+    function Copy: TMultiArray;
+    function Get(i: longint): single; overload;
+    function Get(i: array of integer): single; overload;
+    function Reshape(NewShape: array of longint): TMultiArray;
+    function Slice(idx: array of TLongVector): TMultiArray;
+    function T: TMultiArray;
+    procedure Put(i: array of integer; x: single);
     procedure ResetIndices;
     property IsContiguous: boolean read FIsContiguous write FIsContiguous;
     property NDims: integer read GetNDims;
     property Size: longint read GetSize;
-    property Items[i: array of longint]: _T read Get write Put; default;
+    property Items[i: array of longint]: single read Get write Put; default;
   end;
-
-  TMultiArray = specialize TTensor<single>;
 
   TBroadcastResult = record
     A, B: TMultiArray;
@@ -59,6 +58,8 @@ type
   function CreateMultiArray(AData: array of single): TMultiArray;
   function CreateMultiArray(AData: single): TMultiArray;
   function DynArrayToVector(A: array of longint): TLongVector;
+  function GenerateMultiArray(Shape: array of longint; GenFunc: TGenFunc;
+    Params: array of single): TMultiArray;
   function Range(Start, Stop, step: longint): TLongVector; overload;
   function Range(Start, Stop: longint): TLongVector; overload;
   function ShapeToStrides(AShape: array of longint): TLongVector;
@@ -302,6 +303,17 @@ implementation
     WriteLn;
   end;
 
+  function GenerateMultiArray(Shape: array of longint; GenFunc: TGenFunc;
+    Params: array of single): TMultiArray;
+  var
+    i: longint;
+  begin
+    Result := AllocateMultiArray(specialize Prod<longint>(Shape));
+    for i := 0 to High(Result.Data) do
+      Result.Data[i] := GenFunc(Params);
+    Result := Result.Reshape(Shape);
+  end;
+
   function Range(start, stop, step: longint): TLongVector;
   var
     idx, num, Size: longint;
@@ -340,7 +352,7 @@ implementation
     end;
   end;
 
-  generic function TTensor<_T>.OffsetToStrided(Offset: longint): longint;
+  generic function TMultiArray.OffsetToStrided(Offset: longint): longint;
   var
     r, c: longint;
   begin
@@ -358,23 +370,21 @@ implementation
     begin
       r := Indices[0][Offset div Shape[1]];
       c := Indices[1][Offset mod Shape[1]];
-      //r := Offset div Shape[1];
-      //c := Offset mod Shape[1];
       Exit(IndexToStridedOffset([r, c]));
     end;
   end;
 
-  generic function TTensor<_T>.GetNDims: integer;
+  generic function TMultiArray.GetNDims: integer;
   begin
     Exit(Length(Shape));
   end;
 
-  generic function TTensor<_T>.GetSize: longint;
+  generic function TMultiArray.GetSize: longint;
   begin
     Exit(specialize Prod<longint>(Shape));
   end;
 
-  function TTensor.IndexToStridedOffset(Index: array of longint): longint;
+  function TMultiArray.IndexToStridedOffset(Index: array of longint): longint;
   var
     i: integer;
   begin
@@ -383,7 +393,7 @@ implementation
       Result := Result + (Strides[i] * Index[i]);
   end;
 
-  function TTensor.Contiguous: TTensor;
+  function TMultiArray.Contiguous: TMultiArray;
   var
     i: integer;
   begin
@@ -394,7 +404,7 @@ implementation
       Result.Data[i] := Self.Get(i);
   end;
 
-  function TTensor.Copy: TTensor;
+  function TMultiArray.Copy: TMultiArray;
   var
     i, j: longint;
   begin
@@ -416,19 +426,19 @@ implementation
     end;
   end;
 
-  function TTensor.Get(i: longint): single; overload;
+  function TMultiArray.Get(i: longint): single; overload;
   begin
     if IsContiguous then Exit(Data[i]);
     Exit(Data[OffsetToStrided(i)]);
   end;
 
-  function TTensor.Get(i: array of integer): single; overload;
+  function TMultiArray.Get(i: array of integer): single; overload;
   begin
     Assert(length(i) = length(Shape), 'Index out of bounds.');
     Exit(Data[IndexToStridedOffset(i)]);
   end;
 
-  function TTensor.Reshape(NewShape: array of longint): TTensor;
+  function TMultiArray.Reshape(NewShape: array of longint): TMultiArray;
   var
     i: integer;
   begin
@@ -442,7 +452,7 @@ implementation
     Result.ResetIndices;
   end;
 
-  function TTensor.Slice(idx: array of TLongVector): TTensor;
+  function TMultiArray.Slice(idx: array of TLongVector): TMultiArray;
   var
     i: integer;
   begin
@@ -460,7 +470,7 @@ implementation
     Result := Result.Contiguous;
   end;
 
-  function TTensor.T: TTensor;
+  function TMultiArray.T: TMultiArray;
   var
     i: integer;
     NewIndices: array of array of longint;
@@ -474,12 +484,12 @@ implementation
     Result.Indices := NewIndices;
   end;
 
-  procedure TTensor.Put(i: array of integer; x: _T);
+  procedure TMultiArray.Put(i: array of integer; x: single);
   begin
     Data[Self.IndexToStridedOffset(i)] := x;
   end;
 
-  procedure TTensor.ResetIndices;
+  procedure TMultiArray.ResetIndices;
   var
     i, j: integer;
   begin
