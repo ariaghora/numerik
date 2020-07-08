@@ -23,7 +23,7 @@ type
     function GetNDims: integer;
     function GetSize: longint;
     function IndexToStridedOffset(Index: array of longint): longint;
-    function OffsetToStrided(Offset: longint): longint;
+    function OffsetToStrided(Offset: longint): longint; inline;
   public
     FDataOffset: longint;
     Data:  array of single;
@@ -32,9 +32,10 @@ type
     Strides: TLongVector;
     function Contiguous: TMultiArray;
     function Copy: TMultiArray;
-    function Get(i: longint): single; overload;
+    function Get(i: longint): single; overload; inline;
     function Get(idx: array of integer): TMultiArray; overload;
     function Reshape(NewShape: array of longint): TMultiArray;
+    { For now Slice() will return contiguous }
     function Slice(idx: array of TLongVector): TMultiArray;
     function T: TMultiArray;
     procedure Put(i: array of integer; x: single);
@@ -241,6 +242,7 @@ implementation
     i: longint;
   begin
     writeln('Data offset    :', A.FDataOffset);
+    writeln('Is contiguous  :', A.IsContiguous);
     writeln('NDims          :', A.NDims);
     Write  ('Shape          :'); specialize PrintVector<TLongVector>(A.Shape);
     writeln('Size (actual)  :', Length(A.Data));
@@ -418,8 +420,7 @@ implementation
     r, c, i, cnt: longint;
     index: TLongVector;
   begin
-    //if NDims > 2 then
-    //  raise ENotImplemented.Create('Item access with not implemented yet with NDims > 2.');
+    if IsContiguous then Exit(Offset);
 
     { A scalar }
     if Length(Data) = 1 then Exit(0);
@@ -554,7 +555,6 @@ implementation
     i: integer;
   begin
     Assert((specialize Prod<longint>(NewShape)) = (specialize Prod<longint>(Shape)), 'Impossible reshape.');
-    Result.IsContiguous := False;
     Result.Data := self.Data;
     SetLength(Result.Shape, Length(NewShape));
     for i := 0 to Length(NewShape) - 1 do
@@ -578,7 +578,6 @@ implementation
         Result.Shape[i] := Length(idx[i]);
       end
     end;
-    Result := Result.Contiguous;
   end;
 
   function TMultiArray.T: TMultiArray;
@@ -587,6 +586,7 @@ implementation
     NewIndices: array of array of longint;
   begin
     Result := Self.Copy();
+    Result.FIsContiguous := False;
     Result.Shape := specialize Reverse<TLongVector>(Self.Shape);
     Result.Strides := specialize Reverse<TLongVector>(Self.Strides);
     SetLength(NewIndices, Length(Result.Indices));
