@@ -544,6 +544,12 @@ implementation
     i, Offset: longint;
     NewIdx, NewShape, NewStrides: TLongVector;
   begin
+    if Length(idx) > Self.NDims then
+      raise Exception.Create('Index out of bounds');
+
+    if Self.NDims = 1 then
+      Exit(Self.Get(idx[0]));
+
     if Length(idx) < Self.NDims then
     begin
       SetLength(NewIdx, Self.NDims);
