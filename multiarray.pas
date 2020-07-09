@@ -612,7 +612,7 @@ implementation
       end
     end;
     Result.Strides := ShapeToStrides(Result.Shape);
-    //Result := Result.Contiguous;
+    Result := Result.Contiguous;
   end;
 
   function TMultiArray.T: TMultiArray;
