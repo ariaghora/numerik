@@ -63,6 +63,7 @@ type
   function DynArrayToVector(A: array of longint): TLongVector;
   function GenerateMultiArray(Shape: array of longint; GenFunc: TGenFunc;
     Params: array of single): TMultiArray;
+  function GetVirtualData(A: TMultiArray): TSingleVector;
   function Range(Start, Stop, step: longint): TLongVector; overload;
   function Range(Start, Stop: longint): TLongVector; overload;
   function ShapeToStrides(AShape: array of longint): TLongVector;
@@ -100,6 +101,9 @@ type
   operator explicit(A: array of longint) B: TLongVector;
   operator :=(A: TLongVector) B: TSingleVector;
   operator explicit(A: TLongVector) B: TSingleVector;
+
+var
+  GLOBAL_FUNC_DEBUG: boolean;
 
 implementation
 
@@ -208,22 +212,24 @@ implementation
     BcastResult: TBroadcastResult;
     TimeThen: TDateTime;
   begin
-    if PrintDebug then TimeThen := Now;
+    if (PrintDebug or GLOBAL_FUNC_DEBUG) then TimeThen := Now;
 
     if not(specialize VectorsEqual<TLongVector>(A.Shape, B.Shape)) then
     begin
       BcastResult := BroadcastArrays(A, B);
-      Exit(ApplyBFunc(BcastResult.A, BcastResult.B, BFunc));
+      Result := ApplyBFunc(BcastResult.A, BcastResult.B, BFunc, PrintDebug, FuncName);
+    end else
+    begin
+      Result := AllocateMultiArray(A.Size);
+      Result := Result.Reshape(A.Shape); // should be reset strides
+      Result.ResetIndices;
+      for i := 0 to A.Size - 1 do
+        Result.Data[i] := BFunc(A.Get(i), B.Get(i));
+
+      if (PrintDebug or GLOBAL_FUNC_DEBUG) then
+        WriteLn('Function ' + FuncName + ' executed in ',
+                MilliSecondsBetween(TimeThen, Now), ' ms');
     end;
-
-    Result := AllocateMultiArray(A.Size);
-    Result := Result.Reshape(A.Shape); // should be reset strides
-    Result.ResetIndices;
-    for i := 0 to A.Size - 1 do
-      Result.Data[i] := BFunc(A.Get(i), B.Get(i));
-
-    if PrintDebug then WriteLn('Function ' + FuncName + ' executed in ',
-                               MilliSecondsBetween(TimeThen, Now), ' ms');
   end;
 
   function ApplyUFunc(A: TMultiArray; UFunc: TUFunc; Params: array of single): TMultiArray;
@@ -384,6 +390,15 @@ implementation
     for i := 0 to High(Result.Data) do
       Result.Data[i] := GenFunc(Params);
     Result := Result.Reshape(Shape);
+  end;
+
+  function GetVirtualData(A: TMultiArray): TSingleVector;
+  var
+    i: longint;
+  begin
+    SetLength(Result, A.Size);
+    for i := 0 to A.Size - 1 do
+      Result[i] := A.Get(i);
   end;
 
   function Range(start, stop, step: longint): TLongVector;
@@ -664,7 +679,7 @@ implementation
 
   operator +(A, B: TMultiArray) C: TMultiArray;
   begin
-    C := ApplyBFunc(A, B, @_Add);
+    C := ApplyBFunc(A, B, @_Add, GLOBAL_FUNC_DEBUG, 'ADD');
   end;
 
   operator - (A: TMultiArray) B: TMultiArray;
@@ -684,7 +699,7 @@ implementation
 
   operator / (A, B: TMultiArray) C: TMultiArray;
   begin
-    C := ApplyBFunc(A, B, @_Divide);
+    C := ApplyBFunc(A, B, @_Divide, GLOBAL_FUNC_DEBUG, 'DIVIDE');
   end;
 
   operator ** (A, B: TMultiArray) C: TMultiArray;
@@ -732,6 +747,9 @@ implementation
     SetLength(B, Length(A));
     for i := 0 to High(A) do B[i] := A[i];
   end;
+
+initialization
+  GLOBAL_FUNC_DEBUG := False;
 
 end.
 
