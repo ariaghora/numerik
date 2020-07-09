@@ -12,6 +12,7 @@ uses
 
 type
   TLongVector = array of longint;
+  TLongVectorArr = array of TLongVector;
   TSingleVector = array of single;
   TGenFunc = function(Params: array of single): single;
   TUFunc = function(a: single; params: array of single): single;
@@ -28,7 +29,7 @@ type
   public
     FDataOffset: longint;
     Data:  array of single;
-    Indices: array of array of longint;
+    Indices: TLongVectorArr;
     Shape: TLongVector;
     Strides: TLongVector;
     function Contiguous: TMultiArray;
@@ -70,6 +71,7 @@ type
 
   procedure DebugMultiArray(A: TMultiArray);
   procedure PrintMultiArray(A: TMultiArray);
+  procedure SqueezeMultiArray(var A: TMultiArray);
 
   { Vector tools }
   generic function CopyVector<T>(v: T): T;
@@ -449,6 +451,20 @@ implementation
         prod := prod * AShape[j];
       Result[k] := prod;
     end;
+  end;
+
+  procedure SqueezeMultiArray(var A: TMultiArray);
+  var
+    len, i: integer;
+  begin
+    len := A.NDims;
+    for i := len - 1 downto 0 do
+      if A.Shape[i] = 1 then
+      begin
+        specialize DeleteFromVector<TLongVector>(A.Shape, i, 1);
+        specialize DeleteFromVector<TLongVector>(A.Strides, i, 1);
+        specialize DeleteFromVector<TLongVectorArr>(A.Indices, i, 1);
+      end;
   end;
 
   generic function TMultiArray.OffsetToStrided(Offset: longint): longint;

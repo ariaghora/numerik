@@ -31,7 +31,7 @@ function RandG(mean, stddev: float; Shape: array of longint): TMultiArray; overl
 
 { Sum-reducing TMultiArray along a specified axis. This is for convenience rather
   than performance. }
-function ReduceSum(A: TMultiArray; axis: integer): TMultiArray;
+function ReduceSum(A: TMultiArray; axis: integer; KeepDims: Boolean = False): TMultiArray;
 
 implementation
 
@@ -95,7 +95,7 @@ begin
   Exit(GenerateMultiArray(Shape, @_RandG, [mean, stddev]));
 end;
 
-function ReduceSum(A: TMultiArray; axis: integer): TMultiArray;
+function ReduceSum(A: TMultiArray; axis: integer; KeepDims: Boolean = False): TMultiArray;
 var
   i: longint;
   IterIndices: array of TLongVector;
@@ -105,14 +105,15 @@ begin
     IterIndices[i] := []; // slicing by [ALL, ALL, ..., ALL]
 
   IterIndices[axis] := [0];
-  Result := A.Slice(IterIndices);
+  Result := A.Slice(IterIndices);  // Slice([ALL, ..., [0], ..., ALL])
 
   for i := 1 to A.Shape[axis] - 1 do
   begin
     IterIndices[axis] := [i];
     Result := Result + A.Slice(IterIndices);
   end;
-  Result := Result.Contiguous;
+  //if Not KeepDims then
+  //  SqueezeMultiArray(Result);
 end;
 
 end.
