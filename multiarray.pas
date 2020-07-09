@@ -3,11 +3,12 @@ unit multiarray;
 {$mode objfpc}
 {$H+}
 {$modeSwitch advancedRecords}
+{$inline on}
 
 interface
 
 uses
-  Classes, SysUtils, math, StrUtils;
+  Classes, SysUtils, math, StrUtils, DateUtils;
 
 type
   TLongVector = array of longint;
@@ -31,8 +32,8 @@ type
     Shape: TLongVector;
     Strides: TLongVector;
     function Contiguous: TMultiArray;
-    function Copy: TMultiArray;
-    function Get(i: longint): single; overload; inline;
+    function Copy(Deep: boolean = True): TMultiArray;
+    function Get(i: longint): single; overload;
     function Get(idx: array of integer): TMultiArray; overload;
     function Reshape(NewShape: array of longint): TMultiArray;
     { For now Slice() will return contiguous }
@@ -51,7 +52,8 @@ type
 
   function All: TLongVector;
   function AllocateMultiArray(Size: longint): TMultiArray;
-  function ApplyBFunc(A, B: TMultiArray; BFunc: TBFunc): TMultiArray;
+  function ApplyBFunc(A, B: TMultiArray; BFunc: TBFunc; PrintDebug: Boolean = False;
+    FuncName: string = ''): TMultiArray;
   function ApplyUFunc(A: TMultiArray; UFunc: TUFunc; Params: array of single): TMultiArray;
   function AsStrided(A: TMultiArray; Shape, Strides: array of longint): TMultiArray;
   function BroadcastArrays(A, B: TMultiArray): TBroadcastResult;
@@ -199,11 +201,15 @@ implementation
     Result.Indices := A.Indices;
   end;
 
-  function ApplyBFunc(A, B: TMultiArray; BFunc: TBFunc): TMultiArray;
+  function ApplyBFunc(A, B: TMultiArray; BFunc: TBFunc; PrintDebug: Boolean = False;
+    FuncName: string = ''): TMultiArray;
   var
     i: longint;
     BcastResult: TBroadcastResult;
+    TimeThen: TDateTime;
   begin
+    if PrintDebug then TimeThen := Now;
+
     if not(specialize VectorsEqual<TLongVector>(A.Shape, B.Shape)) then
     begin
       BcastResult := BroadcastArrays(A, B);
@@ -215,6 +221,9 @@ implementation
     Result.ResetIndices;
     for i := 0 to A.Size - 1 do
       Result.Data[i] := BFunc(A.Get(i), B.Get(i));
+
+    if PrintDebug then WriteLn('Function ' + FuncName + ' executed in ',
+                               MilliSecondsBetween(TimeThen, Now), ' ms');
   end;
 
   function ApplyUFunc(A: TMultiArray; UFunc: TUFunc; Params: array of single): TMultiArray;
@@ -474,19 +483,26 @@ implementation
   begin
     if IsContiguous then Exit(self);
     Result := AllocateMultiArray(Self.Size).Reshape(Self.Shape);
+    Result.ResetIndices;
+    Result.IsContiguous := True;
     SetLength(Result.Data, Self.Size);
     for i := 0 to Self.Size - 1 do
       Result.Data[i] := Self.Get(i);
   end;
 
-  function TMultiArray.Copy: TMultiArray;
+  function TMultiArray.Copy(Deep: boolean = True): TMultiArray;
   var
     i, j: longint;
   begin
     Result.IsContiguous := self.IsContiguous;
-    SetLength(Result.Data, length(Self.Data));
-    for i := 0 to High(self.Data) do
-      Result.Data[i] := self.Data[i];
+    if deep then
+    begin
+      SetLength(Result.Data, length(Self.Data));
+      for i := 0 to High(self.Data) do
+        Result.Data[i] := self.Data[i];
+    end
+    else
+      Result.Data := self.Data;
     Result.FDataOffset := Self.FDataOffset;
     Result.Shape := specialize CopyVector<TLongVector>(self.Shape);
     Result.Strides := specialize CopyVector<TLongVector>(self.Strides);
@@ -544,18 +560,13 @@ implementation
     Result.ResetIndices;
   end;
 
-  //function TMultiArray.Get(idx: array of integer): single; overload;
-  //begin
-  //  Assert(length(idx) = length(Shape), 'Index out of bounds.');
-  //  Exit(Data[IndexToStridedOffset(idx)]);
-  //end;
-
   function TMultiArray.Reshape(NewShape: array of longint): TMultiArray;
   var
     i: integer;
   begin
     Assert((specialize Prod<longint>(NewShape)) = (specialize Prod<longint>(Shape)), 'Impossible reshape.');
     Result.Data := self.Data;
+    Result.FDataOffset := self.FDataOffset;
     SetLength(Result.Shape, Length(NewShape));
     for i := 0 to Length(NewShape) - 1 do
       Result.Shape[i] := NewShape[i];
@@ -569,15 +580,18 @@ implementation
   begin
     if Length(idx) > Self.NDims then
       raise Exception.Create('Invalid slicing: Len(idx) > Self.NDims');
-    Result := Self.Copy;
+    Result := Self.Copy(False);
+    Result.IsContiguous := False;
     for i := 0 to High(idx) do
     begin
       if Length(idx[i]) > 0 then
       begin
-        Result.Indices[i] := specialize CopyVector<TLongVector>(idx[i]);
+        Result.Indices[i] := idx[i];
         Result.Shape[i] := Length(idx[i]);
       end
     end;
+    Result.Strides := ShapeToStrides(Result.Shape);
+    //Result := Result.Contiguous;
   end;
 
   function TMultiArray.T: TMultiArray;
