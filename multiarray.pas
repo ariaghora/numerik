@@ -71,11 +71,13 @@ type
   procedure DebugMultiArray(A: TMultiArray);
   procedure PrintMultiArray(A: TMultiArray);
 
+  { Vector tools }
   generic function CopyVector<T>(v: T): T;
   generic function SliceVector<T>(v: T; start, stop: longint): T;
   generic function Prod<T>(Data: array of T): T;
   generic function Reverse<T>(Data: T): T;
   generic function VectorsEqual<T>(A, B: T): boolean;
+  generic procedure DeleteFromVector<T>(var Data: T; At, Count: longint);
   generic procedure PrintVector<T>(Data: T);
 
   { Basic arithmetic function wrappers }
@@ -366,6 +368,16 @@ implementation
     Result := True;
     for i := 0 to High(A) do
       Result := Result and (A[i] = B[i]);
+  end;
+
+  generic procedure DeleteFromVector<T>(var Data: T; At, Count: longint);
+  var
+    i, Offset: longint;
+  begin
+    Offset := At + Count;
+    for i := Offset to High(Data) do
+      Data[i - Count] := Data[i];
+    SetLength(Data, Length(Data) - Count);
   end;
 
   generic procedure PrintVector<T>(Data: T);
