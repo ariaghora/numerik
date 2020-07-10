@@ -302,7 +302,7 @@ implementation
     var
       i: longint;
     begin
-      if Length(Shape) < 2 then
+      if Length(Shape) < 1 then
       begin
         for i := 0 to A.Size - 1 do
           Write(A.Get(i) : 5 : 2);
@@ -388,7 +388,7 @@ implementation
   begin
     for i := 0 to Length(Data) - 1 do
     begin
-      Write(Data[i]);
+      Write(Data[i] : 2);
       if i < Length(Data) - 1 then
         Write(', ');
     end;
@@ -493,7 +493,7 @@ implementation
       cnt := Self.NDims - 1;
       for i := High(Self.Shape) downto 0 do
       begin
-        index[cnt] := Offset mod Self.Shape[i];
+        index[cnt] := Indices[cnt][Offset mod Self.Shape[i]];
         Offset := Offset div Self.Shape[i];
         Dec(cnt);
       end;
@@ -601,7 +601,7 @@ implementation
 
     Offset := IndexToStridedOffset(NewIdx);
 
-    Result := CreateEmptyFTensor(Self.IsContiguous);
+    Result := CreateEmptyFTensor(False);
     Result.Data := Self.Data;
     Result.Shape := NewShape;
     Result.Strides := NewStrides;
