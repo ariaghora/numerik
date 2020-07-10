@@ -305,15 +305,25 @@ implementation
 
     procedure Pr(A: TMultiArray; Shape: TLongVector; it: longint);
     var
-      i: longint;
+      i, j: longint;
     begin
       if (Length(Shape) < MaxDims) and (Length(Shape) > 1) and (it > 0) then
         Write(DupeString(sLineBreak, Length(Shape) - 1));
 
-      if Length(Shape) < 1 then
+      if Length(Shape) < 2 then
       begin
-        for i := 0 to A.Size - 1 do
-          Write(A.Get(i) : 5 : 2, ' ');
+        for j := 0 to A.Size - 1 do
+        begin
+          if A.Size > 1 then
+            if j = 0 then Write('[');
+          Write(A.Get(j) : 5 : 2);
+          if A.Size > 1 then
+          begin
+            if j < A.Size - 1 then Write(', ');
+            if j = A.Size - 1 then Write(']');
+          end;
+        end;
+        WriteLn;
       end
       else
       if Length(Shape) = 2 then
