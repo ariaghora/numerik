@@ -288,8 +288,10 @@ implementation
     begin
       for c := 0 to A.Shape[1] - 1 do
       begin
+        if c = 0 then Write('[');
         Write(A.Get(r * A.Shape[1] + c) : 5 : 2);
-        if c < A.Shape[1] - 1 then Write(' ');
+        if c < A.Shape[1] - 1 then Write(', ');
+        if c = A.Shape[1] - 1 then Write(']');
       end;
 
       if r < (A.Shape[0] - 1) then
@@ -298,31 +300,39 @@ implementation
   end;
 
   procedure PrintMultiArray(A: TMultiArray);
-    procedure Pr(A: TMultiArray; Shape: TLongVector);
+  var
+    MaxDims: integer;
+
+    procedure Pr(A: TMultiArray; Shape: TLongVector; it: longint);
     var
       i: longint;
     begin
+      if (Length(Shape) < MaxDims) and (Length(Shape) > 1) and (it > 0) then
+        Write(DupeString(sLineBreak, Length(Shape) - 1));
+
       if Length(Shape) < 1 then
       begin
         for i := 0 to A.Size - 1 do
-          Write(A.Get(i) : 5 : 2);
+          Write(A.Get(i) : 5 : 2, ' ');
       end
       else
       if Length(Shape) = 2 then
       begin
         PrintMatrix(A);
+        WriteLn;
       end
       else
       begin
         for i := 0 to Shape[0] - 1 do
         begin
-          Pr(A.Get([i]), specialize SliceVector<TLongVector>(Shape, 1, Length(Shape)));
+          // Pr(A.Get([i]), Shape[1:end])
+          Pr(A.Get([i]), specialize SliceVector<TLongVector>(Shape, 1, Length(Shape)), i);
         end;
       end;
-      WriteLn(DupeString(sLineBreak, Length(Shape) - 1));
     end;
   begin
-    Pr(A, A.Shape);
+    MaxDims := A.NDims;
+    Pr(A, A.Shape, 0);
   end;
 
   generic function CopyVector<T>(v: T): T;

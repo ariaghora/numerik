@@ -112,8 +112,9 @@ begin
     IterIndices[axis] := [i];
     Result := Result + A.Slice(IterIndices);
   end;
-  //if Not KeepDims then
-  //  SqueezeMultiArray(Result);
+
+  if Not KeepDims then
+    SqueezeMultiArray(Result);
 end;
 
 end.
