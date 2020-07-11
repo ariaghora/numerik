@@ -57,6 +57,7 @@ type
   function ApplyBFunc(A, B: TMultiArray; BFunc: TBFunc; PrintDebug: Boolean = False;
     FuncName: string = ''): TMultiArray;
   function ApplyUFunc(A: TMultiArray; UFunc: TUFunc; Params: array of single): TMultiArray;
+  function ArrayEqual(A, B: TMultiArray): boolean;
   function AsStrided(A: TMultiArray; Shape, Strides: array of longint): TMultiArray;
   function BroadcastArrays(A, B: TMultiArray): TBroadcastResult;
   function CreateEmptyFTensor(Contiguous: boolean = True): TMultiArray;
@@ -85,6 +86,7 @@ type
   generic procedure PrintVector<T>(Data: T);
 
   function VectorsEqual(A, B: TSingleVector): boolean;
+  function VectorsEqual(A, B: TLongVector): boolean;
 
   { Basic arithmetic function wrappers }
   function _Add(a, b: single): single;
@@ -202,6 +204,12 @@ implementation
   function CreateMultiArray(AData: single): TMultiArray;
   begin
     Result := CreateMultiArray([AData]);
+  end;
+
+  function ArrayEqual(A, B: TMultiArray): boolean;
+  begin
+    Exit(VectorsEqual(A.GetVirtualData, B.GetVirtualData) and
+         VectorsEqual(A.Shape, B.Shape));
   end;
 
   function AsStrided(A: TMultiArray; Shape, Strides: array of longint): TMultiArray;
@@ -420,6 +428,11 @@ implementation
   function VectorsEqual(A, B: TSingleVector): boolean;
   begin
     Exit(specialize VectorsEqual<TSingleVector>(A, B));
+  end;
+
+  function VectorsEqual(A, B: TLongVector): boolean;
+  begin
+    Exit(specialize VectorsEqual<TLongVector>(A, B));
   end;
 
   function GenerateMultiArray(Shape: array of longint; GenFunc: TGenFunc;
