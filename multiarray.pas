@@ -34,11 +34,11 @@ type
     function Contiguous: TMultiArray;
     function Copy(Deep: boolean = True): TMultiArray;
     function Get(i: longint): single; overload;
-    function Get(idx: array of integer): TMultiArray; overload;
+    function Get(idx: TLongVector): TMultiArray; overload;
     function GetVirtualData: TSingleVector;
     function IndexToStridedOffset(Index: array of longint): longint;
-    function Reshape(NewShape: array of longint): TMultiArray;
-    { For now Slice() will return contiguous }
+    function Reshape(NewShape: TLongVector): TMultiArray;
+    { For now Slice will return contiguous }
     function Slice(idx: array of TLongVector): TMultiArray;
     function T: TMultiArray;
     procedure Put(i: array of integer; x: single);
@@ -58,7 +58,7 @@ type
     FuncName: string = ''): TMultiArray;
   function ApplyUFunc(A: TMultiArray; UFunc: TUFunc; Params: array of single): TMultiArray;
   function ArrayEqual(A, B: TMultiArray): boolean;
-  function AsStrided(A: TMultiArray; Shape, Strides: array of longint): TMultiArray;
+  function AsStrided(A: TMultiArray; Shape, Strides: TLongVector): TMultiArray;
   function BroadcastArrays(A, B: TMultiArray): TBroadcastResult;
   function CreateEmptyFTensor(Contiguous: boolean = True): TMultiArray;
   function CreateMultiArray(AData: array of single): TMultiArray;
@@ -70,7 +70,7 @@ type
   function OffsetToIndex(A: TMultiArray; Offset: longint): TLongVector;
   function Range(Start, Stop, step: longint): TLongVector; overload;
   function Range(Start, Stop: longint): TLongVector; overload;
-  function ShapeToStrides(AShape: array of longint): TLongVector;
+  function ShapeToStrides(AShape: TLongVector): TLongVector;
 
   procedure DebugMultiArray(A: TMultiArray);
   procedure PrintMultiArray(A: TMultiArray);
@@ -212,12 +212,12 @@ implementation
          VectorsEqual(A.Shape, B.Shape));
   end;
 
-  function AsStrided(A: TMultiArray; Shape, Strides: array of longint): TMultiArray;
+  function AsStrided(A: TMultiArray; Shape, Strides: TLongVector): TMultiArray;
   begin
     Result := CreateEmptyFTensor(false);
     Result.Data := A.Data;
-    Result.Shape := DynArrayToVector(Shape);
-    Result.Strides := DynArrayToVector(Strides);
+    Result.Shape := Shape;
+    Result.Strides := Strides;
     Result.Indices := A.Indices;
   end;
 
@@ -492,7 +492,7 @@ implementation
     Exit(Range(Start, Stop, 1));
   end;
 
-  function ShapeToStrides(AShape: array of longint): TLongVector;
+  function ShapeToStrides(AShape: TLongVector): TLongVector;
   var
     k, j, prod: integer;
   begin
@@ -620,7 +620,7 @@ implementation
     Exit(Data[OffsetToStrided(i)]);
   end;
 
-  function TMultiArray.Get(idx: array of integer): TMultiArray;
+  function TMultiArray.Get(idx: TLongVector): TMultiArray;
   var
     i, Offset: longint;
     NewIdx, NewShape, NewStrides: TLongVector;
@@ -662,14 +662,14 @@ implementation
     Result.ResetIndices;
   end;
 
-  function TMultiArray.Reshape(NewShape: array of longint): TMultiArray;
+  function TMultiArray.Reshape(NewShape: TLongVector): TMultiArray;
   var
     i: integer;
   begin
     Assert((specialize Prod<longint>(NewShape)) = (specialize Prod<longint>(Shape)), 'Impossible reshape.');
     Result.Data := self.Data;
     Result.FDataOffset := self.FDataOffset;
-    Result.IsContiguous:=False;
+    //Result.IsContiguous:=False;
     SetLength(Result.Shape, Length(NewShape));
     for i := 0 to Length(NewShape) - 1 do
       Result.Shape[i] := NewShape[i];

@@ -12,6 +12,7 @@ type
   TTestMultiArray = class(TTestCase)
   published
     procedure TestBroadcastMatrixScalar;
+    procedure TestBroadcastReshaped;
     procedure TestSlicing2D;
     procedure TestSlicing2DAddScalar;
     procedure TestSlicing2DAddTransposed;
@@ -31,6 +32,13 @@ procedure TTestMultiArray.TestBroadcastMatrixScalar;
 begin
   M := TMultiArray([1, 2, 3, 4]).Reshape([2, 2]);
   AssertTrue(VectorsEqual((M + 2).GetVirtualData, [3, 4, 5, 6]));
+end;
+
+procedure TTestMultiArray.TestBroadcastReshaped;
+begin
+  M := [1, 2, 3];
+  M := M.Reshape([3, 1]) * M.Reshape([1, 3]);
+  AssertTrue(VectorsEqual(M.GetVirtualData, [1, 2, 3, 2, 4, 6, 3, 6, 9]));
 end;
 
 procedure TTestMultiArray.TestSlicing2D;
