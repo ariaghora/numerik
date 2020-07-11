@@ -19,6 +19,7 @@ type
 
     procedure TestReduceSimple;
     procedure TestReduceStacked;
+    procedure TestReduceBig;
   end;
 
 var
@@ -75,6 +76,20 @@ begin
   M := TMultiArray([1, 2, 3, 4, 5, 6]).Reshape([2, 3]);
   M := ReduceSum(ReduceSum(M, 0), 0);
   AssertTrue(VectorsEqual(M.GetVirtualData, [21]));
+end;
+
+procedure TTestMultiArray.TestReduceBig;
+var
+  i: integer;
+  expected: TSingleVector;
+begin
+  M := Random([10000, 100]);
+  M := M / M;
+  M := ReduceSum(M, 0);
+  SetLength(expected, 100);
+  for i := 0 to 99 do
+    expected[i] := 10000;
+  AssertTrue(VectorsEqual(M.GetVirtualData, expected));
 end;
 
 initialization
