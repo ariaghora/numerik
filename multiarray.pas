@@ -96,6 +96,7 @@ type
   function _Power(base, exponent: single): single;
   function _Subtract(a, b: single): single;
 
+  function Matmul(A, B: TMultiArray): TMultiArray;
   function Power(A, B: TMultiArray): TMultiArray; overload;
   operator + (A, B: TMultiArray) C: TMultiArray;
   operator - (A: TMultiArray) B: TMultiArray;
@@ -116,6 +117,9 @@ var
   GLOBAL_FUNC_DEBUG: boolean;
 
 implementation
+
+uses
+  numerik;
 
   function All: TLongVector;
   begin
@@ -561,6 +565,7 @@ implementation
 
   function TMultiArray.GetVirtualData: TSingleVector;
   begin
+    if Self.IsContiguous then Exit(Self.Data);
     Exit(multiarray.GetVirtualData(Self));
   end;
 
@@ -669,7 +674,6 @@ implementation
     Assert((specialize Prod<longint>(NewShape)) = (specialize Prod<longint>(Shape)), 'Impossible reshape.');
     Result.Data := self.Data;
     Result.FDataOffset := self.FDataOffset;
-    //Result.IsContiguous:=False;
     SetLength(Result.Shape, Length(NewShape));
     for i := 0 to Length(NewShape) - 1 do
       Result.Shape[i] := NewShape[i];
@@ -757,6 +761,11 @@ implementation
   function _Subtract(a, b: single): single;
   begin
     Exit(a - b);
+  end;
+
+  function Matmul(A, B: TMultiArray): TMultiArray;
+  begin
+    Exit(MatMul_BLAS(A, B));
   end;
 
   function Power(A, B: TMultiArray): TMultiArray;

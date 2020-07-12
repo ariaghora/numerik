@@ -7,6 +7,10 @@ interface
 uses
   Classes, SysUtils, Math, multiarray;
 
+type
+  CBLAS_ORDER     = (CblasRowMajor = 101, CblasColMajor = 102);
+  CBLAS_TRANSPOSE = (CblasNoTrans = 111, CblasTrans = 112, CblasConjTrans = 113);
+
 { ----------- Trigonometry --------------------------------------------------- }
 function _Cos(X: single; params: array of single): single;
 function _DegToRad(X: single; params: array of single): single;
@@ -32,6 +36,16 @@ function RandG(mean, stddev: float; Shape: array of longint): TMultiArray; overl
 { Sum-reducing TMultiArray along a specified axis. This is for convenience rather
   than performance. }
 function ReduceSum(A: TMultiArray; axis: integer; KeepDims: Boolean = False): TMultiArray;
+
+{ BLAS backend interface }
+procedure cblas_sgemm(Order: CBLAS_ORDER; TransA: CBLAS_TRANSPOSE;
+    TransB: CBLAS_TRANSPOSE; M: longint; N: longint; K: longint;
+    alpha: single; A: TSingleVector; lda: longint; B: TSingleVector;
+    ldb: longint; beta: single; C: TSingleVector; ldc: longint);
+    external 'libopenblas.dll';
+
+function MatMul_BLAS(A, B: TMultiArray): TMultiArray;
+
 
 implementation
 
@@ -115,6 +129,23 @@ begin
 
   if Not KeepDims then
     SqueezeMultiArray(Result);
+end;
+
+function MatMul_BLAS(A, B: TMultiArray): TMultiArray;
+var
+  OutSize: longint;
+begin
+  OutSize := A.Shape[0] * B.Shape[1];
+  Result := AllocateMultiArray(OutSize).Reshape([A.Shape[0], B.Shape[1]]);
+
+  cblas_sgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans,
+              A.Shape[0], B.shape[1], B.shape[0], // A.shape[0], B.shape[1], B.shape[0]
+              1,                                  // alpha
+              A.GetVirtualData, B.Shape[0],       // A, B.shape[0]
+              B.GetVirtualData, B.Shape[1],       // B, B.shape[1]
+              1,                                  // beta
+              Result.Data, B.Shape[1]             // C, B.shape[1]
+              );
 end;
 
 end.
