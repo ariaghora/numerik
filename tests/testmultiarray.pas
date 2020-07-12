@@ -2,15 +2,20 @@ unit testmultiarray;
 
 {$mode objfpc}{$H+}
 
+{$IFDEF FPC}
+{$PACKRECORDS C}
+{$ENDIF}
+
 interface
 
 uses
-  Classes, SysUtils, fpcunit, testregistry, multiarray, numerik;
+  Classes, SysUtils, fpcunit, testregistry, multiarray, numerik, DateUtils;
 
 type
 
   TTestMultiArray = class(TTestCase)
   published
+    procedure TestAssignment;
     procedure TestBroadcastMatrixScalar;
     procedure TestBroadcastReshaped;
     procedure TestSlicing2D;
@@ -24,9 +29,20 @@ type
   end;
 
 var
-  M: TMultiArray;
+  M, N: TMultiArray;
 
 implementation
+
+procedure TTestMultiArray.TestAssignment;
+var
+  t: TDateTime;
+  A, B, C: TMultiArray;
+begin
+  M := Random([10000, 1000]);
+  t := Now;
+  N := M.Copy();
+  WriteLn(MilliSecondsBetween(Now, t));
+end;
 
 procedure TTestMultiArray.TestBroadcastMatrixScalar;
 begin
