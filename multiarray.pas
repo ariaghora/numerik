@@ -81,12 +81,12 @@ type
   generic function SliceVector<T>(v: T; start, stop: longint): T;
   generic function Prod<T>(Data: array of T): T;
   generic function Reverse<T>(Data: T): T;
-  generic function VectorsEqual<T>(A, B: T): boolean;
+  generic function VectorEqual<T>(A, B: T): boolean;
   generic procedure DeleteFromVector<T>(var Data: T; At, Count: longint);
   generic procedure PrintVector<T>(Data: T);
 
-  function VectorsEqual(A, B: TSingleVector): boolean;
-  function VectorsEqual(A, B: TLongVector): boolean;
+  function VectorEqual(A, B: TSingleVector): boolean;
+  function VectorEqual(A, B: TLongVector): boolean;
 
   { Basic arithmetic function wrappers }
   function _Add(a, b: single): single;
@@ -212,8 +212,8 @@ uses
 
   function ArrayEqual(A, B: TMultiArray): boolean;
   begin
-    Exit(VectorsEqual(A.GetVirtualData, B.GetVirtualData) and
-         VectorsEqual(A.Shape, B.Shape));
+    Exit(VectorEqual(A.GetVirtualData, B.GetVirtualData) and
+         VectorEqual(A.Shape, B.Shape));
   end;
 
   function AsStrided(A: TMultiArray; Shape, Strides: TLongVector): TMultiArray;
@@ -234,7 +234,7 @@ uses
   begin
     if (PrintDebug or GLOBAL_FUNC_DEBUG) then TimeThen := Now;
 
-    if not(specialize VectorsEqual<TLongVector>(A.Shape, B.Shape)) then
+    if not(specialize VectorEqual<TLongVector>(A.Shape, B.Shape)) then
     begin
       BcastResult := BroadcastArrays(A, B);
       Result := ApplyBFunc(BcastResult.A, BcastResult.B, BFunc, PrintDebug, FuncName);
@@ -396,7 +396,7 @@ uses
       Result[High(Data) - i] := Data[i];
   end;
 
-  generic function VectorsEqual<T>(A, B: T): boolean;
+  generic function VectorEqual<T>(A, B: T): boolean;
   var
     i: longint;
   begin
@@ -429,14 +429,14 @@ uses
     WriteLn;
   end;
 
-  function VectorsEqual(A, B: TSingleVector): boolean;
+  function VectorEqual(A, B: TSingleVector): boolean;
   begin
-    Exit(specialize VectorsEqual<TSingleVector>(A, B));
+    Exit(specialize VectorEqual<TSingleVector>(A, B));
   end;
 
-  function VectorsEqual(A, B: TLongVector): boolean;
+  function VectorEqual(A, B: TLongVector): boolean;
   begin
-    Exit(specialize VectorsEqual<TLongVector>(A, B));
+    Exit(specialize VectorEqual<TLongVector>(A, B));
   end;
 
   function GenerateMultiArray(Shape: array of longint; GenFunc: TGenFunc;
