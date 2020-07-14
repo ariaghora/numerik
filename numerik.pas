@@ -7,6 +7,9 @@ interface
 uses
   Classes, SysUtils, Math, multiarray;
 
+const
+  LIB_NAME = 'libopenblas.dll';
+
 type
   CBLAS_ORDER     = (CblasRowMajor = 101, CblasColMajor = 102);
   CBLAS_TRANSPOSE = (CblasNoTrans = 111, CblasTrans = 112, CblasConjTrans = 113);
@@ -42,7 +45,12 @@ procedure cblas_sgemm(Order: CBLAS_ORDER; TransA: CBLAS_TRANSPOSE;
     TransB: CBLAS_TRANSPOSE; M: longint; N: longint; K: longint;
     alpha: single; A: TSingleVector; lda: longint; B: TSingleVector;
     ldb: longint; beta: single; C: TSingleVector; ldc: longint);
-    external 'libopenblas.dll';
+    external LIB_NAME;
+
+procedure LAPACKE_sgesvd(JOBU, JOBVT: char; M, N: longint; A: TSingleVector;
+    LDA: longint; S, U: TSingleVector; LDU: longint; VT: TSingleVector;
+    LDVT: longint; Work: TSingleVector; LWork, Info: longint);
+    external LIB_NAME;
 
 function MatMul_BLAS(A, B: TMultiArray): TMultiArray;
 
