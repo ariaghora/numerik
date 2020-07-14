@@ -91,6 +91,7 @@ type
   { Basic arithmetic function wrappers }
   function _Add(a, b: single): single;
   function _Divide(a, b: single): single;
+  function _GreaterThan(a, b: single): single;
   function _Multiply(a, b: single): single;
   function _Negate(a: single; params: array of single): single;
   function _Power(base, exponent: single): single;
@@ -104,6 +105,7 @@ type
   operator * (A, B: TMultiArray) C: TMultiArray;
   operator / (A, B: TMultiArray) C: TMultiArray;
   operator ** (A, B: TMultiArray) C: TMultiArray;
+  operator > (A, B: TMultiArray) C: TMultiArray;
   operator := (A: single) B: TMultiArray;
   operator := (A: array of single) B: TMultiArray;
   operator explicit(A: single) B: TMultiArray;
@@ -743,6 +745,11 @@ uses
     Exit(a / b);
   end;
 
+  function _GreaterThan(a, b: single): single;
+  begin
+    Exit(Single(Integer(a > b)));
+  end;
+
   function _Multiply(a, b: single): single;
   begin
     Exit(a * b);
@@ -801,6 +808,11 @@ uses
   operator ** (A, B: TMultiArray) C: TMultiArray;
   begin
     C := Power(A, B);
+  end;
+
+  operator > (A, B: TMultiArray) C: TMultiArray;
+  begin
+    C := ApplyBFunc(A, B, @_GreaterThan, GLOBAL_FUNC_DEBUG, 'GREATER_THAN');
   end;
 
   operator :=(A: single) B: TMultiArray;
