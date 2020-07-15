@@ -37,6 +37,7 @@ type
     function Get(idx: TLongVector): TMultiArray; overload;
     function GetVirtualData: TSingleVector;
     function IndexToStridedOffset(Index: array of longint): longint;
+    function Matmul(Other: TMultiArray): TMultiArray;
     function Reshape(NewShape: TLongVector): TMultiArray;
     { For now Slice will return contiguous }
     function Slice(idx: array of TLongVector): TMultiArray;
@@ -669,6 +670,11 @@ uses
     Result.ResetIndices;
   end;
 
+  function TMultiArray.Matmul(Other: TMultiArray): TMultiArray;
+  begin
+    Exit(multiarray.Matmul(Self, Other));
+  end;
+
   function TMultiArray.Reshape(NewShape: TLongVector): TMultiArray;
   var
     i: integer;
@@ -772,6 +778,8 @@ uses
 
   function Matmul(A, B: TMultiArray): TMultiArray;
   begin
+    if (A.NDims <> 2) or (B.NDims <> 2) then
+      raise Exception.Create('Only arrays with NDims=2 are supporter for Matmul');
     Exit(MatMul_BLAS(A, B));
   end;
 
