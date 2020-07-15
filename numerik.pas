@@ -10,9 +10,16 @@ uses
 const
   LIB_NAME = 'libopenblas.dll';
 
+  LAPACK_ROW_MAJOR = 101;
+  LAPACK_COL_MAJOR = 102;
+
 type
   CBLAS_ORDER     = (CblasRowMajor = 101, CblasColMajor = 102);
   CBLAS_TRANSPOSE = (CblasNoTrans = 111, CblasTrans = 112, CblasConjTrans = 113);
+
+  TSVDResult = record
+    U, Sigma, VT: TMultiArray;
+  end;
 
 { ----------- Trigonometry --------------------------------------------------- }
 function _Cos(X: single; params: array of single): single;
@@ -47,13 +54,18 @@ procedure cblas_sgemm(Order: CBLAS_ORDER; TransA: CBLAS_TRANSPOSE;
     ldb: longint; beta: single; C: TSingleVector; ldc: longint);
     external LIB_NAME;
 
-procedure LAPACKE_sgesvd(JOBU, JOBVT: char; M, N: longint; A: TSingleVector;
+procedure sgesvd(JOBU, JOBVT: pchar; M, N: longint; A: TSingleVector;
     LDA: longint; S, U: TSingleVector; LDU: longint; VT: TSingleVector;
     LDVT: longint; Work: TSingleVector; LWork, Info: longint);
     external LIB_NAME;
 
-function MatMul_BLAS(A, B: TMultiArray): TMultiArray;
+function LAPACKE_sgesvd(MatrixLayout: longint; JOBU, JOBVT: char; M, N: longint;
+     A: TSingleVector; LDA: longint; S, U: TSingleVector; LDU: longint; VT: TSingleVector;
+     LDVT: longint; Superb: TSingleVector): longint;
+     external LIB_NAME;
 
+function MatMul_BLAS(A, B: TMultiArray): TMultiArray;
+function SVD(A: TMultiArray): TSVDResult;
 
 implementation
 
@@ -154,6 +166,25 @@ begin
               1,                                  // beta
               Result.Data, B.Shape[1]             // C, B.shape[1]
               );
+end;
+
+function SVD(A: TMultiArray): TSVDResult;
+var
+  m, n, info: integer;
+  U, Sigma, VT, Superb: TMultiArray;
+begin
+  m := A.Shape[0];
+  n := A.Shape[1];
+  Superb := AllocateMultiArray(min(m, n) - 1);
+  Sigma := AllocateMultiArray(max(m, n));
+  U := AllocateMultiArray(m ** 2).Reshape([m, m]);
+  VT := AllocateMultiArray(n ** 2).Reshape([n, n]);
+
+  info := LAPACKE_sgesvd(LAPACK_ROW_MAJOR, 'A', 'A', m, n, A.GetVirtualData,
+    m, Sigma.Data, U.Data, m, VT.Data, n, Superb.Data);
+  Result.Sigma := Sigma;
+  Result.U := U;
+  Result.VT := VT;
 end;
 
 end.
