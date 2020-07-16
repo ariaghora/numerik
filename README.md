@@ -7,31 +7,29 @@ Numerik is a numerical library for object pascal. It supports:
 ### Example
 ```pascal
 uses
-  multiarray,
-  numerik;
+  multiarray, numerik;
 
 var
   A, B: TMultiArray;
   RowIndices, ColIndices: TLongVector;
 
 begin
-
-  A := Random([5, 5]); // 5 by 5 random array
+  { 5 x 5 random array }
+  A := Random([5, 5]);
   PrintMultiArray(A);
 
-  WriteLn;
-
+  { Multidimensional slicing }
   RowIndices := [0, 3];
   ColIndices := [0, 1, 3, 4];
   B := A.Slice([RowIndices, ColIndices]);
-
   PrintMultiArray(B);
 
-  WriteLn;
-
-  PrintMultiArray(B.T + 2); // Transpose and add 2
-
-  readln;
+  { Math operation }
+  PrintMultiArray(Transpose(B));   // Equivalent to B.T
+  PrintMultiArray(Exp(B));         // Element-wise exponentiation
+  PrintMultiArray(Add(B, 2));      // Equivalent to B + 2
+  PrintMultiArray(Multiply(B, B)); // Element-wise multiplication, Equivalent to B * B
+  PrintMultiArray(Matmul(B.T, B)); // Matrix multiplication 
 end.      
 ```
 
