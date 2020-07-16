@@ -311,7 +311,8 @@ uses
     Result.Data := A.Data;
     Result.Shape := Shape;
     Result.Strides := Strides;
-    Result.Indices := A.Indices;
+    //Result.Indices := A.Indices;
+    Result.ResetIndices;
   end;
 
   function ApplyBFunc(A, B: TMultiArray; BFunc: TBFunc; PrintDebug: Boolean = False;
