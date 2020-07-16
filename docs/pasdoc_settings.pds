@@ -24,7 +24,7 @@ Sorting_6=0
 Sorting_7=0
 Sorting_8=1
 Sorting_9=0
-CssFileName=
+CssFileName=custom.css
 IntroductionFileName=
 ConclusionFileName=
 HtmlHead=
@@ -45,6 +45,12 @@ VizGraphUses=0
 CheckSpelling=0
 LatexGraphicsPackage=0
 
+[AutoLinkExclude]
+Count=0
+
+[AdditionalFiles]
+Count=0
+
 [Defines]
 Count=2
 Item_0=FPC
@@ -56,9 +62,6 @@ Count=0
 [Footer]
 Count=0
 
-[AutoLinkExclude]
-Count=0
-
 [IncludeDirectories]
 Count=1
 Item_0=..\src
@@ -67,9 +70,6 @@ Item_0=..\src
 Count=2
 Item_0=..\src\multiarray.pas
 Item_1=..\src\numerik.pas
-
-[AdditionalFiles]
-Count=0
 
 [HyphenatedWords]
 Count=0
