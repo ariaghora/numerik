@@ -100,6 +100,7 @@ type
   function _Power(base, exponent: single): single;
   function _Subtract(a, b: single): single;
 
+  function Add(A, B: TMultiArray): TMultiArray;
   function Matmul(A, B: TMultiArray): TMultiArray;
   function Maximum(A, B: TMultiArray): TMultiArray;
   function Power(A, B: TMultiArray): TMultiArray; overload;
@@ -814,6 +815,11 @@ uses
     Exit(a - b);
   end;
 
+  function Add(A, B: TMultiArray): TMultiArray;
+  begin
+    Exit(ApplyBFunc(A, B, @_Add, GLOBAL_FUNC_DEBUG, 'ADD'));
+  end;
+
   function Matmul(A, B: TMultiArray): TMultiArray;
   begin
     if (A.NDims <> 2) or (B.NDims <> 2) then
@@ -838,7 +844,7 @@ uses
 
   operator +(A, B: TMultiArray) C: TMultiArray;
   begin
-    C := ApplyBFunc(A, B, @_Add, GLOBAL_FUNC_DEBUG, 'ADD');
+    C := Add(A, B);
   end;
 
   operator - (A: TMultiArray) B: TMultiArray;

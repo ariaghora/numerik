@@ -17,9 +17,15 @@ type
   CBLAS_ORDER     = (CblasRowMajor = 101, CblasColMajor = 102);
   CBLAS_TRANSPOSE = (CblasNoTrans = 111, CblasTrans = 112, CblasConjTrans = 113);
 
+  TReduceFunc = function(A, B: TMultiArray): TMultiArray;
+
   TSVDResult = record
     U, Sigma, VT: TMultiArray;
   end;
+
+{ ----------- Arithmetic------------------------------------------------------ }
+function Mean(A: TMultiArray; axis: integer = -1): TMultiArray; overload;
+function Sum(A: TMultiArray; axis: integer = -1): TMultiArray; overload;
 
 { ----------- Trigonometry --------------------------------------------------- }
 function Cos(X: TMultiArray): TMultiArray; overload;
@@ -37,9 +43,10 @@ function Random(Shape: array of longint): TMultiArray; overload;
 { Gaussian random array generator. }
 function RandG(mean, stddev: float; Shape: array of longint): TMultiArray; overload;
 
-{ Sum-reducing TMultiArray along a specified axis. This is for convenience rather
-  than performance. }
-function ReduceSum(A: TMultiArray; axis: integer; KeepDims: Boolean = False): TMultiArray;
+{ Reduce TMultiArray along a specified axis with specified ReduceFunc. This is
+  for convenience rather than performance. }
+function ReduceAlongAxis(A: TMultiArray; ReduceFunc: TReduceFunc; axis: integer;
+     KeepDims: Boolean = False): TMultiArray;
 
 { BLAS backend interface }
 procedure cblas_sgemm(Order: CBLAS_ORDER; TransA: CBLAS_TRANSPOSE;
@@ -120,7 +127,8 @@ begin
   Exit(GenerateMultiArray(Shape, @_RandG, [mean, stddev]));
 end;
 
-function ReduceSum(A: TMultiArray; axis: integer; KeepDims: Boolean = False): TMultiArray;
+function ReduceAlongAxis(A: TMultiArray; ReduceFunc: TReduceFunc; axis: integer;
+     KeepDims: Boolean = False): TMultiArray;
 var
   i: longint;
   IterIndices: array of TLongVector;
@@ -135,11 +143,25 @@ begin
   for i := 1 to A.Shape[axis] - 1 do
   begin
     IterIndices[axis] := [i];
-    Result := Result + A.Slice(IterIndices);
+    Result := ReduceFunc(Result, A.Slice(IterIndices));//Result + A.Slice(IterIndices);
   end;
 
   if Not KeepDims then
     SqueezeMultiArray(Result);
+end;
+
+function Mean(A: TMultiArray; axis: integer = -1): TMultiArray; overload;
+begin
+  if axis = -1 then
+    Exit(math.Mean(A.GetVirtualData));
+  Exit(Sum(A, axis) / A.Shape[axis]);
+end;
+
+function Sum(A: TMultiArray; axis: integer = -1): TMultiArray;
+begin
+  if axis = -1 then
+    Exit(math.Sum(A.GetVirtualData));
+  Exit(ReduceAlongAxis(A, @Add, axis));
 end;
 
 function MatMul_BLAS(A, B: TMultiArray): TMultiArray;
