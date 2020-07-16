@@ -97,14 +97,14 @@ end;
 procedure TTestMultiArray.TestReduceSimple;
 begin
   M := TMultiArray([1, 2, 3, 4, 5, 6]).Reshape([2, 3]);
-  M := ReduceSum(M, 0);
+  M := Sum(M, 0);
   AssertTrue(VectorEqual(M.GetVirtualData, [5, 7, 9]));
 end;
 
 procedure TTestMultiArray.TestReduceStacked;
 begin
   M := TMultiArray([1, 2, 3, 4, 5, 6]).Reshape([2, 3]);
-  M := ReduceSum(ReduceSum(M, 0), 0);
+  M := Sum(Sum(M, 0), 0);
   AssertTrue(VectorEqual(M.GetVirtualData, [21]));
 end;
 
@@ -115,7 +115,7 @@ var
 begin
   M := Random([10000, 100]);
   M := M / M;
-  M := ReduceSum(M, 0);
+  M := Sum(M, 0);
   SetLength(expected, 100);
   for i := 0 to 99 do
     expected[i] := 10000;
