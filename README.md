@@ -14,6 +14,14 @@ var
   RowIndices, ColIndices: TLongVector;
 
 begin
+  A := [1, 2, 3, 4, 5, 6]; // TMultiArray accepts open array assignment
+  A := A.Reshape([3, 2]);  // Reshape it into a 3x2 array
+  PrintMultiArray(A);
+
+  { Load data from CSV }
+  A := ReadCSV('data.csv'); 
+  PrintMultiArray(A);
+  
   { 5 x 5 random array }
   A := Random([5, 5]);
   PrintMultiArray(A);
