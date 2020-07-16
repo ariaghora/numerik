@@ -22,20 +22,14 @@ type
   end;
 
 { ----------- Trigonometry --------------------------------------------------- }
-function _Cos(X: single; params: array of single): single;
-function _DegToRad(X: single; params: array of single): single;
-function _Sin(X: single; params: array of single): single;
 function Cos(X: TMultiArray): TMultiArray; overload;
 function DegToRad(X: TMultiArray): TMultiArray; overload;
 function Sin(X: TMultiArray): TMultiArray; overload;
 
 { ----------- Exponential ---------------------------------------------------- }
-function _Exp(X: single; params: array of single): single;
 function Exp(X: TMultiArray): TMultiArray; overload;
 
 { ----------- Random number generator ---------------------------------------- }
-function _Random(Params: array of single): single;
-function _RandG(Params: array of single): single;
 
 { Wrapper for pascal's Random function, as a TMultiArray. }
 function Random(Shape: array of longint): TMultiArray; overload;
@@ -54,7 +48,6 @@ procedure cblas_sgemm(Order: CBLAS_ORDER; TransA: CBLAS_TRANSPOSE;
     ldb: longint; beta: single; C: TSingleVector; ldc: longint);
     external LIB_NAME;
 
-
 function LAPACKE_sgesvd(MatrixLayout: longint; JOBU, JOBVT: char; M, N: longint;
      A: TSingleVector; LDA: longint; S, U: TSingleVector; LDU: longint; VT: TSingleVector;
      LDVT: longint; Superb: TSingleVector): longint;
@@ -66,34 +59,9 @@ function SVD(A: TMultiArray; SigmasAsMatrix: Boolean=False): TSVDResult;
 
 implementation
 
-function _Random(Params: array of single): single;
-begin
-  Exit(Random);
-end;
-
-function _RandG(Params: array of single): single;
-begin
-  Exit(RandG(Params[0], Params[1]));
-end;
-
 function _Cos(X: single; params: array of single): single;
 begin
-  Exit(Cos(X));
-end;
-
-function _DegToRad(X: single; params: array of single): single;
-begin
-  Exit(DegToRad(X));
-end;
-
-function _Exp(X: single; params: array of single): single;
-begin
-  Exit(Exp(X));
-end;
-
-function _Sin(X: single; params: array of single): single;
-begin
-  Exit(Sin(X));
+  Exit(System.Cos(X));
 end;
 
 function Cos(X: TMultiArray): TMultiArray;
@@ -101,14 +69,19 @@ begin
   Exit(ApplyUFunc(X, @_Cos, []));
 end;
 
+function _DegToRad(X: single; params: array of single): single;
+begin
+  Exit(math.DegToRad(X));
+end;
+
 function DegToRad(X: TMultiArray): TMultiArray; overload;
 begin
   Exit(ApplyUFunc(X, @_DegToRad, []));
 end;
 
-function Sin(X: TMultiArray): TMultiArray;
+function _Exp(X: single; params: array of single): single;
 begin
-  Exit(ApplyUFunc(X, @_Sin, []));
+  Exit(System.Exp(X));
 end;
 
 function Exp(X: TMultiArray): TMultiArray;
@@ -116,9 +89,29 @@ begin
   Exit(ApplyUFunc(X, @_Exp, []));
 end;
 
+function _Sin(X: single; params: array of single): single;
+begin
+  Exit(System.Sin(X));
+end;
+
+function Sin(X: TMultiArray): TMultiArray;
+begin
+  Exit(ApplyUFunc(X, @_Sin, []));
+end;
+
+function _Random(Params: array of single): single;
+begin
+  Exit(System.Random);
+end;
+
 function Random(Shape: array of longint): TMultiArray;
 begin
   Exit(GenerateMultiArray(Shape, @_Random, []));
+end;
+
+function _RandG(Params: array of single): single;
+begin
+  Exit(math.RandG(Params[0], Params[1]));
 end;
 
 function RandG(mean, stddev: float; Shape: array of longint): TMultiArray; overload;
@@ -173,7 +166,7 @@ begin
   SVDRes := SVD(A, True);
   for i := 0 to SVDRes.Sigma.Size - 1 do
     if SVDRes.Sigma.Get(i) > 0 then
-       SVDRes.Sigma.Put(OffsetToIndex(SVDRes.Sigma, i), 1/SVDRes.Sigma.Get(i));
+       SVDRes.Sigma.Put(OffsetToIndex(SVDRes.Sigma, i), 1 / SVDRes.Sigma.Get(i));
   Exit(SVDRes.VT.T.Matmul(SVDRes.Sigma.T).Matmul(SVDRes.U.T));
 end;
 
