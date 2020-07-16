@@ -53,6 +53,7 @@ function LAPACKE_sgesvd(MatrixLayout: longint; JOBU, JOBVT: char; M, N: longint;
      LDVT: longint; Superb: TSingleVector): longint;
      external LIB_NAME;
 
+{ Linear algebra }
 function MatMul_BLAS(A, B: TMultiArray): TMultiArray;
 function PseudoInverse(A: TMultiArray): TMultiArray;
 function SVD(A: TMultiArray; SigmasAsMatrix: Boolean=False): TSVDResult;

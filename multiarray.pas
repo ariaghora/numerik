@@ -71,6 +71,7 @@ type
   function OffsetToIndex(A: TMultiArray; Offset: longint): TLongVector;
   function Range(Start, Stop, step: longint): TLongVector; overload;
   function Range(Start, Stop: longint): TLongVector; overload;
+  function ReadCSV(FileName: string): TMultiArray;
   function ShapeToStrides(AShape: TLongVector): TLongVector;
 
   procedure DebugMultiArray(A: TMultiArray);
@@ -503,6 +504,36 @@ uses
   function Range(Start, Stop: longint): TLongVector;
   begin
     Exit(Range(Start, Stop, 1));
+  end;
+
+  function ReadCSV(FileName: string): TMultiArray;
+  var
+    sl: TStringList;
+    Offset, RowCnt, ColCnt: integer;
+    c, s: string;
+    Data: TSingleVector;
+  begin
+    sl := TStringList.Create;
+    sl.LoadFromFile(FileName);
+
+    RowCnt := sl.Count;
+    if RowCnt > 0 then
+      ColCnt := Length(sl[0].Split(',')); // Assuming num of cols is consistent
+
+    SetLength(Data, RowCnt * ColCnt);
+    Offset := 0;
+    for s in sl do
+    begin
+      for c in s.Split(',') do
+      begin
+        Data[Offset] := StrToFloat(c);
+        Inc(Offset);
+      end;
+    end;
+    sl.Free;
+
+    Result := AllocateMultiArray(RowCnt * ColCnt).Reshape([RowCnt, ColCnt]);
+    Result.Data := Data;
   end;
 
   function ShapeToStrides(AShape: TLongVector): TLongVector;
