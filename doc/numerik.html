@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>numerik</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="generator" content="PasDoc 0.15.0">
+<meta http-equiv="content-type" content="text/html; charset=utf-8">
+<link rel="stylesheet" type="text/css" href="tipuesearch/tipuesearch.css">
+
+<link rel="StyleSheet" type="text/css" href="pasdoc.css">
+</head>
+<body>
+<table class="container"><tr><td class="navigation">
+<p><a href="AllUnits.html" class="navigation">Units</a></p><p><a href="ClassHierarchy.html" class="navigation">Class Hierarchy</a></p><p><a href="AllClasses.html" class="navigation">Classes, Interfaces, Objects and Records</a></p><p><a href="AllTypes.html" class="navigation">Types</a></p><p><a href="AllVariables.html" class="navigation">Variables</a></p><p><a href="AllConstants.html" class="navigation">Constants</a></p><p><a href="AllFunctions.html" class="navigation">Functions and Procedures</a></p><p><a href="AllIdentifiers.html" class="navigation">Identifiers</a></p><form class="search-form" action="_tipue_results.html"><div class="search-input"><input type="text" name="q" id="tipue_search_input"></div><div class="search-button"><input type="button" id="tipue_search_button" onclick="this.form.submit();"></div></form>
+<div style="clear: both"></div>
+</td><td class="content">
+<h1 class="unit">Unit numerik</h1>
+<div class="sections">
+<div class="one_section"><a class="section" href="#PasDoc-Description">Description</a></div><div class="one_section">Uses</div><div class="one_section"><a class="section" href="#PasDoc-Classes">Classes, Interfaces, Objects and Records</a></div><div class="one_section"><a class="section" href="#PasDoc-FuncsProcs">Functions and Procedures</a></div><div class="one_section"><a class="section" href="#PasDoc-Types">Types</a></div><div class="one_section"><a class="section" href="#PasDoc-Constants">Constants</a></div><div class="one_section">Variables</div></div>
+<span id="PasDoc-Description"></span><h2 class="description">Description</h2>
+&nbsp;<span id="PasDoc-Uses"></span><h2 class="overview">Overview</h2>
+<span id="PasDoc-Classes"></span><h3 class="cio">Classes, Interfaces, Objects and Records</h3>
+<table class="classestable wide_list">
+<tr class="listheader">
+<th class="itemname">Name</th>
+<th class="itemdesc">Description</th>
+</tr>
+<tr class="list">
+<td class="itemname">Record&nbsp;<a class="bold" href="numerik.TSVDResult.html"><code>TSVDResult</code></a></td>
+<td class="itemdesc">&nbsp;</td>
+</tr>
+</table>
+<span id="PasDoc-FuncsProcs"></span><h3 class="summary">Functions and Procedures</h3>
+<table class="summary wide_list">
+<tr class="list">
+<td class="itemcode"><code>procedure <strong><a href="numerik.html#cblas_sgemm">cblas_sgemm</a></strong>(Order: longint; TransA: longint; TransB: longint; M: longint; N: longint; K: longint; alpha: single; A: <a href="multiarray.html#TSingleVector">TSingleVector</a>; lda: longint; B: <a href="multiarray.html#TSingleVector">TSingleVector</a>; ldb: longint; beta: single; C: <a href="multiarray.html#TSingleVector">TSingleVector</a>; ldc: longint); external <a href="numerik.html#LIB_NAME">LIB_NAME</a>;</code></td>
+</tr>
+<tr class="list2">
+<td class="itemcode"><code>function <strong><a href="numerik.html#Cos">Cos</a></strong>(X: <a href="multiarray.TMultiArray.html">TMultiArray</a>): <a href="multiarray.TMultiArray.html">TMultiArray</a>; overload;</code></td>
+</tr>
+<tr class="list">
+<td class="itemcode"><code>function <strong><a href="numerik.html#DegToRad">DegToRad</a></strong>(X: <a href="multiarray.TMultiArray.html">TMultiArray</a>): <a href="multiarray.TMultiArray.html">TMultiArray</a>; overload;</code></td>
+</tr>
+<tr class="list2">
+<td class="itemcode"><code>function <strong><a href="numerik.html#Exp">Exp</a></strong>(X: <a href="multiarray.TMultiArray.html">TMultiArray</a>): <a href="multiarray.TMultiArray.html">TMultiArray</a>; overload;</code></td>
+</tr>
+<tr class="list">
+<td class="itemcode"><code>function <strong><a href="numerik.html#LAPACKE_sgesvd">LAPACKE_sgesvd</a></strong>(MatrixLayout: longint; JOBU, JOBVT: char; M, N: longint; A: <a href="multiarray.html#TSingleVector">TSingleVector</a>; LDA: longint; S, U: <a href="multiarray.html#TSingleVector">TSingleVector</a>; LDU: longint; VT: <a href="multiarray.html#TSingleVector">TSingleVector</a>; LDVT: longint; Superb: <a href="multiarray.html#TSingleVector">TSingleVector</a>): longint; external <a href="numerik.html#LIB_NAME">LIB_NAME</a>;</code></td>
+</tr>
+<tr class="list2">
+<td class="itemcode"><code>function <strong><a href="numerik.html#MatMul_BLAS">MatMul_BLAS</a></strong>(A, B: <a href="multiarray.TMultiArray.html">TMultiArray</a>): <a href="multiarray.TMultiArray.html">TMultiArray</a>;</code></td>
+</tr>
+<tr class="list">
+<td class="itemcode"><code>function <strong><a href="numerik.html#Mean">Mean</a></strong>(A: <a href="multiarray.TMultiArray.html">TMultiArray</a>; axis: integer = -1): <a href="multiarray.TMultiArray.html">TMultiArray</a>; overload;</code></td>
+</tr>
+<tr class="list2">
+<td class="itemcode"><code>function <strong><a href="numerik.html#PseudoInverse">PseudoInverse</a></strong>(A: <a href="multiarray.TMultiArray.html">TMultiArray</a>): <a href="multiarray.TMultiArray.html">TMultiArray</a>;</code></td>
+</tr>
+<tr class="list">
+<td class="itemcode"><code>function <strong><a href="numerik.html#RandG">RandG</a></strong>(mean, stddev: float; Shape: array of longint): <a href="multiarray.TMultiArray.html">TMultiArray</a>; overload;</code></td>
+</tr>
+<tr class="list2">
+<td class="itemcode"><code>function <strong><a href="numerik.html#Random">Random</a></strong>(Shape: array of longint): <a href="multiarray.TMultiArray.html">TMultiArray</a>; overload;</code></td>
+</tr>
+<tr class="list">
+<td class="itemcode"><code>function <strong><a href="numerik.html#ReduceAlongAxis">ReduceAlongAxis</a></strong>(A: <a href="multiarray.TMultiArray.html">TMultiArray</a>; ReduceFunc: <a href="numerik.html#TReduceFunc">TReduceFunc</a>; axis: integer; KeepDims: Boolean = False): <a href="multiarray.TMultiArray.html">TMultiArray</a>;</code></td>
+</tr>
+<tr class="list2">
+<td class="itemcode"><code>function <strong><a href="numerik.html#Sin">Sin</a></strong>(X: <a href="multiarray.TMultiArray.html">TMultiArray</a>): <a href="multiarray.TMultiArray.html">TMultiArray</a>; overload;</code></td>
+</tr>
+<tr class="list">
+<td class="itemcode"><code>function <strong><a href="numerik.html#Sum">Sum</a></strong>(A: <a href="multiarray.TMultiArray.html">TMultiArray</a>; axis: integer = -1): <a href="multiarray.TMultiArray.html">TMultiArray</a>; overload;</code></td>
+</tr>
+<tr class="list2">
+<td class="itemcode"><code>function <strong><a href="numerik.html#SVD">SVD</a></strong>(A: <a href="multiarray.TMultiArray.html">TMultiArray</a>; SigmasAsMatrix: Boolean=False): <a href="numerik.TSVDResult.html">TSVDResult</a>;</code></td>
+</tr>
+</table>
+<span id="PasDoc-Types"></span><h3 class="summary">Types</h3>
+<table class="summary wide_list">
+<tr class="list">
+<td class="itemcode"><code><strong><a href="numerik.html#TReduceFunc">TReduceFunc</a></strong> = function(A, B: <a href="multiarray.TMultiArray.html">TMultiArray</a>): <a href="multiarray.TMultiArray.html">TMultiArray</a>;</code></td>
+</tr>
+</table>
+<span id="PasDoc-Constants"></span><h3 class="summary">Constants</h3>
+<table class="summary wide_list">
+<tr class="list">
+<td class="itemcode"><code><strong><a href="numerik.html#LIB_NAME">LIB_NAME</a></strong> = 'libopenblas.dll';</code></td>
+</tr>
+<tr class="list2">
+<td class="itemcode"><code><strong><a href="numerik.html#LAPACK_ROW_MAJOR">LAPACK_ROW_MAJOR</a></strong> = 101;</code></td>
+</tr>
+<tr class="list">
+<td class="itemcode"><code><strong><a href="numerik.html#LAPACK_COL_MAJOR">LAPACK_COL_MAJOR</a></strong> = 102;</code></td>
+</tr>
+<tr class="list2">
+<td class="itemcode"><code><strong><a href="numerik.html#CBLAS_ROW_MAJOR">CBLAS_ROW_MAJOR</a></strong>  = 101;</code></td>
+</tr>
+<tr class="list">
+<td class="itemcode"><code><strong><a href="numerik.html#CBLAS_COL_MAJOR">CBLAS_COL_MAJOR</a></strong>  = 102;</code></td>
+</tr>
+<tr class="list2">
+<td class="itemcode"><code><strong><a href="numerik.html#CBLAS_NO_TRANS">CBLAS_NO_TRANS</a></strong>   = 111;</code></td>
+</tr>
+<tr class="list">
+<td class="itemcode"><code><strong><a href="numerik.html#CBLAS_TRANS">CBLAS_TRANS</a></strong>      = 112;</code></td>
+</tr>
+<tr class="list2">
+<td class="itemcode"><code><strong><a href="numerik.html#CBLAS_CONJ_TRANS">CBLAS_CONJ_TRANS</a></strong> = 113;</code></td>
+</tr>
+</table>
+<h2 class="description">Description</h2>
+<h3 class="detail">Functions and Procedures</h3>
+<table class="detail wide_list">
+<tr class="list">
+<td class="itemcode"><span id="cblas_sgemm"></span><code>procedure <strong>cblas_sgemm</strong>(Order: longint; TransA: longint; TransB: longint; M: longint; N: longint; K: longint; alpha: single; A: <a href="multiarray.html#TSingleVector">TSingleVector</a>; lda: longint; B: <a href="multiarray.html#TSingleVector">TSingleVector</a>; ldb: longint; beta: single; C: <a href="multiarray.html#TSingleVector">TSingleVector</a>; ldc: longint); external <a href="numerik.html#LIB_NAME">LIB_NAME</a>;</code></td>
+</tr>
+<tr><td colspan="1">
+<p>
+&mdash;&mdash;&mdash;&ndash; BLAS backend interface &mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&ndash;</p>
+</td></tr>
+</table>
+<table class="detail wide_list">
+<tr class="list">
+<td class="itemcode"><span id="Cos"></span><code>function <strong>Cos</strong>(X: <a href="multiarray.TMultiArray.html">TMultiArray</a>): <a href="multiarray.TMultiArray.html">TMultiArray</a>; overload;</code></td>
+</tr>
+<tr><td colspan="1">
+<p>
+&mdash;&mdash;&mdash;&ndash; Trigonometry &mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;</p>
+</td></tr>
+</table>
+<table class="detail wide_list">
+<tr class="list">
+<td class="itemcode"><span id="DegToRad"></span><code>function <strong>DegToRad</strong>(X: <a href="multiarray.TMultiArray.html">TMultiArray</a>): <a href="multiarray.TMultiArray.html">TMultiArray</a>; overload;</code></td>
+</tr>
+<tr><td colspan="1">
+&nbsp;</td></tr>
+</table>
+<table class="detail wide_list">
+<tr class="list">
+<td class="itemcode"><span id="Exp"></span><code>function <strong>Exp</strong>(X: <a href="multiarray.TMultiArray.html">TMultiArray</a>): <a href="multiarray.TMultiArray.html">TMultiArray</a>; overload;</code></td>
+</tr>
+<tr><td colspan="1">
+<p>
+&mdash;&mdash;&mdash;&ndash; Exponential &mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;-</p>
+</td></tr>
+</table>
+<table class="detail wide_list">
+<tr class="list">
+<td class="itemcode"><span id="LAPACKE_sgesvd"></span><code>function <strong>LAPACKE_sgesvd</strong>(MatrixLayout: longint; JOBU, JOBVT: char; M, N: longint; A: <a href="multiarray.html#TSingleVector">TSingleVector</a>; LDA: longint; S, U: <a href="multiarray.html#TSingleVector">TSingleVector</a>; LDU: longint; VT: <a href="multiarray.html#TSingleVector">TSingleVector</a>; LDVT: longint; Superb: <a href="multiarray.html#TSingleVector">TSingleVector</a>): longint; external <a href="numerik.html#LIB_NAME">LIB_NAME</a>;</code></td>
+</tr>
+<tr><td colspan="1">
+&nbsp;</td></tr>
+</table>
+<table class="detail wide_list">
+<tr class="list">
+<td class="itemcode"><span id="MatMul_BLAS"></span><code>function <strong>MatMul_BLAS</strong>(A, B: <a href="multiarray.TMultiArray.html">TMultiArray</a>): <a href="multiarray.TMultiArray.html">TMultiArray</a>;</code></td>
+</tr>
+<tr><td colspan="1">
+<p>
+Linear algebra</p>
+</td></tr>
+</table>
+<table class="detail wide_list">
+<tr class="list">
+<td class="itemcode"><span id="Mean"></span><code>function <strong>Mean</strong>(A: <a href="multiarray.TMultiArray.html">TMultiArray</a>; axis: integer = -1): <a href="multiarray.TMultiArray.html">TMultiArray</a>; overload;</code></td>
+</tr>
+<tr><td colspan="1">
+<p>
+&mdash;&mdash;&mdash;&ndash; Arithmetic&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;</p>
+</td></tr>
+</table>
+<table class="detail wide_list">
+<tr class="list">
+<td class="itemcode"><span id="PseudoInverse"></span><code>function <strong>PseudoInverse</strong>(A: <a href="multiarray.TMultiArray.html">TMultiArray</a>): <a href="multiarray.TMultiArray.html">TMultiArray</a>;</code></td>
+</tr>
+<tr><td colspan="1">
+&nbsp;</td></tr>
+</table>
+<table class="detail wide_list">
+<tr class="list">
+<td class="itemcode"><span id="RandG"></span><code>function <strong>RandG</strong>(mean, stddev: float; Shape: array of longint): <a href="multiarray.TMultiArray.html">TMultiArray</a>; overload;</code></td>
+</tr>
+<tr><td colspan="1">
+<p>
+Gaussian random array generator.</p>
+</td></tr>
+</table>
+<table class="detail wide_list">
+<tr class="list">
+<td class="itemcode"><span id="Random"></span><code>function <strong>Random</strong>(Shape: array of longint): <a href="multiarray.TMultiArray.html">TMultiArray</a>; overload;</code></td>
+</tr>
+<tr><td colspan="1">
+<p>
+Wrapper for pascal's Random function, as a TMultiArray.</p>
+</td></tr>
+</table>
+<table class="detail wide_list">
+<tr class="list">
+<td class="itemcode"><span id="ReduceAlongAxis"></span><code>function <strong>ReduceAlongAxis</strong>(A: <a href="multiarray.TMultiArray.html">TMultiArray</a>; ReduceFunc: <a href="numerik.html#TReduceFunc">TReduceFunc</a>; axis: integer; KeepDims: Boolean = False): <a href="multiarray.TMultiArray.html">TMultiArray</a>;</code></td>
+</tr>
+<tr><td colspan="1">
+<p>
+Reduce TMultiArray along a specified axis with specified ReduceFunc. This is for convenience rather than performance.</p>
+</td></tr>
+</table>
+<table class="detail wide_list">
+<tr class="list">
+<td class="itemcode"><span id="Sin"></span><code>function <strong>Sin</strong>(X: <a href="multiarray.TMultiArray.html">TMultiArray</a>): <a href="multiarray.TMultiArray.html">TMultiArray</a>; overload;</code></td>
+</tr>
+<tr><td colspan="1">
+&nbsp;</td></tr>
+</table>
+<table class="detail wide_list">
+<tr class="list">
+<td class="itemcode"><span id="Sum"></span><code>function <strong>Sum</strong>(A: <a href="multiarray.TMultiArray.html">TMultiArray</a>; axis: integer = -1): <a href="multiarray.TMultiArray.html">TMultiArray</a>; overload;</code></td>
+</tr>
+<tr><td colspan="1">
+&nbsp;</td></tr>
+</table>
+<table class="detail wide_list">
+<tr class="list">
+<td class="itemcode"><span id="SVD"></span><code>function <strong>SVD</strong>(A: <a href="multiarray.TMultiArray.html">TMultiArray</a>; SigmasAsMatrix: Boolean=False): <a href="numerik.TSVDResult.html">TSVDResult</a>;</code></td>
+</tr>
+<tr><td colspan="1">
+&nbsp;</td></tr>
+</table>
+<h3 class="detail">Types</h3>
+<table class="detail wide_list">
+<tr class="list">
+<td class="itemcode"><span id="TReduceFunc"></span><code><strong>TReduceFunc</strong> = function(A, B: <a href="multiarray.TMultiArray.html">TMultiArray</a>): <a href="multiarray.TMultiArray.html">TMultiArray</a>;</code></td>
+</tr>
+<tr><td colspan="1">
+&nbsp;</td></tr>
+</table>
+<h3 class="detail">Constants</h3>
+<table class="detail wide_list">
+<tr class="list">
+<td class="itemcode"><span id="LIB_NAME"></span><code><strong>LIB_NAME</strong> = 'libopenblas.dll';</code></td>
+</tr>
+<tr><td colspan="1">
+&nbsp;</td></tr>
+</table>
+<table class="detail wide_list">
+<tr class="list">
+<td class="itemcode"><span id="LAPACK_ROW_MAJOR"></span><code><strong>LAPACK_ROW_MAJOR</strong> = 101;</code></td>
+</tr>
+<tr><td colspan="1">
+&nbsp;</td></tr>
+</table>
+<table class="detail wide_list">
+<tr class="list">
+<td class="itemcode"><span id="LAPACK_COL_MAJOR"></span><code><strong>LAPACK_COL_MAJOR</strong> = 102;</code></td>
+</tr>
+<tr><td colspan="1">
+&nbsp;</td></tr>
+</table>
+<table class="detail wide_list">
+<tr class="list">
+<td class="itemcode"><span id="CBLAS_ROW_MAJOR"></span><code><strong>CBLAS_ROW_MAJOR</strong>  = 101;</code></td>
+</tr>
+<tr><td colspan="1">
+&nbsp;</td></tr>
+</table>
+<table class="detail wide_list">
+<tr class="list">
+<td class="itemcode"><span id="CBLAS_COL_MAJOR"></span><code><strong>CBLAS_COL_MAJOR</strong>  = 102;</code></td>
+</tr>
+<tr><td colspan="1">
+&nbsp;</td></tr>
+</table>
+<table class="detail wide_list">
+<tr class="list">
+<td class="itemcode"><span id="CBLAS_NO_TRANS"></span><code><strong>CBLAS_NO_TRANS</strong>   = 111;</code></td>
+</tr>
+<tr><td colspan="1">
+&nbsp;</td></tr>
+</table>
+<table class="detail wide_list">
+<tr class="list">
+<td class="itemcode"><span id="CBLAS_TRANS"></span><code><strong>CBLAS_TRANS</strong>      = 112;</code></td>
+</tr>
+<tr><td colspan="1">
+&nbsp;</td></tr>
+</table>
+<table class="detail wide_list">
+<tr class="list">
+<td class="itemcode"><span id="CBLAS_CONJ_TRANS"></span><code><strong>CBLAS_CONJ_TRANS</strong> = 113;</code></td>
+</tr>
+<tr><td colspan="1">
+&nbsp;</td></tr>
+</table>
+<hr><span class="appinfo"><em>Generated by <a href="https://github.com/pasdoc/pasdoc/wiki">PasDoc 0.15.0</a>. </em>
+</span>
+</td></tr></table></body></html>
