@@ -79,6 +79,7 @@ type
 
   { Vector tools }
   generic function CopyVector<T>(v: T): T;
+  function CopyVector(v: TSingleVector): TSingleVector;
   generic function SliceVector<T>(v: T; start, stop: longint): T;
   generic function Prod<T>(Data: array of T): T;
   generic function Reverse<T>(Data: T): T;
@@ -369,6 +370,11 @@ uses
     SetLength(Result, Length(v));
     for i := 0 to High(v) do
       Result[i] := v[i];
+  end;
+
+  function CopyVector(v: TSingleVector): TSingleVector;
+  begin
+    Exit(specialize CopyVector<TSingleVector>(v));
   end;
 
   generic function SliceVector<T>(v: T; start, stop: longint): T;
