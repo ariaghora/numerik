@@ -35,7 +35,7 @@ begin
 end.      
 ```
 
-> Note: Numerik's TMultiArray will be used in my neural network framework, [Noe](https://github.com/ariaghora/noe).
+Read the API reference [here](http://ariaghora.github.io/numerik).
 
 ### TODO:
 - [x] ~~Array slicing~~
