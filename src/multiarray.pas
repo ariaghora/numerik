@@ -92,38 +92,42 @@ type
   procedure PrintMultiArray(A: TMultiArray);
   procedure SqueezeMultiArray(var A: TMultiArray);
 
-  { Vector tools }
   function CopyVector(v: TSingleVector): TSingleVector;
   function VectorEqual(A, B: TSingleVector): boolean;
   function VectorEqual(A, B: TLongVector): boolean;
-
-  { Basic arithmetic function wrappers }
-  function _Add(a, b: single): single;
-  function _Divide(a, b: single): single;
-  function _GreaterThan(a, b: single): single;
-  function _Multiply(a, b: single): single;
-  function _Negate(a: single; params: array of single): single;
-  function _Power(base, exponent: single): single;
-  function _Subtract(a, b: single): single;
 
   function Add(A, B: TMultiArray): TMultiArray;
   function Matmul(A, B: TMultiArray): TMultiArray;
   function Maximum(A, B: TMultiArray): TMultiArray;
   function Power(A, B: TMultiArray): TMultiArray; overload;
-  operator + (A, B: TMultiArray) C: TMultiArray;
-  operator - (A: TMultiArray) B: TMultiArray;
-  operator - (A, B: TMultiArray) C: TMultiArray;
-  operator * (A, B: TMultiArray) C: TMultiArray;
-  operator / (A, B: TMultiArray) C: TMultiArray;
-  operator ** (A, B: TMultiArray) C: TMultiArray;
-  operator > (A, B: TMultiArray) C: TMultiArray;
-  operator := (A: single) B: TMultiArray;
-  operator := (A: array of single) B: TMultiArray;
-  operator explicit(A: single) B: TMultiArray;
 
+  { @exclude }
+  operator + (A, B: TMultiArray) C: TMultiArray;
+  { @exclude }
+  operator - (A: TMultiArray) B: TMultiArray;
+  { @exclude }
+  operator - (A, B: TMultiArray) C: TMultiArray;
+  { @exclude }
+  operator * (A, B: TMultiArray) C: TMultiArray;
+  { @exclude }
+  operator / (A, B: TMultiArray) C: TMultiArray;
+  { @exclude }
+  operator ** (A, B: TMultiArray) C: TMultiArray;
+  { @exclude }
+  operator > (A, B: TMultiArray) C: TMultiArray;
+  { @exclude }
+  operator := (A: single) B: TMultiArray;
+  { @exclude }
+  operator := (A: array of single) B: TMultiArray;
+  { @exclude }
+  operator explicit(A: single) B: TMultiArray;
+  { @exclude }
   operator :=(A: array of longint) B: TLongVector;
+  { @exclude }
   operator explicit(A: array of longint) B: TLongVector;
+  { @exclude }
   operator :=(A: TLongVector) B: TSingleVector;
+  { @exclude }
   operator explicit(A: TLongVector) B: TSingleVector;
 
 var
