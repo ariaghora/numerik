@@ -87,6 +87,7 @@ type
   function Range(Start, Stop: longint): TLongVector; overload;
   function ReadCSV(FileName: string): TMultiArray;
   function ShapeToStrides(AShape: TLongVector): TLongVector;
+  function Transpose(A: TMultiArray): TMultiArray;
 
   procedure DebugMultiArray(A: TMultiArray);
   procedure PrintMultiArray(A: TMultiArray);
@@ -99,6 +100,7 @@ type
   function Add(A, B: TMultiArray): TMultiArray;
   function Matmul(A, B: TMultiArray): TMultiArray;
   function Maximum(A, B: TMultiArray): TMultiArray;
+  function Multiply(A, B: TMultiArray): TMultiArray;
   function Power(A, B: TMultiArray): TMultiArray; overload;
 
   { @exclude }
@@ -564,6 +566,21 @@ uses
     end;
   end;
 
+  function Transpose(A: TMultiArray): TMultiArray;
+  var
+    i: integer;
+    NewIndices: array of array of longint;
+  begin
+    Result := A.Copy();
+    Result.FIsContiguous := False;
+    Result.Shape := specialize Reverse<TLongVector>(A.Shape);
+    Result.Strides := specialize Reverse<TLongVector>(A.Strides);
+    SetLength(NewIndices, Length(Result.Indices));
+    for i := 0 to High(Result.Indices) do
+      NewIndices[i] := Result.Indices[High(Result.Indices) - i];
+    Result.Indices := NewIndices;
+  end;
+
   procedure SqueezeMultiArray(var A: TMultiArray);
   var
     len, i: integer;
@@ -758,18 +775,8 @@ uses
   end;
 
   function TMultiArray.T: TMultiArray;
-  var
-    i: integer;
-    NewIndices: array of array of longint;
   begin
-    Result := Self.Copy();
-    Result.FIsContiguous := False;
-    Result.Shape := specialize Reverse<TLongVector>(Self.Shape);
-    Result.Strides := specialize Reverse<TLongVector>(Self.Strides);
-    SetLength(NewIndices, Length(Result.Indices));
-    for i := 0 to High(Result.Indices) do
-      NewIndices[i] := Result.Indices[High(Result.Indices) - i];
-    Result.Indices := NewIndices;
+    Exit(Transpose(Self));
   end;
 
   procedure TMultiArray.Put(i: array of integer; x: single);
@@ -847,6 +854,11 @@ uses
     Exit(ApplyBFunc(A, B, @_Max));
   end;
 
+  function Multiply(A, B: TMultiArray): TMultiArray;
+  begin
+    Exit(ApplyBFunc(A, B, @_Multiply));
+  end;
+
   function Power(A, B: TMultiArray): TMultiArray;
   begin
     Exit(ApplyBFunc(A, B, @_Power));
@@ -869,7 +881,7 @@ uses
 
   operator *(A, B: TMultiArray) C: TMultiArray;
   begin
-    C := ApplyBFunc(A, B, @_Multiply);
+    C := Multiply(A, B);
   end;
 
   operator / (A, B: TMultiArray) C: TMultiArray;
