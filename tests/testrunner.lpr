@@ -3,7 +3,7 @@ program testrunner;
 {$mode objfpc}{$H+}
 
 uses
-  Classes, consoletestrunner, testmultiarray;
+  Classes, consoletestrunner, testmultiarray, numerik.blas;
 
 type
 

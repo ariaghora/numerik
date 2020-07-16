@@ -1,4 +1,5 @@
-{ A unit containing TMultiArray, multidimensional array data structure. }
+{ A unit containing TMultiArray, multidimensional array data structure with
+  single precision and arbitrary number of dimension. }
 unit multiarray;
 
 {$mode objfpc}
@@ -131,7 +132,7 @@ var
 implementation
 
 uses
-  numerik;
+  numerik, numerik.blas;
 
   generic function CopyVector<T>(v: T): T;
   var
