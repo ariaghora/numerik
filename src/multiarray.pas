@@ -1,3 +1,4 @@
+{ Unit containing TMultiArray, multidimensional array data structure. }
 unit multiarray;
 
 {$mode objfpc}
@@ -19,6 +20,9 @@ type
   TBFunc = function(a, b: single): single;
 
 type
+
+  { Multidimensional array data structure. }
+
   TMultiArray = record
   private
     FIsContiguous: boolean;
@@ -26,21 +30,30 @@ type
     function GetSize: longint;
     function OffsetToStrided(Offset: longint): longint; inline;
   public
-    FDataOffset: longint;
+    DataOffset: longint;
     Data:  array of single;
     Indices: TLongVectorArr;
     Shape: TLongVector;
     Strides: TLongVector;
+
+    { Returns contiguous copy of this array }
     function Contiguous: TMultiArray;
+
+    { Perform copying of this array. By default, the actual data is referenced
+      rather than copied. If Deep is true, then the actual data is copied. }
     function Copy(Deep: boolean = True): TMultiArray;
+
     function Get(i: longint): single; overload;
     function Get(idx: TLongVector): TMultiArray; overload;
     function GetVirtualData: TSingleVector;
     function IndexToStridedOffset(Index: array of longint): longint;
     function Matmul(Other: TMultiArray): TMultiArray;
     function Reshape(NewShape: TLongVector): TMultiArray;
-    { For now Slice will return contiguous }
+
+    { Perform multidimensional slicing.
+      For now Slice will return contiguous. }
     function Slice(idx: array of TLongVector): TMultiArray;
+
     function T: TMultiArray;
     procedure Put(i: array of integer; x: single);
     procedure ResetIndices;
@@ -79,15 +92,7 @@ type
   procedure SqueezeMultiArray(var A: TMultiArray);
 
   { Vector tools }
-  generic function CopyVector<T>(v: T): T;
   function CopyVector(v: TSingleVector): TSingleVector;
-  generic function SliceVector<T>(v: T; start, stop: longint): T;
-  generic function Prod<T>(Data: array of T): T;
-  generic function Reverse<T>(Data: T): T;
-  generic function VectorEqual<T>(A, B: T): boolean;
-  generic procedure DeleteFromVector<T>(var Data: T; At, Count: longint);
-  generic procedure PrintVector<T>(Data: T);
-
   function VectorEqual(A, B: TSingleVector): boolean;
   function VectorEqual(A, B: TLongVector): boolean;
 
@@ -128,6 +133,76 @@ implementation
 uses
   numerik;
 
+  generic function CopyVector<T>(v: T): T;
+  var
+    i: longint;
+  begin
+    SetLength(Result, Length(v));
+    for i := 0 to High(v) do
+      Result[i] := v[i];
+  end;
+
+  generic function SliceVector<T>(v: T; start, stop: longint): T;
+  var
+    i: longint;
+  begin
+    SetLength(Result, stop - start);
+    for i := start to stop - 1 do
+      Result[i - start] := v[i];
+  end;
+
+  generic function Prod<T>(Data: array of T): T;
+  var
+    x: T;
+  begin
+    Result := 1;
+    for x in Data do
+      Result := Result * x;
+  end;
+
+  generic function Reverse<T>(Data: T): T;
+  var
+    i: longint;
+  begin
+    Result := nil;
+    SetLength(Result, Length(Data));
+    For i := High(Data) downto 0 do
+      Result[High(Data) - i] := Data[i];
+  end;
+
+  generic function VectorEqual<T>(A, B: T): boolean;
+  var
+    i: longint;
+  begin
+    if (Length(A) <> Length(B)) then Exit(false);
+    Result := True;
+    for i := 0 to High(A) do
+      Result := Result and (A[i] = B[i]);
+  end;
+
+  generic procedure DeleteFromVector<T>(var Data: T; At, Count: longint);
+  var
+    i, Offset: longint;
+  begin
+    Offset := At + Count;
+    for i := Offset to High(Data) do
+      Data[i - Count] := Data[i];
+    SetLength(Data, Length(Data) - Count);
+  end;
+
+  generic procedure PrintVector<T>(Data: T);
+  var
+    i: longint;
+  begin
+    for i := 0 to Length(Data) - 1 do
+    begin
+      Write(Data[i] : 2);
+      if i < Length(Data) - 1 then
+        Write(', ');
+    end;
+    WriteLn;
+  end;
+
   function All: TLongVector;
   begin
     Exit([]);
@@ -141,7 +216,7 @@ uses
     Result.Shape[0] := Size;
     Result.Strides := ShapeToStrides(Result.Shape);
     Result.ResetIndices;
-    Result.FDataOffset := 0;
+    Result.DataOffset := 0;
   end;
 
   function BroadcastArrays(A, B: TMultiArray): TBroadcastResult;
@@ -195,7 +270,7 @@ uses
   function CreateEmptyFTensor(Contiguous: boolean = True):TMultiArray;
   begin
     Result.IsContiguous := Contiguous;
-    Result.FDataOffset := 0;
+    Result.DataOffset := 0;
   end;
 
   function CreateMultiArray(AData: array of single): TMultiArray;
@@ -283,7 +358,7 @@ uses
   var
     i: longint;
   begin
-    writeln('Data offset    :', A.FDataOffset);
+    writeln('Data offset    :', A.DataOffset);
     writeln('Is contiguous  :', A.IsContiguous);
     writeln('NDims          :', A.NDims);
     Write  ('Shape          :'); specialize PrintVector<TLongVector>(A.Shape);
@@ -366,79 +441,9 @@ uses
     Pr(A, 0);
   end;
 
-  generic function CopyVector<T>(v: T): T;
-  var
-    i: longint;
-  begin
-    SetLength(Result, Length(v));
-    for i := 0 to High(v) do
-      Result[i] := v[i];
-  end;
-
   function CopyVector(v: TSingleVector): TSingleVector;
   begin
     Exit(specialize CopyVector<TSingleVector>(v));
-  end;
-
-  generic function SliceVector<T>(v: T; start, stop: longint): T;
-  var
-    i: longint;
-  begin
-    SetLength(Result, stop - start);
-    for i := start to stop - 1 do
-      Result[i - start] := v[i];
-  end;
-
-  generic function Prod<T>(Data: array of T): T;
-  var
-    x: T;
-  begin
-    Result := 1;
-    for x in Data do
-      Result := Result * x;
-  end;
-
-  generic function Reverse<T>(Data: T): T;
-  var
-    i: longint;
-  begin
-    Result := nil;
-    SetLength(Result, Length(Data));
-    For i := High(Data) downto 0 do
-      Result[High(Data) - i] := Data[i];
-  end;
-
-  generic function VectorEqual<T>(A, B: T): boolean;
-  var
-    i: longint;
-  begin
-    if (Length(A) <> Length(B)) then Exit(false);
-    Result := True;
-    for i := 0 to High(A) do
-      Result := Result and (A[i] = B[i]);
-  end;
-
-  generic procedure DeleteFromVector<T>(var Data: T; At, Count: longint);
-  var
-    i, Offset: longint;
-  begin
-    Offset := At + Count;
-    for i := Offset to High(Data) do
-      Data[i - Count] := Data[i];
-    SetLength(Data, Length(Data) - Count);
-  end;
-
-  generic procedure PrintVector<T>(Data: T);
-  var
-    i: longint;
-  begin
-    for i := 0 to Length(Data) - 1 do
-    begin
-      Write(Data[i] : 2);
-      if i < Length(Data) - 1 then
-        Write(', ');
-    end;
-    WriteLn;
   end;
 
   function VectorEqual(A, B: TSingleVector): boolean;
@@ -579,19 +584,19 @@ uses
     if Length(Data) = 1 then Exit(0);
 
     { A vector }
-    if NDims = 1 then Exit(Indices[0][Offset] + FDataOffset);
+    if NDims = 1 then Exit(Indices[0][Offset] + DataOffset);
 
     { Higher rank }
     if NDims = 2 then
     begin
       r := Indices[0][Offset div Shape[1]];
       c := Indices[1][Offset mod Shape[1]];
-      Exit(IndexToStridedOffset([r, c]) + FDataOffset);
+      Exit(IndexToStridedOffset([r, c]) + DataOffset);
     end
     else
     begin
       Index := OffsetToIndex(Self, Offset);
-      Exit(IndexToStridedOffset(index) {+ FDataOffset})
+      Exit(IndexToStridedOffset(index) {+ DataOffset})
     end;
   end;
 
@@ -646,7 +651,7 @@ uses
     end
     else
       Result.Data := self.Data;
-    Result.FDataOffset := Self.FDataOffset;
+    Result.DataOffset := Self.DataOffset;
     Result.Shape := specialize CopyVector<TLongVector>(self.Shape);
     Result.Strides := specialize CopyVector<TLongVector>(self.Strides);
 
@@ -705,7 +710,7 @@ uses
     Result.Data := Self.Data;
     Result.Shape := NewShape;
     Result.Strides := NewStrides;
-    Result.FDataOffset := Self.FDataOffset + Offset;
+    Result.DataOffset := Self.DataOffset + Offset;
     Result.ResetIndices;
   end;
 
@@ -720,7 +725,7 @@ uses
   begin
     Assert((specialize Prod<longint>(NewShape)) = (specialize Prod<longint>(Shape)), 'Impossible reshape.');
     Result.Data := self.Data;
-    Result.FDataOffset := self.FDataOffset;
+    Result.DataOffset := self.DataOffset;
     SetLength(Result.Shape, Length(NewShape));
     for i := 0 to Length(NewShape) - 1 do
       Result.Shape[i] := NewShape[i];
