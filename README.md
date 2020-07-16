@@ -12,6 +12,7 @@ uses
 var
   A, B: TMultiArray;
   RowIndices, ColIndices: TLongVector;
+  SVDResult: TSVDResult;
 
 begin
   A := [1, 2, 3, 4, 5, 6]; // TMultiArray accepts open array assignment
@@ -38,6 +39,15 @@ begin
   PrintMultiArray(Add(B, 2));      // Equivalent to B + 2
   PrintMultiArray(Multiply(B, B)); // Element-wise multiplication, Equivalent to B * B
   PrintMultiArray(Matmul(B.T, B)); // Matrix multiplication 
+  
+  { Singular value decomposition }
+  SVDResult := SVD(B);
+  PrintMultiArray(SVDResult.U);
+  PrintMultiArray(SVDResult.Sigma);
+  PrintMultiArray(SVDResult.VT);
+
+  { Pseudo-inverse }
+  PrintMultiArray(PseudoInverse(B));
 end.      
 ```
 
