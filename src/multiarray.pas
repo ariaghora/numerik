@@ -1,4 +1,4 @@
-{ Unit containing TMultiArray, multidimensional array data structure. }
+{ A unit containing TMultiArray, multidimensional array data structure. }
 unit multiarray;
 
 {$mode objfpc}

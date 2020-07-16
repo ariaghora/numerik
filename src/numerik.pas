@@ -1,3 +1,13 @@
+{
+  A unit containing:
+
+  @unorderedList(
+    @item(Mathematical operation over TMultiArrays)
+    @item(Some linear algebra functionality )
+    @item(Random number generation )
+  )
+}
+
 unit numerik;
 
 {$mode objfpc}{$H+}
