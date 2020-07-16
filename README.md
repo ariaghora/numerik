@@ -25,10 +25,11 @@ begin
   PrintMultiArray(B);
 
   { Math operation }
+  PrintMultiArray(Transpose(B));   // Equivalent to B.T
   PrintMultiArray(Exp(B));         // Element-wise exponentiation
   PrintMultiArray(Add(B, 2));      // Equivalent to B + 2
   PrintMultiArray(Multiply(B, B)); // Element-wise multiplication, Equivalent to B * B
-  PrintMultiArray(Matmul(B, B));   // Matrix multiplication 
+  PrintMultiArray(Matmul(B.T, B)); // Matrix multiplication 
 end.      
 ```
 
