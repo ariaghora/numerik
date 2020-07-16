@@ -28,7 +28,7 @@ $(document).ready(function() {
 </td><td class="content">
 <h1 class="unit">Unit numerik</h1>
 <div class="sections">
-<div class="one_section"><a class="section" href="#PasDoc-Description">Description</a></div><div class="one_section">Uses</div><div class="one_section"><a class="section" href="#PasDoc-Classes">Classes, Interfaces, Objects and Records</a></div><div class="one_section"><a class="section" href="#PasDoc-FuncsProcs">Functions and Procedures</a></div><div class="one_section"><a class="section" href="#PasDoc-Types">Types</a></div><div class="one_section"><a class="section" href="#PasDoc-Constants">Constants</a></div><div class="one_section">Variables</div></div>
+<div class="one_section"><a class="section" href="#PasDoc-Description">Description</a></div><div class="one_section">Uses</div><div class="one_section"><a class="section" href="#PasDoc-Classes">Classes, Interfaces, Objects and Records</a></div><div class="one_section"><a class="section" href="#PasDoc-FuncsProcs">Functions and Procedures</a></div><div class="one_section"><a class="section" href="#PasDoc-Types">Types</a></div><div class="one_section">Constants</div><div class="one_section">Variables</div></div>
 <span id="PasDoc-Description"></span><h2 class="description">Description</h2>
 <p>
 A unit containing:
@@ -57,45 +57,36 @@ A unit containing:
 <span id="PasDoc-FuncsProcs"></span><h3 class="summary">Functions and Procedures</h3>
 <table class="summary wide_list">
 <tr class="list">
-<td class="itemcode"><code>procedure <b><a  href="numerik.html#cblas_sgemm">cblas_sgemm</a></b>(Order: longint; TransA: longint; TransB: longint; M: longint; N: longint; K: longint; alpha: single; A: <a  href="multiarray.html#TSingleVector">TSingleVector</a>; lda: longint; B: <a  href="multiarray.html#TSingleVector">TSingleVector</a>; ldb: longint; beta: single; C: <a  href="multiarray.html#TSingleVector">TSingleVector</a>; ldc: longint); external <a  href="numerik.html#LIB_NAME">LIB_NAME</a>;</code></td>
+<td class="itemcode"><code>function <b><a  href="numerik.html#Cos">Cos</a></b>(A: <a  href="multiarray.TMultiArray.html">TMultiArray</a>): <a  href="multiarray.TMultiArray.html">TMultiArray</a>; overload;</code></td>
 </tr>
 <tr class="list2">
-<td class="itemcode"><code>function <b><a  href="numerik.html#Cos">Cos</a></b>(X: <a  href="multiarray.TMultiArray.html">TMultiArray</a>): <a  href="multiarray.TMultiArray.html">TMultiArray</a>; overload;</code></td>
+<td class="itemcode"><code>function <b><a  href="numerik.html#DegToRad">DegToRad</a></b>(A: <a  href="multiarray.TMultiArray.html">TMultiArray</a>): <a  href="multiarray.TMultiArray.html">TMultiArray</a>; overload;</code></td>
 </tr>
 <tr class="list">
-<td class="itemcode"><code>function <b><a  href="numerik.html#DegToRad">DegToRad</a></b>(X: <a  href="multiarray.TMultiArray.html">TMultiArray</a>): <a  href="multiarray.TMultiArray.html">TMultiArray</a>; overload;</code></td>
+<td class="itemcode"><code>function <b><a  href="numerik.html#Exp">Exp</a></b>(A: <a  href="multiarray.TMultiArray.html">TMultiArray</a>): <a  href="multiarray.TMultiArray.html">TMultiArray</a>; overload;</code></td>
 </tr>
 <tr class="list2">
-<td class="itemcode"><code>function <b><a  href="numerik.html#Exp">Exp</a></b>(X: <a  href="multiarray.TMultiArray.html">TMultiArray</a>): <a  href="multiarray.TMultiArray.html">TMultiArray</a>; overload;</code></td>
-</tr>
-<tr class="list">
-<td class="itemcode"><code>function <b><a  href="numerik.html#LAPACKE_sgesvd">LAPACKE_sgesvd</a></b>(MatrixLayout: longint; JOBU, JOBVT: char; M, N: longint; A: <a  href="multiarray.html#TSingleVector">TSingleVector</a>; LDA: longint; S, U: <a  href="multiarray.html#TSingleVector">TSingleVector</a>; LDU: longint; VT: <a  href="multiarray.html#TSingleVector">TSingleVector</a>; LDVT: longint; Superb: <a  href="multiarray.html#TSingleVector">TSingleVector</a>): longint; external <a  href="numerik.html#LIB_NAME">LIB_NAME</a>;</code></td>
-</tr>
-<tr class="list2">
-<td class="itemcode"><code>function <b><a  href="numerik.html#MatMul_BLAS">MatMul_BLAS</a></b>(A, B: <a  href="multiarray.TMultiArray.html">TMultiArray</a>): <a  href="multiarray.TMultiArray.html">TMultiArray</a>;</code></td>
-</tr>
-<tr class="list">
 <td class="itemcode"><code>function <b><a  href="numerik.html#Mean">Mean</a></b>(A: <a  href="multiarray.TMultiArray.html">TMultiArray</a>; axis: integer = -1): <a  href="multiarray.TMultiArray.html">TMultiArray</a>; overload;</code></td>
 </tr>
-<tr class="list2">
+<tr class="list">
 <td class="itemcode"><code>function <b><a  href="numerik.html#PseudoInverse">PseudoInverse</a></b>(A: <a  href="multiarray.TMultiArray.html">TMultiArray</a>): <a  href="multiarray.TMultiArray.html">TMultiArray</a>;</code></td>
 </tr>
-<tr class="list">
+<tr class="list2">
 <td class="itemcode"><code>function <b><a  href="numerik.html#RandG">RandG</a></b>(mean, stddev: float; Shape: array of longint): <a  href="multiarray.TMultiArray.html">TMultiArray</a>; overload;</code></td>
 </tr>
-<tr class="list2">
+<tr class="list">
 <td class="itemcode"><code>function <b><a  href="numerik.html#Random">Random</a></b>(Shape: array of longint): <a  href="multiarray.TMultiArray.html">TMultiArray</a>; overload;</code></td>
 </tr>
-<tr class="list">
+<tr class="list2">
 <td class="itemcode"><code>function <b><a  href="numerik.html#ReduceAlongAxis">ReduceAlongAxis</a></b>(A: <a  href="multiarray.TMultiArray.html">TMultiArray</a>; ReduceFunc: <a  href="numerik.html#TReduceFunc">TReduceFunc</a>; axis: integer; KeepDims: Boolean = False): <a  href="multiarray.TMultiArray.html">TMultiArray</a>;</code></td>
 </tr>
-<tr class="list2">
-<td class="itemcode"><code>function <b><a  href="numerik.html#Sin">Sin</a></b>(X: <a  href="multiarray.TMultiArray.html">TMultiArray</a>): <a  href="multiarray.TMultiArray.html">TMultiArray</a>; overload;</code></td>
-</tr>
 <tr class="list">
+<td class="itemcode"><code>function <b><a  href="numerik.html#Sin">Sin</a></b>(A: <a  href="multiarray.TMultiArray.html">TMultiArray</a>): <a  href="multiarray.TMultiArray.html">TMultiArray</a>; overload;</code></td>
+</tr>
+<tr class="list2">
 <td class="itemcode"><code>function <b><a  href="numerik.html#Sum">Sum</a></b>(A: <a  href="multiarray.TMultiArray.html">TMultiArray</a>; axis: integer = -1): <a  href="multiarray.TMultiArray.html">TMultiArray</a>; overload;</code></td>
 </tr>
-<tr class="list2">
+<tr class="list">
 <td class="itemcode"><code>function <b><a  href="numerik.html#SVD">SVD</a></b>(A: <a  href="multiarray.TMultiArray.html">TMultiArray</a>; SigmasAsMatrix: Boolean=False): <a  href="numerik.TSVDResult.html">TSVDResult</a>;</code></td>
 </tr>
 </table>
@@ -105,83 +96,33 @@ A unit containing:
 <td class="itemcode"><code><b><a  href="numerik.html#TReduceFunc">TReduceFunc</a></b> = function(A, B: <a  href="multiarray.TMultiArray.html">TMultiArray</a>): <a  href="multiarray.TMultiArray.html">TMultiArray</a>;</code></td>
 </tr>
 </table>
-<span id="PasDoc-Constants"></span><h3 class="summary">Constants</h3>
-<table class="summary wide_list">
-<tr class="list">
-<td class="itemcode"><code><b><a  href="numerik.html#LIB_NAME">LIB_NAME</a></b> = 'libopenblas.dll';</code></td>
-</tr>
-<tr class="list2">
-<td class="itemcode"><code><b><a  href="numerik.html#LAPACK_ROW_MAJOR">LAPACK_ROW_MAJOR</a></b> = 101;</code></td>
-</tr>
-<tr class="list">
-<td class="itemcode"><code><b><a  href="numerik.html#LAPACK_COL_MAJOR">LAPACK_COL_MAJOR</a></b> = 102;</code></td>
-</tr>
-<tr class="list2">
-<td class="itemcode"><code><b><a  href="numerik.html#CBLAS_ROW_MAJOR">CBLAS_ROW_MAJOR</a></b>  = 101;</code></td>
-</tr>
-<tr class="list">
-<td class="itemcode"><code><b><a  href="numerik.html#CBLAS_COL_MAJOR">CBLAS_COL_MAJOR</a></b>  = 102;</code></td>
-</tr>
-<tr class="list2">
-<td class="itemcode"><code><b><a  href="numerik.html#CBLAS_NO_TRANS">CBLAS_NO_TRANS</a></b>   = 111;</code></td>
-</tr>
-<tr class="list">
-<td class="itemcode"><code><b><a  href="numerik.html#CBLAS_TRANS">CBLAS_TRANS</a></b>      = 112;</code></td>
-</tr>
-<tr class="list2">
-<td class="itemcode"><code><b><a  href="numerik.html#CBLAS_CONJ_TRANS">CBLAS_CONJ_TRANS</a></b> = 113;</code></td>
-</tr>
-</table>
 <h2 class="description">Description</h2>
 <h3 class="detail">Functions and Procedures</h3>
 <table class="detail wide_list">
 <tr class="list">
-<td class="itemcode"><span id="cblas_sgemm"></span><code>procedure <b>cblas_sgemm</b>(Order: longint; TransA: longint; TransB: longint; M: longint; N: longint; K: longint; alpha: single; A: <a  href="multiarray.html#TSingleVector">TSingleVector</a>; lda: longint; B: <a  href="multiarray.html#TSingleVector">TSingleVector</a>; ldb: longint; beta: single; C: <a  href="multiarray.html#TSingleVector">TSingleVector</a>; ldc: longint); external <a  href="numerik.html#LIB_NAME">LIB_NAME</a>;</code></td>
+<td class="itemcode"><span id="Cos"></span><code>function <b>Cos</b>(A: <a  href="multiarray.TMultiArray.html">TMultiArray</a>): <a  href="multiarray.TMultiArray.html">TMultiArray</a>; overload;</code></td>
 </tr>
 <tr><td colspan="1">
 <p>
-&mdash;&mdash;&mdash;&ndash; BLAS backend interface &mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&ndash;</p>
+Compute element wise cosine over A</p>
 </td></tr>
 </table>
 <table class="detail wide_list">
 <tr class="list">
-<td class="itemcode"><span id="Cos"></span><code>function <b>Cos</b>(X: <a  href="multiarray.TMultiArray.html">TMultiArray</a>): <a  href="multiarray.TMultiArray.html">TMultiArray</a>; overload;</code></td>
+<td class="itemcode"><span id="DegToRad"></span><code>function <b>DegToRad</b>(A: <a  href="multiarray.TMultiArray.html">TMultiArray</a>): <a  href="multiarray.TMultiArray.html">TMultiArray</a>; overload;</code></td>
 </tr>
 <tr><td colspan="1">
 <p>
-&mdash;&mdash;&mdash;&ndash; Trigonometry &mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;</p>
+Convert degree to radian element wise over A</p>
 </td></tr>
 </table>
 <table class="detail wide_list">
 <tr class="list">
-<td class="itemcode"><span id="DegToRad"></span><code>function <b>DegToRad</b>(X: <a  href="multiarray.TMultiArray.html">TMultiArray</a>): <a  href="multiarray.TMultiArray.html">TMultiArray</a>; overload;</code></td>
-</tr>
-<tr><td colspan="1">
-&nbsp;</td></tr>
-</table>
-<table class="detail wide_list">
-<tr class="list">
-<td class="itemcode"><span id="Exp"></span><code>function <b>Exp</b>(X: <a  href="multiarray.TMultiArray.html">TMultiArray</a>): <a  href="multiarray.TMultiArray.html">TMultiArray</a>; overload;</code></td>
+<td class="itemcode"><span id="Exp"></span><code>function <b>Exp</b>(A: <a  href="multiarray.TMultiArray.html">TMultiArray</a>): <a  href="multiarray.TMultiArray.html">TMultiArray</a>; overload;</code></td>
 </tr>
 <tr><td colspan="1">
 <p>
-&mdash;&mdash;&mdash;&ndash; Exponential &mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;-</p>
-</td></tr>
-</table>
-<table class="detail wide_list">
-<tr class="list">
-<td class="itemcode"><span id="LAPACKE_sgesvd"></span><code>function <b>LAPACKE_sgesvd</b>(MatrixLayout: longint; JOBU, JOBVT: char; M, N: longint; A: <a  href="multiarray.html#TSingleVector">TSingleVector</a>; LDA: longint; S, U: <a  href="multiarray.html#TSingleVector">TSingleVector</a>; LDU: longint; VT: <a  href="multiarray.html#TSingleVector">TSingleVector</a>; LDVT: longint; Superb: <a  href="multiarray.html#TSingleVector">TSingleVector</a>): longint; external <a  href="numerik.html#LIB_NAME">LIB_NAME</a>;</code></td>
-</tr>
-<tr><td colspan="1">
-&nbsp;</td></tr>
-</table>
-<table class="detail wide_list">
-<tr class="list">
-<td class="itemcode"><span id="MatMul_BLAS"></span><code>function <b>MatMul_BLAS</b>(A, B: <a  href="multiarray.TMultiArray.html">TMultiArray</a>): <a  href="multiarray.TMultiArray.html">TMultiArray</a>;</code></td>
-</tr>
-<tr><td colspan="1">
-<p>
-Linear algebra</p>
+Compute element wise exponent over A</p>
 </td></tr>
 </table>
 <table class="detail wide_list">
@@ -190,7 +131,7 @@ Linear algebra</p>
 </tr>
 <tr><td colspan="1">
 <p>
-&mdash;&mdash;&mdash;&ndash; Arithmetic&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;</p>
+Compute the mean of a A along axis. The default axis is -1, meaning the mean is computed over all items in A.</p>
 </td></tr>
 </table>
 <table class="detail wide_list">
@@ -198,7 +139,9 @@ Linear algebra</p>
 <td class="itemcode"><span id="PseudoInverse"></span><code>function <b>PseudoInverse</b>(A: <a  href="multiarray.TMultiArray.html">TMultiArray</a>): <a  href="multiarray.TMultiArray.html">TMultiArray</a>;</code></td>
 </tr>
 <tr><td colspan="1">
-&nbsp;</td></tr>
+<p>
+Perform pseudoinverse over a matrix A</p>
+</td></tr>
 </table>
 <table class="detail wide_list">
 <tr class="list">
@@ -229,86 +172,35 @@ Reduce TMultiArray along a specified axis with specified ReduceFunc. This is for
 </table>
 <table class="detail wide_list">
 <tr class="list">
-<td class="itemcode"><span id="Sin"></span><code>function <b>Sin</b>(X: <a  href="multiarray.TMultiArray.html">TMultiArray</a>): <a  href="multiarray.TMultiArray.html">TMultiArray</a>; overload;</code></td>
+<td class="itemcode"><span id="Sin"></span><code>function <b>Sin</b>(A: <a  href="multiarray.TMultiArray.html">TMultiArray</a>): <a  href="multiarray.TMultiArray.html">TMultiArray</a>; overload;</code></td>
 </tr>
 <tr><td colspan="1">
-&nbsp;</td></tr>
+<p>
+Compute element wise sine over A</p>
+</td></tr>
 </table>
 <table class="detail wide_list">
 <tr class="list">
 <td class="itemcode"><span id="Sum"></span><code>function <b>Sum</b>(A: <a  href="multiarray.TMultiArray.html">TMultiArray</a>; axis: integer = -1): <a  href="multiarray.TMultiArray.html">TMultiArray</a>; overload;</code></td>
 </tr>
 <tr><td colspan="1">
-&nbsp;</td></tr>
+<p>
+Compute the sum of a A along axis. The default axis is -1, meaning the sum is computed over all items in A.</p>
+</td></tr>
 </table>
 <table class="detail wide_list">
 <tr class="list">
 <td class="itemcode"><span id="SVD"></span><code>function <b>SVD</b>(A: <a  href="multiarray.TMultiArray.html">TMultiArray</a>; SigmasAsMatrix: Boolean=False): <a  href="numerik.TSVDResult.html">TSVDResult</a>;</code></td>
 </tr>
 <tr><td colspan="1">
-&nbsp;</td></tr>
+<p>
+Perform singular value decomposition (SVD) over a matrix A</p>
+</td></tr>
 </table>
 <h3 class="detail">Types</h3>
 <table class="detail wide_list">
 <tr class="list">
 <td class="itemcode"><span id="TReduceFunc"></span><code><b>TReduceFunc</b> = function(A, B: <a  href="multiarray.TMultiArray.html">TMultiArray</a>): <a  href="multiarray.TMultiArray.html">TMultiArray</a>;</code></td>
-</tr>
-<tr><td colspan="1">
-&nbsp;</td></tr>
-</table>
-<h3 class="detail">Constants</h3>
-<table class="detail wide_list">
-<tr class="list">
-<td class="itemcode"><span id="LIB_NAME"></span><code><b>LIB_NAME</b> = 'libopenblas.dll';</code></td>
-</tr>
-<tr><td colspan="1">
-&nbsp;</td></tr>
-</table>
-<table class="detail wide_list">
-<tr class="list">
-<td class="itemcode"><span id="LAPACK_ROW_MAJOR"></span><code><b>LAPACK_ROW_MAJOR</b> = 101;</code></td>
-</tr>
-<tr><td colspan="1">
-&nbsp;</td></tr>
-</table>
-<table class="detail wide_list">
-<tr class="list">
-<td class="itemcode"><span id="LAPACK_COL_MAJOR"></span><code><b>LAPACK_COL_MAJOR</b> = 102;</code></td>
-</tr>
-<tr><td colspan="1">
-&nbsp;</td></tr>
-</table>
-<table class="detail wide_list">
-<tr class="list">
-<td class="itemcode"><span id="CBLAS_ROW_MAJOR"></span><code><b>CBLAS_ROW_MAJOR</b>  = 101;</code></td>
-</tr>
-<tr><td colspan="1">
-&nbsp;</td></tr>
-</table>
-<table class="detail wide_list">
-<tr class="list">
-<td class="itemcode"><span id="CBLAS_COL_MAJOR"></span><code><b>CBLAS_COL_MAJOR</b>  = 102;</code></td>
-</tr>
-<tr><td colspan="1">
-&nbsp;</td></tr>
-</table>
-<table class="detail wide_list">
-<tr class="list">
-<td class="itemcode"><span id="CBLAS_NO_TRANS"></span><code><b>CBLAS_NO_TRANS</b>   = 111;</code></td>
-</tr>
-<tr><td colspan="1">
-&nbsp;</td></tr>
-</table>
-<table class="detail wide_list">
-<tr class="list">
-<td class="itemcode"><span id="CBLAS_TRANS"></span><code><b>CBLAS_TRANS</b>      = 112;</code></td>
-</tr>
-<tr><td colspan="1">
-&nbsp;</td></tr>
-</table>
-<table class="detail wide_list">
-<tr class="list">
-<td class="itemcode"><span id="CBLAS_CONJ_TRANS"></span><code><b>CBLAS_CONJ_TRANS</b> = 113;</code></td>
 </tr>
 <tr><td colspan="1">
 &nbsp;</td></tr>

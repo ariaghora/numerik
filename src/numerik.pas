@@ -20,21 +20,34 @@ uses
 type
   TReduceFunc = function(A, B: TMultiArray): TMultiArray;
 
+  { Holding the result of SVD }
   TSVDResult = record
     U, Sigma, VT: TMultiArray;
   end;
 
 { ----------- Arithmetic------------------------------------------------------ }
+
+{ Compute the mean of a A along axis. The default axis is -1, meaning the mean is
+  computed over all items in A. }
 function Mean(A: TMultiArray; axis: integer = -1): TMultiArray; overload;
+
+{ Compute the sum of a A along axis. The default axis is -1, meaning the sum is
+  computed over all items in A. }
 function Sum(A: TMultiArray; axis: integer = -1): TMultiArray; overload;
 
 { ----------- Trigonometry --------------------------------------------------- }
-function Cos(X: TMultiArray): TMultiArray; overload;
-function DegToRad(X: TMultiArray): TMultiArray; overload;
-function Sin(X: TMultiArray): TMultiArray; overload;
+
+{ Compute element wise cosine over A }
+function Cos(A: TMultiArray): TMultiArray; overload;
+{ Convert degree to radian element wise over A }
+function DegToRad(A: TMultiArray): TMultiArray; overload;
+{ Compute element wise sine over A }
+function Sin(A: TMultiArray): TMultiArray; overload;
 
 { ----------- Exponential ---------------------------------------------------- }
-function Exp(X: TMultiArray): TMultiArray; overload;
+
+{ Compute element wise exponent over A }
+function Exp(A: TMultiArray): TMultiArray; overload;
 
 { ----------- Random number generator ---------------------------------------- }
 
@@ -63,9 +76,9 @@ begin
   Exit(System.Cos(X));
 end;
 
-function Cos(X: TMultiArray): TMultiArray;
+function Cos(A: TMultiArray): TMultiArray;
 begin
-  Exit(ApplyUFunc(X, @_Cos, []));
+  Exit(ApplyUFunc(A, @_Cos, []));
 end;
 
 function _DegToRad(X: single; params: array of single): single;
@@ -73,9 +86,9 @@ begin
   Exit(math.DegToRad(X));
 end;
 
-function DegToRad(X: TMultiArray): TMultiArray; overload;
+function DegToRad(A: TMultiArray): TMultiArray; overload;
 begin
-  Exit(ApplyUFunc(X, @_DegToRad, []));
+  Exit(ApplyUFunc(A, @_DegToRad, []));
 end;
 
 function _Exp(X: single; params: array of single): single;
@@ -83,9 +96,9 @@ begin
   Exit(System.Exp(X));
 end;
 
-function Exp(X: TMultiArray): TMultiArray;
+function Exp(A: TMultiArray): TMultiArray;
 begin
-  Exit(ApplyUFunc(X, @_Exp, []));
+  Exit(ApplyUFunc(A, @_Exp, []));
 end;
 
 function _Sin(X: single; params: array of single): single;
@@ -93,9 +106,9 @@ begin
   Exit(System.Sin(X));
 end;
 
-function Sin(X: TMultiArray): TMultiArray;
+function Sin(A: TMultiArray): TMultiArray;
 begin
-  Exit(ApplyUFunc(X, @_Sin, []));
+  Exit(ApplyUFunc(A, @_Sin, []));
 end;
 
 function _Random(Params: array of single): single;
