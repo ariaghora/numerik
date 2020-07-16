@@ -1,7 +1,7 @@
 [Main]
 StoreRelativePaths=1
 Language=en
-OutputDir=..\doc
+OutputDir=..\docs
 GenerateFormat=0
 ProjectName=
 Verbosity=2
