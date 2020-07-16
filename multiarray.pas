@@ -101,6 +101,7 @@ type
   function _Subtract(a, b: single): single;
 
   function Matmul(A, B: TMultiArray): TMultiArray;
+  function Maximum(A, B: TMultiArray): TMultiArray;
   function Power(A, B: TMultiArray): TMultiArray; overload;
   operator + (A, B: TMultiArray) C: TMultiArray;
   operator - (A: TMultiArray) B: TMultiArray;
@@ -818,6 +819,16 @@ uses
     if (A.NDims <> 2) or (B.NDims <> 2) then
       raise Exception.Create('Only arrays with NDims=2 are supporter for Matmul');
     Exit(MatMul_BLAS(A, B));
+  end;
+
+  function _Max(a, b: single): single;
+  begin
+    Exit(math.max(a, b))
+  end;
+
+  function Maximum(A, B: TMultiArray): TMultiArray;
+  begin
+    Exit(ApplyBFunc(A, B, @_Max));
   end;
 
   function Power(A, B: TMultiArray): TMultiArray;
