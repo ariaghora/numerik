@@ -54,10 +54,6 @@ procedure cblas_sgemm(Order: CBLAS_ORDER; TransA: CBLAS_TRANSPOSE;
     ldb: longint; beta: single; C: TSingleVector; ldc: longint);
     external LIB_NAME;
 
-procedure sgesvd(JOBU, JOBVT: pchar; M, N: longint; A: TSingleVector;
-    LDA: longint; S, U: TSingleVector; LDU: longint; VT: TSingleVector;
-    LDVT: longint; Work: TSingleVector; LWork, Info: longint);
-    external LIB_NAME;
 
 function LAPACKE_sgesvd(MatrixLayout: longint; JOBU, JOBVT: char; M, N: longint;
      A: TSingleVector; LDA: longint; S, U: TSingleVector; LDU: longint; VT: TSingleVector;
@@ -65,7 +61,8 @@ function LAPACKE_sgesvd(MatrixLayout: longint; JOBU, JOBVT: char; M, N: longint;
      external LIB_NAME;
 
 function MatMul_BLAS(A, B: TMultiArray): TMultiArray;
-function SVD(A: TMultiArray): TSVDResult;
+function PseudoInverse(A: TMultiArray): TMultiArray;
+function SVD(A: TMultiArray; SigmasAsMatrix: Boolean=False): TSVDResult;
 
 implementation
 
@@ -168,23 +165,49 @@ begin
               );
 end;
 
-function SVD(A: TMultiArray): TSVDResult;
+function PseudoInverse(A: TMultiArray): TMultiArray;
 var
-  m, n, info: integer;
-  U, Sigma, VT, Superb: TMultiArray;
+  SVDRes: TSVDResult;
+  i : integer;
+begin
+  SVDRes := SVD(A, True);
+  for i := 0 to SVDRes.Sigma.Size - 1 do
+    if SVDRes.Sigma.Get(i) > 0 then
+       SVDRes.Sigma.Put(OffsetToIndex(SVDRes.Sigma, i), 1/SVDRes.Sigma.Get(i));
+  Exit(SVDRes.VT.T.Matmul(SVDRes.Sigma.T).Matmul(SVDRes.U.T));
+end;
+
+function SVD(A: TMultiArray; SigmasAsMatrix: Boolean=False): TSVDResult;
+var
+  i, m, n, info: integer;
+  U, Sigma, VT: TMultiArray;
+  Superb, SigmaVal: TSingleVector;
 begin
   m := A.Shape[0];
   n := A.Shape[1];
-  Superb := AllocateMultiArray(min(m, n) - 1);
-  Sigma := AllocateMultiArray(max(m, n));
+  SetLength(Superb, min(m, n) - 1);
+  SetLength(SigmaVal, min(m, n));
+
   U := AllocateMultiArray(m ** 2).Reshape([m, m]);
   VT := AllocateMultiArray(n ** 2).Reshape([n, n]);
 
-  info := LAPACKE_sgesvd(LAPACK_ROW_MAJOR, 'A', 'A', m, n, A.GetVirtualData,
-    m, Sigma.Data, U.Data, m, VT.Data, n, Superb.Data);
-  Result.Sigma := Sigma;
+  info := LAPACKE_sgesvd(LAPACK_ROW_MAJOR, 'A', 'A', m, n, CopyVector(A.GetVirtualData),
+    n, SigmaVal, U.Data, m, VT.Data, n, Superb);
+
   Result.U := U;
   Result.VT := VT;
+
+  if not SigmasAsMatrix then
+    Result.Sigma := SigmaVal
+  else
+  begin
+    Sigma := AllocateMultiArray(m * n).Reshape([m, n]);
+    for i := 0 to min(m, n) - 1 do
+      Sigma.Put([i, i], SigmaVal[i]);
+    Result.Sigma := Sigma;
+  end;
+
+  superb := nil;
 end;
 
 end.
