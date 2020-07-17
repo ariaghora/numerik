@@ -396,43 +396,61 @@ uses
   var
     tmp: TMultiArray;
   var
-    MaxDims: integer;
+    Digit, DecPlace, MaxDims: integer;
+    MaxNum: single;
+    s: string = '';
 
     procedure Pr(A: TMultiArray; it: longint);
     var
       i, j: longint;
     begin
-      if (A.NDims < MaxDims) and (A.NDims > 1) and (it > 0) then
-        Write(DupeString(sLineBreak, A.NDims - 1));
+
+      if it > 0 then
+      begin
+        s := s + DupeString(']', A.NDims) + ',';
+        s := s + DupeString(sLineBreak, A.NDims);
+        s := s + DupeString(' ', MaxDims - A.NDims);
+        s := s + DupeString('[', A.NDims);
+      end;
 
       if A.NDims < 2 then
       begin
         for j := 0 to A.Size - 1 do
         begin
-          if A.Size > 1 then
-            if j = 0 then Write('[');
-          Write(A.Get(j) : 5 : 2);
-          if A.Size > 1 then
+
+          s := s + Format('%' + IntToStr(Digit + DecPlace + 2) + '.' +
+                          IntToStr(DecPlace) +'f', [A.Get(j)]);
+
+          if j < A.Size - 1 then
           begin
-            if j < A.Size - 1 then Write(', ');
-            if j = A.Size - 1 then Write(']');
+            s := s + ',';
           end;
         end;
-        WriteLn;
-      end
-      else
-      begin
-        for i := 0 to A.Shape[0] - 1 do
-        begin
-          tmp := A.Slice([[i]]).Contiguous; //<== A potential bottleneck
-          SqueezeMultiArray(tmp);
-          Pr(tmp, i);
-        end;
+        exit;
       end;
+
+      for i := 0 to A.Shape[0] - 1 do
+      begin
+        tmp := A.Slice([[i]]).Contiguous; //<== A potential bottleneck
+        SqueezeMultiArray(tmp);
+        Pr(tmp, i);
+      end;
+
     end;
   begin
     MaxDims := A.NDims;
+
+    MaxNum := MaxValue(A.Data);
+    Digit := Ceil(Log10(MaxNum));
+    DecPlace := 2;
+
+    // TODO: Consider when the minimum is negative,
+    // i.e., an extra '-' character
+
+    Write(DupeString('[', MaxDims));
     Pr(A, 0);
+    Write(s);
+    WriteLn(DupeString(']', MaxDims));
   end;
 
   function CopyVector(v: TSingleVector): TSingleVector;
