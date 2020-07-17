@@ -13,25 +13,13 @@
 <table class="container"><tr><td class="navigation">
 <p><a href="AllUnits.html" class="navigation">Units</a></p><p><a href="ClassHierarchy.html" class="navigation">Class Hierarchy</a></p><p><a href="AllClasses.html" class="navigation">Classes, Interfaces, Objects and Records</a></p><p><a href="AllTypes.html" class="navigation">Types</a></p><p><a href="AllVariables.html" class="navigation">Variables</a></p><p><a href="AllConstants.html" class="navigation">Constants</a></p><p><a href="AllFunctions.html" class="navigation">Functions and Procedures</a></p><p><a href="AllIdentifiers.html" class="navigation">Identifiers</a></p><form class="search-form" action="_tipue_results.html"><div class="search-input"><input type="text" name="q" id="tipue_search_input"></div><div class="search-button"><input type="button" id="tipue_search_button" onclick="this.form.submit();"></div></form>
 <div style="clear: both"></div>
-
-<script type="text/javascript">
-$(document).ready(function() {
-    $('#tipue_search_input').tipuesearch({
-        /* 10 items to display seems standard */
-        'show': 10,
-        /* For PasDoc docs, showing urls is not very useful,
-           since the page title already shows the unit and identifier. */
-        'showURL': false
-    });
-});
-</script>
 </td><td class="content">
 <span id="TMultiArray"></span><h1 class="cio">Record TMultiArray</h1>
 <div class="sections">
 <div class="one_section"><a class="section" href="#PasDoc-Description">Description</a></div><div class="one_section">Hierarchy</div><div class="one_section"><a class="section" href="#PasDoc-Fields">Fields</a></div><div class="one_section"><a class="section" href="#PasDoc-Methods">Methods</a></div><div class="one_section"><a class="section" href="#PasDoc-Properties">Properties</a></div></div>
 <span id="PasDoc-Description"></span><h2 class="unit">Unit</h2>
 <p class="unitlink">
-<a  href="multiarray.html">multiarray</a></p>
+<a href="multiarray.html">multiarray</a></p>
 <h2 class="declaration">Declaration</h2>
 <p class="declaration">
 <code>type TMultiArray = record</code></p>
@@ -42,222 +30,262 @@ Multidimensional array data structure.</p>
 <span id="PasDoc-Fields"></span><h3 class="summary">Fields</h3>
 <table class="summary wide_list">
 <tr class="list">
-<td class="itemcode"><code><b><a  href="multiarray.TMultiArray.html#DataOffset">DataOffset</a></b>: longint;</code></td>
+<td class="visibility"><a href="legend.html"><img  src="public.gif" alt="Public" title="Public"></a></td>
+<td class="itemcode"><code><strong><a href="multiarray.TMultiArray.html#DataOffset">DataOffset</a></strong>: longint;</code></td>
 </tr>
 <tr class="list2">
-<td class="itemcode"><code><b><a  href="multiarray.TMultiArray.html#Data">Data</a></b>:  array of single;</code></td>
+<td class="visibility"><a href="legend.html"><img  src="public.gif" alt="Public" title="Public"></a></td>
+<td class="itemcode"><code><strong><a href="multiarray.TMultiArray.html#Data">Data</a></strong>:  array of single;</code></td>
 </tr>
 <tr class="list">
-<td class="itemcode"><code><b><a  href="multiarray.TMultiArray.html#Indices">Indices</a></b>: <a  href="multiarray.html#TLongVectorArr">TLongVectorArr</a>;</code></td>
+<td class="visibility"><a href="legend.html"><img  src="public.gif" alt="Public" title="Public"></a></td>
+<td class="itemcode"><code><strong><a href="multiarray.TMultiArray.html#Indices">Indices</a></strong>: <a href="multiarray.html#TLongVectorArr">TLongVectorArr</a>;</code></td>
 </tr>
 <tr class="list2">
-<td class="itemcode"><code><b><a  href="multiarray.TMultiArray.html#Shape">Shape</a></b>: <a  href="multiarray.html#TLongVector">TLongVector</a>;</code></td>
+<td class="visibility"><a href="legend.html"><img  src="public.gif" alt="Public" title="Public"></a></td>
+<td class="itemcode"><code><strong><a href="multiarray.TMultiArray.html#Shape">Shape</a></strong>: <a href="multiarray.html#TLongVector">TLongVector</a>;</code></td>
 </tr>
 <tr class="list">
-<td class="itemcode"><code><b><a  href="multiarray.TMultiArray.html#Strides">Strides</a></b>: <a  href="multiarray.html#TLongVector">TLongVector</a>;</code></td>
+<td class="visibility"><a href="legend.html"><img  src="public.gif" alt="Public" title="Public"></a></td>
+<td class="itemcode"><code><strong><a href="multiarray.TMultiArray.html#Strides">Strides</a></strong>: <a href="multiarray.html#TLongVector">TLongVector</a>;</code></td>
 </tr>
 </table>
 <span id="PasDoc-Methods"></span><h3 class="summary">Methods</h3>
 <table class="summary wide_list">
 <tr class="list">
-<td class="itemcode"><code>function <b><a  href="multiarray.TMultiArray.html#Contiguous">Contiguous</a></b>: <a  href="multiarray.TMultiArray.html">TMultiArray</a>;</code></td>
+<td class="visibility"><a href="legend.html"><img  src="public.gif" alt="Public" title="Public"></a></td>
+<td class="itemcode"><code>function <strong><a href="multiarray.TMultiArray.html#Contiguous">Contiguous</a></strong>: <a href="multiarray.TMultiArray.html">TMultiArray</a>;</code></td>
 </tr>
 <tr class="list2">
-<td class="itemcode"><code>function <b><a  href="multiarray.TMultiArray.html#Copy">Copy</a></b>(Deep: boolean = True): <a  href="multiarray.TMultiArray.html">TMultiArray</a>;</code></td>
+<td class="visibility"><a href="legend.html"><img  src="public.gif" alt="Public" title="Public"></a></td>
+<td class="itemcode"><code>function <strong><a href="multiarray.TMultiArray.html#Copy">Copy</a></strong>(Deep: boolean = True): <a href="multiarray.TMultiArray.html">TMultiArray</a>;</code></td>
 </tr>
 <tr class="list">
-<td class="itemcode"><code>function <b><a  href="multiarray.TMultiArray.html#Get">Get</a></b>(idx: <a  href="multiarray.html#TLongVector">TLongVector</a>): <a  href="multiarray.TMultiArray.html">TMultiArray</a>; overload;</code></td>
+<td class="visibility"><a href="legend.html"><img  src="public.gif" alt="Public" title="Public"></a></td>
+<td class="itemcode"><code>function <strong><a href="multiarray.TMultiArray.html#Get">Get</a></strong>(idx: <a href="multiarray.html#TLongVector">TLongVector</a>): <a href="multiarray.TMultiArray.html">TMultiArray</a>; overload;</code></td>
 </tr>
 <tr class="list2">
-<td class="itemcode"><code>function <b><a  href="multiarray.TMultiArray.html#Get">Get</a></b>(i: longint): single; overload;</code></td>
+<td class="visibility"><a href="legend.html"><img  src="public.gif" alt="Public" title="Public"></a></td>
+<td class="itemcode"><code>function <strong><a href="multiarray.TMultiArray.html#Get">Get</a></strong>(i: longint): single; overload;</code></td>
 </tr>
 <tr class="list">
-<td class="itemcode"><code>function <b><a  href="multiarray.TMultiArray.html#GetVirtualData">GetVirtualData</a></b>: <a  href="multiarray.html#TSingleVector">TSingleVector</a>;</code></td>
+<td class="visibility"><a href="legend.html"><img  src="public.gif" alt="Public" title="Public"></a></td>
+<td class="itemcode"><code>function <strong><a href="multiarray.TMultiArray.html#GetVirtualData">GetVirtualData</a></strong>: <a href="multiarray.html#TSingleVector">TSingleVector</a>;</code></td>
 </tr>
 <tr class="list2">
-<td class="itemcode"><code>function <b><a  href="multiarray.TMultiArray.html#IndexToStridedOffset">IndexToStridedOffset</a></b>(Index: array of longint): longint;</code></td>
+<td class="visibility"><a href="legend.html"><img  src="public.gif" alt="Public" title="Public"></a></td>
+<td class="itemcode"><code>function <strong><a href="multiarray.TMultiArray.html#IndexToStridedOffset">IndexToStridedOffset</a></strong>(Index: array of longint): longint;</code></td>
 </tr>
 <tr class="list">
-<td class="itemcode"><code>function <b><a  href="multiarray.TMultiArray.html#Matmul">Matmul</a></b>(Other: <a  href="multiarray.TMultiArray.html">TMultiArray</a>): <a  href="multiarray.TMultiArray.html">TMultiArray</a>;</code></td>
+<td class="visibility"><a href="legend.html"><img  src="public.gif" alt="Public" title="Public"></a></td>
+<td class="itemcode"><code>function <strong><a href="multiarray.TMultiArray.html#Matmul">Matmul</a></strong>(Other: <a href="multiarray.TMultiArray.html">TMultiArray</a>): <a href="multiarray.TMultiArray.html">TMultiArray</a>;</code></td>
 </tr>
 <tr class="list2">
-<td class="itemcode"><code>function <b><a  href="multiarray.TMultiArray.html#Reshape">Reshape</a></b>(NewShape: <a  href="multiarray.html#TLongVector">TLongVector</a>): <a  href="multiarray.TMultiArray.html">TMultiArray</a>;</code></td>
+<td class="visibility"><a href="legend.html"><img  src="public.gif" alt="Public" title="Public"></a></td>
+<td class="itemcode"><code>function <strong><a href="multiarray.TMultiArray.html#Reshape">Reshape</a></strong>(NewShape: <a href="multiarray.html#TLongVector">TLongVector</a>): <a href="multiarray.TMultiArray.html">TMultiArray</a>;</code></td>
 </tr>
 <tr class="list">
-<td class="itemcode"><code>function <b><a  href="multiarray.TMultiArray.html#Slice">Slice</a></b>(idx: array of <a  href="multiarray.html#TLongVector">TLongVector</a>): <a  href="multiarray.TMultiArray.html">TMultiArray</a>;</code></td>
+<td class="visibility"><a href="legend.html"><img  src="public.gif" alt="Public" title="Public"></a></td>
+<td class="itemcode"><code>function <strong><a href="multiarray.TMultiArray.html#Slice">Slice</a></strong>(idx: array of <a href="multiarray.html#TLongVector">TLongVector</a>): <a href="multiarray.TMultiArray.html">TMultiArray</a>;</code></td>
 </tr>
 <tr class="list2">
-<td class="itemcode"><code>function <b><a  href="multiarray.TMultiArray.html#T">T</a></b>: <a  href="multiarray.TMultiArray.html">TMultiArray</a>;</code></td>
+<td class="visibility"><a href="legend.html"><img  src="public.gif" alt="Public" title="Public"></a></td>
+<td class="itemcode"><code>function <strong><a href="multiarray.TMultiArray.html#T">T</a></strong>: <a href="multiarray.TMultiArray.html">TMultiArray</a>;</code></td>
 </tr>
 <tr class="list">
-<td class="itemcode"><code>procedure <b><a  href="multiarray.TMultiArray.html#Put">Put</a></b>(i: array of integer; x: single);</code></td>
+<td class="visibility"><a href="legend.html"><img  src="public.gif" alt="Public" title="Public"></a></td>
+<td class="itemcode"><code>procedure <strong><a href="multiarray.TMultiArray.html#Put">Put</a></strong>(i: array of integer; x: single);</code></td>
 </tr>
 <tr class="list2">
-<td class="itemcode"><code>procedure <b><a  href="multiarray.TMultiArray.html#ResetIndices">ResetIndices</a></b>;</code></td>
+<td class="visibility"><a href="legend.html"><img  src="public.gif" alt="Public" title="Public"></a></td>
+<td class="itemcode"><code>procedure <strong><a href="multiarray.TMultiArray.html#ResetIndices">ResetIndices</a></strong>;</code></td>
 </tr>
 </table>
 <span id="PasDoc-Properties"></span><h3 class="summary">Properties</h3>
 <table class="summary wide_list">
 <tr class="list">
-<td class="itemcode"><code>property <b><a  href="multiarray.TMultiArray.html#IsContiguous">IsContiguous</a></b>: boolean read FIsContiguous write FIsContiguous;</code></td>
+<td class="visibility"><a href="legend.html"><img  src="public.gif" alt="Public" title="Public"></a></td>
+<td class="itemcode"><code>property <strong><a href="multiarray.TMultiArray.html#IsContiguous">IsContiguous</a></strong>: boolean read FIsContiguous write FIsContiguous;</code></td>
 </tr>
 <tr class="list2">
-<td class="itemcode"><code>property <b><a  href="multiarray.TMultiArray.html#NDims">NDims</a></b>: integer read GetNDims;</code></td>
+<td class="visibility"><a href="legend.html"><img  src="public.gif" alt="Public" title="Public"></a></td>
+<td class="itemcode"><code>property <strong><a href="multiarray.TMultiArray.html#NDims">NDims</a></strong>: integer read GetNDims;</code></td>
 </tr>
 <tr class="list">
-<td class="itemcode"><code>property <b><a  href="multiarray.TMultiArray.html#Size">Size</a></b>: longint read GetSize;</code></td>
+<td class="visibility"><a href="legend.html"><img  src="public.gif" alt="Public" title="Public"></a></td>
+<td class="itemcode"><code>property <strong><a href="multiarray.TMultiArray.html#Size">Size</a></strong>: longint read GetSize;</code></td>
 </tr>
 </table>
 <h2 class="description">Description</h2>
 <h3 class="detail">Fields</h3>
 <table class="detail wide_list">
 <tr class="list">
-<td class="itemcode"><span id="DataOffset"></span><code><b>DataOffset</b>: longint;</code></td>
+<td class="visibility"><a href="legend.html"><img  src="public.gif" alt="Public" title="Public"></a></td>
+<td class="itemcode"><span id="DataOffset"></span><code><strong>DataOffset</strong>: longint;</code></td>
 </tr>
-<tr><td colspan="1">
+<tr><td colspan="2">
 &nbsp;</td></tr>
 </table>
 <table class="detail wide_list">
 <tr class="list">
-<td class="itemcode"><span id="Data"></span><code><b>Data</b>:  array of single;</code></td>
+<td class="visibility"><a href="legend.html"><img  src="public.gif" alt="Public" title="Public"></a></td>
+<td class="itemcode"><span id="Data"></span><code><strong>Data</strong>:  array of single;</code></td>
 </tr>
-<tr><td colspan="1">
+<tr><td colspan="2">
 &nbsp;</td></tr>
 </table>
 <table class="detail wide_list">
 <tr class="list">
-<td class="itemcode"><span id="Indices"></span><code><b>Indices</b>: <a  href="multiarray.html#TLongVectorArr">TLongVectorArr</a>;</code></td>
+<td class="visibility"><a href="legend.html"><img  src="public.gif" alt="Public" title="Public"></a></td>
+<td class="itemcode"><span id="Indices"></span><code><strong>Indices</strong>: <a href="multiarray.html#TLongVectorArr">TLongVectorArr</a>;</code></td>
 </tr>
-<tr><td colspan="1">
+<tr><td colspan="2">
 &nbsp;</td></tr>
 </table>
 <table class="detail wide_list">
 <tr class="list">
-<td class="itemcode"><span id="Shape"></span><code><b>Shape</b>: <a  href="multiarray.html#TLongVector">TLongVector</a>;</code></td>
+<td class="visibility"><a href="legend.html"><img  src="public.gif" alt="Public" title="Public"></a></td>
+<td class="itemcode"><span id="Shape"></span><code><strong>Shape</strong>: <a href="multiarray.html#TLongVector">TLongVector</a>;</code></td>
 </tr>
-<tr><td colspan="1">
+<tr><td colspan="2">
 &nbsp;</td></tr>
 </table>
 <table class="detail wide_list">
 <tr class="list">
-<td class="itemcode"><span id="Strides"></span><code><b>Strides</b>: <a  href="multiarray.html#TLongVector">TLongVector</a>;</code></td>
+<td class="visibility"><a href="legend.html"><img  src="public.gif" alt="Public" title="Public"></a></td>
+<td class="itemcode"><span id="Strides"></span><code><strong>Strides</strong>: <a href="multiarray.html#TLongVector">TLongVector</a>;</code></td>
 </tr>
-<tr><td colspan="1">
+<tr><td colspan="2">
 &nbsp;</td></tr>
 </table>
 <h3 class="detail">Methods</h3>
 <table class="detail wide_list">
 <tr class="list">
-<td class="itemcode"><span id="Contiguous"></span><code>function <b>Contiguous</b>: <a  href="multiarray.TMultiArray.html">TMultiArray</a>;</code></td>
+<td class="visibility"><a href="legend.html"><img  src="public.gif" alt="Public" title="Public"></a></td>
+<td class="itemcode"><span id="Contiguous"></span><code>function <strong>Contiguous</strong>: <a href="multiarray.TMultiArray.html">TMultiArray</a>;</code></td>
 </tr>
-<tr><td colspan="1">
+<tr><td colspan="2">
 <p>
 Returns contiguous copy of this array</p>
 </td></tr>
 </table>
 <table class="detail wide_list">
 <tr class="list">
-<td class="itemcode"><span id="Copy"></span><code>function <b>Copy</b>(Deep: boolean = True): <a  href="multiarray.TMultiArray.html">TMultiArray</a>;</code></td>
+<td class="visibility"><a href="legend.html"><img  src="public.gif" alt="Public" title="Public"></a></td>
+<td class="itemcode"><span id="Copy"></span><code>function <strong>Copy</strong>(Deep: boolean = True): <a href="multiarray.TMultiArray.html">TMultiArray</a>;</code></td>
 </tr>
-<tr><td colspan="1">
+<tr><td colspan="2">
 <p>
 Perform copying of this array. By default, the actual data is referenced rather than copied. If Deep is true, then the actual data is copied.</p>
 </td></tr>
 </table>
 <table class="detail wide_list">
 <tr class="list">
-<td class="itemcode"><span id="Get"></span><code>function <b>Get</b>(idx: <a  href="multiarray.html#TLongVector">TLongVector</a>): <a  href="multiarray.TMultiArray.html">TMultiArray</a>; overload;</code></td>
+<td class="visibility"><a href="legend.html"><img  src="public.gif" alt="Public" title="Public"></a></td>
+<td class="itemcode"><span id="Get"></span><code>function <strong>Get</strong>(idx: <a href="multiarray.html#TLongVector">TLongVector</a>): <a href="multiarray.TMultiArray.html">TMultiArray</a>; overload;</code></td>
 </tr>
-<tr><td colspan="1">
+<tr><td colspan="2">
 &nbsp;</td></tr>
 </table>
 <table class="detail wide_list">
 <tr class="list">
-<td class="itemcode"><span id="Get"></span><code>function <b>Get</b>(i: longint): single; overload;</code></td>
+<td class="visibility"><a href="legend.html"><img  src="public.gif" alt="Public" title="Public"></a></td>
+<td class="itemcode"><span id="Get"></span><code>function <strong>Get</strong>(i: longint): single; overload;</code></td>
 </tr>
-<tr><td colspan="1">
+<tr><td colspan="2">
 &nbsp;</td></tr>
 </table>
 <table class="detail wide_list">
 <tr class="list">
-<td class="itemcode"><span id="GetVirtualData"></span><code>function <b>GetVirtualData</b>: <a  href="multiarray.html#TSingleVector">TSingleVector</a>;</code></td>
+<td class="visibility"><a href="legend.html"><img  src="public.gif" alt="Public" title="Public"></a></td>
+<td class="itemcode"><span id="GetVirtualData"></span><code>function <strong>GetVirtualData</strong>: <a href="multiarray.html#TSingleVector">TSingleVector</a>;</code></td>
 </tr>
-<tr><td colspan="1">
+<tr><td colspan="2">
 &nbsp;</td></tr>
 </table>
 <table class="detail wide_list">
 <tr class="list">
-<td class="itemcode"><span id="IndexToStridedOffset"></span><code>function <b>IndexToStridedOffset</b>(Index: array of longint): longint;</code></td>
+<td class="visibility"><a href="legend.html"><img  src="public.gif" alt="Public" title="Public"></a></td>
+<td class="itemcode"><span id="IndexToStridedOffset"></span><code>function <strong>IndexToStridedOffset</strong>(Index: array of longint): longint;</code></td>
 </tr>
-<tr><td colspan="1">
+<tr><td colspan="2">
 &nbsp;</td></tr>
 </table>
 <table class="detail wide_list">
 <tr class="list">
-<td class="itemcode"><span id="Matmul"></span><code>function <b>Matmul</b>(Other: <a  href="multiarray.TMultiArray.html">TMultiArray</a>): <a  href="multiarray.TMultiArray.html">TMultiArray</a>;</code></td>
+<td class="visibility"><a href="legend.html"><img  src="public.gif" alt="Public" title="Public"></a></td>
+<td class="itemcode"><span id="Matmul"></span><code>function <strong>Matmul</strong>(Other: <a href="multiarray.TMultiArray.html">TMultiArray</a>): <a href="multiarray.TMultiArray.html">TMultiArray</a>;</code></td>
 </tr>
-<tr><td colspan="1">
+<tr><td colspan="2">
 &nbsp;</td></tr>
 </table>
 <table class="detail wide_list">
 <tr class="list">
-<td class="itemcode"><span id="Reshape"></span><code>function <b>Reshape</b>(NewShape: <a  href="multiarray.html#TLongVector">TLongVector</a>): <a  href="multiarray.TMultiArray.html">TMultiArray</a>;</code></td>
+<td class="visibility"><a href="legend.html"><img  src="public.gif" alt="Public" title="Public"></a></td>
+<td class="itemcode"><span id="Reshape"></span><code>function <strong>Reshape</strong>(NewShape: <a href="multiarray.html#TLongVector">TLongVector</a>): <a href="multiarray.TMultiArray.html">TMultiArray</a>;</code></td>
 </tr>
-<tr><td colspan="1">
+<tr><td colspan="2">
 &nbsp;</td></tr>
 </table>
 <table class="detail wide_list">
 <tr class="list">
-<td class="itemcode"><span id="Slice"></span><code>function <b>Slice</b>(idx: array of <a  href="multiarray.html#TLongVector">TLongVector</a>): <a  href="multiarray.TMultiArray.html">TMultiArray</a>;</code></td>
+<td class="visibility"><a href="legend.html"><img  src="public.gif" alt="Public" title="Public"></a></td>
+<td class="itemcode"><span id="Slice"></span><code>function <strong>Slice</strong>(idx: array of <a href="multiarray.html#TLongVector">TLongVector</a>): <a href="multiarray.TMultiArray.html">TMultiArray</a>;</code></td>
 </tr>
-<tr><td colspan="1">
+<tr><td colspan="2">
 <p>
 Perform multidimensional slicing. For now Slice will return contiguous.</p>
 </td></tr>
 </table>
 <table class="detail wide_list">
 <tr class="list">
-<td class="itemcode"><span id="T"></span><code>function <b>T</b>: <a  href="multiarray.TMultiArray.html">TMultiArray</a>;</code></td>
+<td class="visibility"><a href="legend.html"><img  src="public.gif" alt="Public" title="Public"></a></td>
+<td class="itemcode"><span id="T"></span><code>function <strong>T</strong>: <a href="multiarray.TMultiArray.html">TMultiArray</a>;</code></td>
 </tr>
-<tr><td colspan="1">
+<tr><td colspan="2">
 &nbsp;</td></tr>
 </table>
 <table class="detail wide_list">
 <tr class="list">
-<td class="itemcode"><span id="Put"></span><code>procedure <b>Put</b>(i: array of integer; x: single);</code></td>
+<td class="visibility"><a href="legend.html"><img  src="public.gif" alt="Public" title="Public"></a></td>
+<td class="itemcode"><span id="Put"></span><code>procedure <strong>Put</strong>(i: array of integer; x: single);</code></td>
 </tr>
-<tr><td colspan="1">
+<tr><td colspan="2">
 &nbsp;</td></tr>
 </table>
 <table class="detail wide_list">
 <tr class="list">
-<td class="itemcode"><span id="ResetIndices"></span><code>procedure <b>ResetIndices</b>;</code></td>
+<td class="visibility"><a href="legend.html"><img  src="public.gif" alt="Public" title="Public"></a></td>
+<td class="itemcode"><span id="ResetIndices"></span><code>procedure <strong>ResetIndices</strong>;</code></td>
 </tr>
-<tr><td colspan="1">
+<tr><td colspan="2">
 &nbsp;</td></tr>
 </table>
 <h3 class="detail">Properties</h3>
 <table class="detail wide_list">
 <tr class="list">
-<td class="itemcode"><span id="IsContiguous"></span><code>property <b>IsContiguous</b>: boolean read FIsContiguous write FIsContiguous;</code></td>
+<td class="visibility"><a href="legend.html"><img  src="public.gif" alt="Public" title="Public"></a></td>
+<td class="itemcode"><span id="IsContiguous"></span><code>property <strong>IsContiguous</strong>: boolean read FIsContiguous write FIsContiguous;</code></td>
 </tr>
-<tr><td colspan="1">
+<tr><td colspan="2">
 &nbsp;</td></tr>
 </table>
 <table class="detail wide_list">
 <tr class="list">
-<td class="itemcode"><span id="NDims"></span><code>property <b>NDims</b>: integer read GetNDims;</code></td>
+<td class="visibility"><a href="legend.html"><img  src="public.gif" alt="Public" title="Public"></a></td>
+<td class="itemcode"><span id="NDims"></span><code>property <strong>NDims</strong>: integer read GetNDims;</code></td>
 </tr>
-<tr><td colspan="1">
+<tr><td colspan="2">
 &nbsp;</td></tr>
 </table>
 <table class="detail wide_list">
 <tr class="list">
-<td class="itemcode"><span id="Size"></span><code>property <b>Size</b>: longint read GetSize;</code></td>
+<td class="visibility"><a href="legend.html"><img  src="public.gif" alt="Public" title="Public"></a></td>
+<td class="itemcode"><span id="Size"></span><code>property <strong>Size</strong>: longint read GetSize;</code></td>
 </tr>
-<tr><td colspan="1">
+<tr><td colspan="2">
 &nbsp;</td></tr>
 </table>
-<hr><span class="appinfo"><em>Generated by <a  href="https://github.com/pasdoc/pasdoc/wiki">PasDoc 0.15.0</a>. </em>
+<hr><span class="appinfo"><em>Generated by <a href="https://github.com/pasdoc/pasdoc/wiki">PasDoc 0.15.0</a>. </em>
 </span>
 </td></tr></table></body></html>

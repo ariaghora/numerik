@@ -103,34 +103,20 @@ type
   function Multiply(A, B: TMultiArray): TMultiArray;
   function Power(A, B: TMultiArray): TMultiArray; overload;
 
-  { @exclude }
-  operator + (A, B: TMultiArray) C: TMultiArray;
-  { @exclude }
-  operator - (A: TMultiArray) B: TMultiArray;
-  { @exclude }
-  operator - (A, B: TMultiArray) C: TMultiArray;
-  { @exclude }
-  operator * (A, B: TMultiArray) C: TMultiArray;
-  { @exclude }
-  operator / (A, B: TMultiArray) C: TMultiArray;
-  { @exclude }
-  operator ** (A, B: TMultiArray) C: TMultiArray;
-  { @exclude }
-  operator > (A, B: TMultiArray) C: TMultiArray;
-  { @exclude }
-  operator := (A: single) B: TMultiArray;
-  { @exclude }
-  operator := (A: array of single) B: TMultiArray;
-  { @exclude }
-  operator explicit(A: single) B: TMultiArray;
-  { @exclude }
-  operator :=(A: array of longint) B: TLongVector;
-  { @exclude }
-  operator explicit(A: array of longint) B: TLongVector;
-  { @exclude }
-  operator :=(A: TLongVector) B: TSingleVector;
-  { @exclude }
-  operator explicit(A: TLongVector) B: TSingleVector;
+  { @exclude } operator + (A, B: TMultiArray) C: TMultiArray;
+  { @exclude } operator - (A: TMultiArray) B: TMultiArray;
+  { @exclude } operator - (A, B: TMultiArray) C: TMultiArray;
+  { @exclude } operator * (A, B: TMultiArray) C: TMultiArray;
+  { @exclude } operator / (A, B: TMultiArray) C: TMultiArray;
+  { @exclude } operator ** (A, B: TMultiArray) C: TMultiArray;
+  { @exclude } operator > (A, B: TMultiArray) C: TMultiArray;
+  { @exclude } operator := (A: single) B: TMultiArray;
+  { @exclude } operator := (A: array of single) B: TMultiArray;
+  { @exclude } operator explicit(A: single) B: TMultiArray;
+  { @exclude } operator :=(A: array of longint) B: TLongVector;
+  { @exclude } operator explicit(A: array of longint) B: TLongVector;
+  { @exclude } operator :=(A: TLongVector) B: TSingleVector;
+  { @exclude } operator explicit(A: TLongVector) B: TSingleVector;
 
 var
   GLOBAL_FUNC_DEBUG: boolean;

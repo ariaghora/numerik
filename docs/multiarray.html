@@ -13,18 +13,6 @@
 <table class="container"><tr><td class="navigation">
 <p><a href="AllUnits.html" class="navigation">Units</a></p><p><a href="ClassHierarchy.html" class="navigation">Class Hierarchy</a></p><p><a href="AllClasses.html" class="navigation">Classes, Interfaces, Objects and Records</a></p><p><a href="AllTypes.html" class="navigation">Types</a></p><p><a href="AllVariables.html" class="navigation">Variables</a></p><p><a href="AllConstants.html" class="navigation">Constants</a></p><p><a href="AllFunctions.html" class="navigation">Functions and Procedures</a></p><p><a href="AllIdentifiers.html" class="navigation">Identifiers</a></p><form class="search-form" action="_tipue_results.html"><div class="search-input"><input type="text" name="q" id="tipue_search_input"></div><div class="search-button"><input type="button" id="tipue_search_button" onclick="this.form.submit();"></div></form>
 <div style="clear: both"></div>
-
-<script type="text/javascript">
-$(document).ready(function() {
-    $('#tipue_search_input').tipuesearch({
-        /* 10 items to display seems standard */
-        'show': 10,
-        /* For PasDoc docs, showing urls is not very useful,
-           since the page title already shows the unit and identifier. */
-        'showURL': false
-    });
-});
-</script>
 </td><td class="content">
 <h1 class="unit">Unit multiarray</h1>
 <div class="sections">
@@ -51,331 +39,331 @@ A unit containing TMultiArray, multidimensional array data structure with single
 <span id="PasDoc-FuncsProcs"></span><h3 class="summary">Functions and Procedures</h3>
 <table class="summary wide_list">
 <tr class="list">
-<td class="itemcode"><code>function <b><a  href="multiarray.html#Add">Add</a></b>(A, B: <a  href="multiarray.TMultiArray.html">TMultiArray</a>): <a  href="multiarray.TMultiArray.html">TMultiArray</a>;</code></td>
+<td class="itemcode"><code>function <strong><a href="multiarray.html#Add">Add</a></strong>(A, B: <a href="multiarray.TMultiArray.html">TMultiArray</a>): <a href="multiarray.TMultiArray.html">TMultiArray</a>;</code></td>
 </tr>
 <tr class="list2">
-<td class="itemcode"><code>function <b><a  href="multiarray.html#All">All</a></b>: <a  href="multiarray.html#TLongVector">TLongVector</a>;</code></td>
+<td class="itemcode"><code>function <strong><a href="multiarray.html#All">All</a></strong>: <a href="multiarray.html#TLongVector">TLongVector</a>;</code></td>
 </tr>
 <tr class="list">
-<td class="itemcode"><code>function <b><a  href="multiarray.html#AllocateMultiArray">AllocateMultiArray</a></b>(Size: longint): <a  href="multiarray.TMultiArray.html">TMultiArray</a>;</code></td>
+<td class="itemcode"><code>function <strong><a href="multiarray.html#AllocateMultiArray">AllocateMultiArray</a></strong>(Size: longint): <a href="multiarray.TMultiArray.html">TMultiArray</a>;</code></td>
 </tr>
 <tr class="list2">
-<td class="itemcode"><code>function <b><a  href="multiarray.html#ApplyBFunc">ApplyBFunc</a></b>(A, B: <a  href="multiarray.TMultiArray.html">TMultiArray</a>; BFunc: <a  href="multiarray.html#TBFunc">TBFunc</a>; PrintDebug: Boolean = False; FuncName: string = ''): <a  href="multiarray.TMultiArray.html">TMultiArray</a>;</code></td>
+<td class="itemcode"><code>function <strong><a href="multiarray.html#ApplyBFunc">ApplyBFunc</a></strong>(A, B: <a href="multiarray.TMultiArray.html">TMultiArray</a>; BFunc: <a href="multiarray.html#TBFunc">TBFunc</a>; PrintDebug: Boolean = False; FuncName: string = ''): <a href="multiarray.TMultiArray.html">TMultiArray</a>;</code></td>
 </tr>
 <tr class="list">
-<td class="itemcode"><code>function <b><a  href="multiarray.html#ApplyUFunc">ApplyUFunc</a></b>(A: <a  href="multiarray.TMultiArray.html">TMultiArray</a>; UFunc: <a  href="multiarray.html#TUFunc">TUFunc</a>; Params: array of single): <a  href="multiarray.TMultiArray.html">TMultiArray</a>;</code></td>
+<td class="itemcode"><code>function <strong><a href="multiarray.html#ApplyUFunc">ApplyUFunc</a></strong>(A: <a href="multiarray.TMultiArray.html">TMultiArray</a>; UFunc: <a href="multiarray.html#TUFunc">TUFunc</a>; Params: array of single): <a href="multiarray.TMultiArray.html">TMultiArray</a>;</code></td>
 </tr>
 <tr class="list2">
-<td class="itemcode"><code>function <b><a  href="multiarray.html#ArrayEqual">ArrayEqual</a></b>(A, B: <a  href="multiarray.TMultiArray.html">TMultiArray</a>): boolean;</code></td>
+<td class="itemcode"><code>function <strong><a href="multiarray.html#ArrayEqual">ArrayEqual</a></strong>(A, B: <a href="multiarray.TMultiArray.html">TMultiArray</a>): boolean;</code></td>
 </tr>
 <tr class="list">
-<td class="itemcode"><code>function <b><a  href="multiarray.html#AsStrided">AsStrided</a></b>(A: <a  href="multiarray.TMultiArray.html">TMultiArray</a>; Shape, Strides: <a  href="multiarray.html#TLongVector">TLongVector</a>): <a  href="multiarray.TMultiArray.html">TMultiArray</a>;</code></td>
+<td class="itemcode"><code>function <strong><a href="multiarray.html#AsStrided">AsStrided</a></strong>(A: <a href="multiarray.TMultiArray.html">TMultiArray</a>; Shape, Strides: <a href="multiarray.html#TLongVector">TLongVector</a>): <a href="multiarray.TMultiArray.html">TMultiArray</a>;</code></td>
 </tr>
 <tr class="list2">
-<td class="itemcode"><code>function <b><a  href="multiarray.html#BroadcastArrays">BroadcastArrays</a></b>(A, B: <a  href="multiarray.TMultiArray.html">TMultiArray</a>): <a  href="multiarray.TBroadcastResult.html">TBroadcastResult</a>;</code></td>
+<td class="itemcode"><code>function <strong><a href="multiarray.html#BroadcastArrays">BroadcastArrays</a></strong>(A, B: <a href="multiarray.TMultiArray.html">TMultiArray</a>): <a href="multiarray.TBroadcastResult.html">TBroadcastResult</a>;</code></td>
 </tr>
 <tr class="list">
-<td class="itemcode"><code>function <b><a  href="multiarray.html#CopyVector">CopyVector</a></b>(v: <a  href="multiarray.html#TSingleVector">TSingleVector</a>): <a  href="multiarray.html#TSingleVector">TSingleVector</a>;</code></td>
+<td class="itemcode"><code>function <strong><a href="multiarray.html#CopyVector">CopyVector</a></strong>(v: <a href="multiarray.html#TSingleVector">TSingleVector</a>): <a href="multiarray.html#TSingleVector">TSingleVector</a>;</code></td>
 </tr>
 <tr class="list2">
-<td class="itemcode"><code>function <b><a  href="multiarray.html#CreateEmptyFTensor">CreateEmptyFTensor</a></b>(Contiguous: boolean = True): <a  href="multiarray.TMultiArray.html">TMultiArray</a>;</code></td>
+<td class="itemcode"><code>function <strong><a href="multiarray.html#CreateEmptyFTensor">CreateEmptyFTensor</a></strong>(Contiguous: boolean = True): <a href="multiarray.TMultiArray.html">TMultiArray</a>;</code></td>
 </tr>
 <tr class="list">
-<td class="itemcode"><code>function <b><a  href="multiarray.html#CreateMultiArray">CreateMultiArray</a></b>(AData: array of single): <a  href="multiarray.TMultiArray.html">TMultiArray</a>;</code></td>
+<td class="itemcode"><code>function <strong><a href="multiarray.html#CreateMultiArray">CreateMultiArray</a></strong>(AData: array of single): <a href="multiarray.TMultiArray.html">TMultiArray</a>;</code></td>
 </tr>
 <tr class="list2">
-<td class="itemcode"><code>function <b><a  href="multiarray.html#CreateMultiArray">CreateMultiArray</a></b>(AData: single): <a  href="multiarray.TMultiArray.html">TMultiArray</a>;</code></td>
+<td class="itemcode"><code>function <strong><a href="multiarray.html#CreateMultiArray">CreateMultiArray</a></strong>(AData: single): <a href="multiarray.TMultiArray.html">TMultiArray</a>;</code></td>
 </tr>
 <tr class="list">
-<td class="itemcode"><code>procedure <b><a  href="multiarray.html#DebugMultiArray">DebugMultiArray</a></b>(A: <a  href="multiarray.TMultiArray.html">TMultiArray</a>);</code></td>
+<td class="itemcode"><code>procedure <strong><a href="multiarray.html#DebugMultiArray">DebugMultiArray</a></strong>(A: <a href="multiarray.TMultiArray.html">TMultiArray</a>);</code></td>
 </tr>
 <tr class="list2">
-<td class="itemcode"><code>function <b><a  href="multiarray.html#DynArrayToVector">DynArrayToVector</a></b>(A: array of longint): <a  href="multiarray.html#TLongVector">TLongVector</a>;</code></td>
+<td class="itemcode"><code>function <strong><a href="multiarray.html#DynArrayToVector">DynArrayToVector</a></strong>(A: array of longint): <a href="multiarray.html#TLongVector">TLongVector</a>;</code></td>
 </tr>
 <tr class="list">
-<td class="itemcode"><code>function <b><a  href="multiarray.html#GenerateMultiArray">GenerateMultiArray</a></b>(Shape: array of longint; GenFunc: <a  href="multiarray.html#TGenFunc">TGenFunc</a>; Params: array of single): <a  href="multiarray.TMultiArray.html">TMultiArray</a>;</code></td>
+<td class="itemcode"><code>function <strong><a href="multiarray.html#GenerateMultiArray">GenerateMultiArray</a></strong>(Shape: array of longint; GenFunc: <a href="multiarray.html#TGenFunc">TGenFunc</a>; Params: array of single): <a href="multiarray.TMultiArray.html">TMultiArray</a>;</code></td>
 </tr>
 <tr class="list2">
-<td class="itemcode"><code>function <b><a  href="multiarray.html#GetVirtualData">GetVirtualData</a></b>(A: <a  href="multiarray.TMultiArray.html">TMultiArray</a>): <a  href="multiarray.html#TSingleVector">TSingleVector</a>;</code></td>
+<td class="itemcode"><code>function <strong><a href="multiarray.html#GetVirtualData">GetVirtualData</a></strong>(A: <a href="multiarray.TMultiArray.html">TMultiArray</a>): <a href="multiarray.html#TSingleVector">TSingleVector</a>;</code></td>
 </tr>
 <tr class="list">
-<td class="itemcode"><code>function <b><a  href="multiarray.html#Matmul">Matmul</a></b>(A, B: <a  href="multiarray.TMultiArray.html">TMultiArray</a>): <a  href="multiarray.TMultiArray.html">TMultiArray</a>;</code></td>
+<td class="itemcode"><code>function <strong><a href="multiarray.html#Matmul">Matmul</a></strong>(A, B: <a href="multiarray.TMultiArray.html">TMultiArray</a>): <a href="multiarray.TMultiArray.html">TMultiArray</a>;</code></td>
 </tr>
 <tr class="list2">
-<td class="itemcode"><code>function <b><a  href="multiarray.html#Maximum">Maximum</a></b>(A, B: <a  href="multiarray.TMultiArray.html">TMultiArray</a>): <a  href="multiarray.TMultiArray.html">TMultiArray</a>;</code></td>
+<td class="itemcode"><code>function <strong><a href="multiarray.html#Maximum">Maximum</a></strong>(A, B: <a href="multiarray.TMultiArray.html">TMultiArray</a>): <a href="multiarray.TMultiArray.html">TMultiArray</a>;</code></td>
 </tr>
 <tr class="list">
-<td class="itemcode"><code>function <b><a  href="multiarray.html#Multiply">Multiply</a></b>(A, B: <a  href="multiarray.TMultiArray.html">TMultiArray</a>): <a  href="multiarray.TMultiArray.html">TMultiArray</a>;</code></td>
+<td class="itemcode"><code>function <strong><a href="multiarray.html#Multiply">Multiply</a></strong>(A, B: <a href="multiarray.TMultiArray.html">TMultiArray</a>): <a href="multiarray.TMultiArray.html">TMultiArray</a>;</code></td>
 </tr>
 <tr class="list2">
-<td class="itemcode"><code>function <b><a  href="multiarray.html#OffsetToIndex">OffsetToIndex</a></b>(A: <a  href="multiarray.TMultiArray.html">TMultiArray</a>; Offset: longint): <a  href="multiarray.html#TLongVector">TLongVector</a>;</code></td>
+<td class="itemcode"><code>function <strong><a href="multiarray.html#OffsetToIndex">OffsetToIndex</a></strong>(A: <a href="multiarray.TMultiArray.html">TMultiArray</a>; Offset: longint): <a href="multiarray.html#TLongVector">TLongVector</a>;</code></td>
 </tr>
 <tr class="list">
-<td class="itemcode"><code>function <b><a  href="multiarray.html#Power">Power</a></b>(A, B: <a  href="multiarray.TMultiArray.html">TMultiArray</a>): <a  href="multiarray.TMultiArray.html">TMultiArray</a>; overload;</code></td>
+<td class="itemcode"><code>function <strong><a href="multiarray.html#Power">Power</a></strong>(A, B: <a href="multiarray.TMultiArray.html">TMultiArray</a>): <a href="multiarray.TMultiArray.html">TMultiArray</a>; overload;</code></td>
 </tr>
 <tr class="list2">
-<td class="itemcode"><code>procedure <b><a  href="multiarray.html#PrintMultiArray">PrintMultiArray</a></b>(A: <a  href="multiarray.TMultiArray.html">TMultiArray</a>);</code></td>
+<td class="itemcode"><code>procedure <strong><a href="multiarray.html#PrintMultiArray">PrintMultiArray</a></strong>(A: <a href="multiarray.TMultiArray.html">TMultiArray</a>);</code></td>
 </tr>
 <tr class="list">
-<td class="itemcode"><code>function <b><a  href="multiarray.html#Range">Range</a></b>(Start, Stop: longint): <a  href="multiarray.html#TLongVector">TLongVector</a>; overload;</code></td>
+<td class="itemcode"><code>function <strong><a href="multiarray.html#Range">Range</a></strong>(Start, Stop, step: longint): <a href="multiarray.html#TLongVector">TLongVector</a>; overload;</code></td>
 </tr>
 <tr class="list2">
-<td class="itemcode"><code>function <b><a  href="multiarray.html#Range">Range</a></b>(Start, Stop, step: longint): <a  href="multiarray.html#TLongVector">TLongVector</a>; overload;</code></td>
+<td class="itemcode"><code>function <strong><a href="multiarray.html#Range">Range</a></strong>(Start, Stop: longint): <a href="multiarray.html#TLongVector">TLongVector</a>; overload;</code></td>
 </tr>
 <tr class="list">
-<td class="itemcode"><code>function <b><a  href="multiarray.html#ReadCSV">ReadCSV</a></b>(FileName: string): <a  href="multiarray.TMultiArray.html">TMultiArray</a>;</code></td>
+<td class="itemcode"><code>function <strong><a href="multiarray.html#ReadCSV">ReadCSV</a></strong>(FileName: string): <a href="multiarray.TMultiArray.html">TMultiArray</a>;</code></td>
 </tr>
 <tr class="list2">
-<td class="itemcode"><code>function <b><a  href="multiarray.html#ShapeToStrides">ShapeToStrides</a></b>(AShape: <a  href="multiarray.html#TLongVector">TLongVector</a>): <a  href="multiarray.html#TLongVector">TLongVector</a>;</code></td>
+<td class="itemcode"><code>function <strong><a href="multiarray.html#ShapeToStrides">ShapeToStrides</a></strong>(AShape: <a href="multiarray.html#TLongVector">TLongVector</a>): <a href="multiarray.html#TLongVector">TLongVector</a>;</code></td>
 </tr>
 <tr class="list">
-<td class="itemcode"><code>procedure <b><a  href="multiarray.html#SqueezeMultiArray">SqueezeMultiArray</a></b>(var A: <a  href="multiarray.TMultiArray.html">TMultiArray</a>);</code></td>
+<td class="itemcode"><code>procedure <strong><a href="multiarray.html#SqueezeMultiArray">SqueezeMultiArray</a></strong>(var A: <a href="multiarray.TMultiArray.html">TMultiArray</a>);</code></td>
 </tr>
 <tr class="list2">
-<td class="itemcode"><code>function <b><a  href="multiarray.html#Transpose">Transpose</a></b>(A: <a  href="multiarray.TMultiArray.html">TMultiArray</a>): <a  href="multiarray.TMultiArray.html">TMultiArray</a>;</code></td>
+<td class="itemcode"><code>function <strong><a href="multiarray.html#Transpose">Transpose</a></strong>(A: <a href="multiarray.TMultiArray.html">TMultiArray</a>): <a href="multiarray.TMultiArray.html">TMultiArray</a>;</code></td>
 </tr>
 <tr class="list">
-<td class="itemcode"><code>function <b><a  href="multiarray.html#VectorEqual">VectorEqual</a></b>(A, B: <a  href="multiarray.html#TSingleVector">TSingleVector</a>): boolean;</code></td>
+<td class="itemcode"><code>function <strong><a href="multiarray.html#VectorEqual">VectorEqual</a></strong>(A, B: <a href="multiarray.html#TSingleVector">TSingleVector</a>): boolean;</code></td>
 </tr>
 <tr class="list2">
-<td class="itemcode"><code>function <b><a  href="multiarray.html#VectorEqual">VectorEqual</a></b>(A, B: <a  href="multiarray.html#TLongVector">TLongVector</a>): boolean;</code></td>
+<td class="itemcode"><code>function <strong><a href="multiarray.html#VectorEqual">VectorEqual</a></strong>(A, B: <a href="multiarray.html#TLongVector">TLongVector</a>): boolean;</code></td>
 </tr>
 </table>
 <span id="PasDoc-Types"></span><h3 class="summary">Types</h3>
 <table class="summary wide_list">
 <tr class="list">
-<td class="itemcode"><code><b><a  href="multiarray.html#TLongVector">TLongVector</a></b> = array of longint;</code></td>
+<td class="itemcode"><code><strong><a href="multiarray.html#TLongVector">TLongVector</a></strong> = array of longint;</code></td>
 </tr>
 <tr class="list2">
-<td class="itemcode"><code><b><a  href="multiarray.html#TLongVectorArr">TLongVectorArr</a></b> = array of <a  href="multiarray.html#TLongVector">TLongVector</a>;</code></td>
+<td class="itemcode"><code><strong><a href="multiarray.html#TLongVectorArr">TLongVectorArr</a></strong> = array of <a href="multiarray.html#TLongVector">TLongVector</a>;</code></td>
 </tr>
 <tr class="list">
-<td class="itemcode"><code><b><a  href="multiarray.html#TSingleVector">TSingleVector</a></b> = array of single;</code></td>
+<td class="itemcode"><code><strong><a href="multiarray.html#TSingleVector">TSingleVector</a></strong> = array of single;</code></td>
 </tr>
 <tr class="list2">
-<td class="itemcode"><code><b><a  href="multiarray.html#TGenFunc">TGenFunc</a></b> = function(Params: array of single): single;</code></td>
+<td class="itemcode"><code><strong><a href="multiarray.html#TGenFunc">TGenFunc</a></strong> = function(Params: array of single): single;</code></td>
 </tr>
 <tr class="list">
-<td class="itemcode"><code><b><a  href="multiarray.html#TUFunc">TUFunc</a></b> = function(a: single; params: array of single): single;</code></td>
+<td class="itemcode"><code><strong><a href="multiarray.html#TUFunc">TUFunc</a></strong> = function(a: single; params: array of single): single;</code></td>
 </tr>
 <tr class="list2">
-<td class="itemcode"><code><b><a  href="multiarray.html#TBFunc">TBFunc</a></b> = function(a, b: single): single;</code></td>
+<td class="itemcode"><code><strong><a href="multiarray.html#TBFunc">TBFunc</a></strong> = function(a, b: single): single;</code></td>
 </tr>
 </table>
 <span id="PasDoc-Variables"></span><h3 class="summary">Variables</h3>
 <table class="summary wide_list">
 <tr class="list">
-<td class="itemcode"><code><b><a  href="multiarray.html#GLOBAL_FUNC_DEBUG">GLOBAL_FUNC_DEBUG</a></b>: boolean;</code></td>
+<td class="itemcode"><code><strong><a href="multiarray.html#GLOBAL_FUNC_DEBUG">GLOBAL_FUNC_DEBUG</a></strong>: boolean;</code></td>
 </tr>
 </table>
 <h2 class="description">Description</h2>
 <h3 class="detail">Functions and Procedures</h3>
 <table class="detail wide_list">
 <tr class="list">
-<td class="itemcode"><span id="Add"></span><code>function <b>Add</b>(A, B: <a  href="multiarray.TMultiArray.html">TMultiArray</a>): <a  href="multiarray.TMultiArray.html">TMultiArray</a>;</code></td>
+<td class="itemcode"><span id="Add"></span><code>function <strong>Add</strong>(A, B: <a href="multiarray.TMultiArray.html">TMultiArray</a>): <a href="multiarray.TMultiArray.html">TMultiArray</a>;</code></td>
 </tr>
 <tr><td colspan="1">
 &nbsp;</td></tr>
 </table>
 <table class="detail wide_list">
 <tr class="list">
-<td class="itemcode"><span id="All"></span><code>function <b>All</b>: <a  href="multiarray.html#TLongVector">TLongVector</a>;</code></td>
+<td class="itemcode"><span id="All"></span><code>function <strong>All</strong>: <a href="multiarray.html#TLongVector">TLongVector</a>;</code></td>
 </tr>
 <tr><td colspan="1">
 &nbsp;</td></tr>
 </table>
 <table class="detail wide_list">
 <tr class="list">
-<td class="itemcode"><span id="AllocateMultiArray"></span><code>function <b>AllocateMultiArray</b>(Size: longint): <a  href="multiarray.TMultiArray.html">TMultiArray</a>;</code></td>
+<td class="itemcode"><span id="AllocateMultiArray"></span><code>function <strong>AllocateMultiArray</strong>(Size: longint): <a href="multiarray.TMultiArray.html">TMultiArray</a>;</code></td>
 </tr>
 <tr><td colspan="1">
 &nbsp;</td></tr>
 </table>
 <table class="detail wide_list">
 <tr class="list">
-<td class="itemcode"><span id="ApplyBFunc"></span><code>function <b>ApplyBFunc</b>(A, B: <a  href="multiarray.TMultiArray.html">TMultiArray</a>; BFunc: <a  href="multiarray.html#TBFunc">TBFunc</a>; PrintDebug: Boolean = False; FuncName: string = ''): <a  href="multiarray.TMultiArray.html">TMultiArray</a>;</code></td>
+<td class="itemcode"><span id="ApplyBFunc"></span><code>function <strong>ApplyBFunc</strong>(A, B: <a href="multiarray.TMultiArray.html">TMultiArray</a>; BFunc: <a href="multiarray.html#TBFunc">TBFunc</a>; PrintDebug: Boolean = False; FuncName: string = ''): <a href="multiarray.TMultiArray.html">TMultiArray</a>;</code></td>
 </tr>
 <tr><td colspan="1">
 &nbsp;</td></tr>
 </table>
 <table class="detail wide_list">
 <tr class="list">
-<td class="itemcode"><span id="ApplyUFunc"></span><code>function <b>ApplyUFunc</b>(A: <a  href="multiarray.TMultiArray.html">TMultiArray</a>; UFunc: <a  href="multiarray.html#TUFunc">TUFunc</a>; Params: array of single): <a  href="multiarray.TMultiArray.html">TMultiArray</a>;</code></td>
+<td class="itemcode"><span id="ApplyUFunc"></span><code>function <strong>ApplyUFunc</strong>(A: <a href="multiarray.TMultiArray.html">TMultiArray</a>; UFunc: <a href="multiarray.html#TUFunc">TUFunc</a>; Params: array of single): <a href="multiarray.TMultiArray.html">TMultiArray</a>;</code></td>
 </tr>
 <tr><td colspan="1">
 &nbsp;</td></tr>
 </table>
 <table class="detail wide_list">
 <tr class="list">
-<td class="itemcode"><span id="ArrayEqual"></span><code>function <b>ArrayEqual</b>(A, B: <a  href="multiarray.TMultiArray.html">TMultiArray</a>): boolean;</code></td>
+<td class="itemcode"><span id="ArrayEqual"></span><code>function <strong>ArrayEqual</strong>(A, B: <a href="multiarray.TMultiArray.html">TMultiArray</a>): boolean;</code></td>
 </tr>
 <tr><td colspan="1">
 &nbsp;</td></tr>
 </table>
 <table class="detail wide_list">
 <tr class="list">
-<td class="itemcode"><span id="AsStrided"></span><code>function <b>AsStrided</b>(A: <a  href="multiarray.TMultiArray.html">TMultiArray</a>; Shape, Strides: <a  href="multiarray.html#TLongVector">TLongVector</a>): <a  href="multiarray.TMultiArray.html">TMultiArray</a>;</code></td>
+<td class="itemcode"><span id="AsStrided"></span><code>function <strong>AsStrided</strong>(A: <a href="multiarray.TMultiArray.html">TMultiArray</a>; Shape, Strides: <a href="multiarray.html#TLongVector">TLongVector</a>): <a href="multiarray.TMultiArray.html">TMultiArray</a>;</code></td>
 </tr>
 <tr><td colspan="1">
 &nbsp;</td></tr>
 </table>
 <table class="detail wide_list">
 <tr class="list">
-<td class="itemcode"><span id="BroadcastArrays"></span><code>function <b>BroadcastArrays</b>(A, B: <a  href="multiarray.TMultiArray.html">TMultiArray</a>): <a  href="multiarray.TBroadcastResult.html">TBroadcastResult</a>;</code></td>
+<td class="itemcode"><span id="BroadcastArrays"></span><code>function <strong>BroadcastArrays</strong>(A, B: <a href="multiarray.TMultiArray.html">TMultiArray</a>): <a href="multiarray.TBroadcastResult.html">TBroadcastResult</a>;</code></td>
 </tr>
 <tr><td colspan="1">
 &nbsp;</td></tr>
 </table>
 <table class="detail wide_list">
 <tr class="list">
-<td class="itemcode"><span id="CopyVector"></span><code>function <b>CopyVector</b>(v: <a  href="multiarray.html#TSingleVector">TSingleVector</a>): <a  href="multiarray.html#TSingleVector">TSingleVector</a>;</code></td>
+<td class="itemcode"><span id="CopyVector"></span><code>function <strong>CopyVector</strong>(v: <a href="multiarray.html#TSingleVector">TSingleVector</a>): <a href="multiarray.html#TSingleVector">TSingleVector</a>;</code></td>
 </tr>
 <tr><td colspan="1">
 &nbsp;</td></tr>
 </table>
 <table class="detail wide_list">
 <tr class="list">
-<td class="itemcode"><span id="CreateEmptyFTensor"></span><code>function <b>CreateEmptyFTensor</b>(Contiguous: boolean = True): <a  href="multiarray.TMultiArray.html">TMultiArray</a>;</code></td>
+<td class="itemcode"><span id="CreateEmptyFTensor"></span><code>function <strong>CreateEmptyFTensor</strong>(Contiguous: boolean = True): <a href="multiarray.TMultiArray.html">TMultiArray</a>;</code></td>
 </tr>
 <tr><td colspan="1">
 &nbsp;</td></tr>
 </table>
 <table class="detail wide_list">
 <tr class="list">
-<td class="itemcode"><span id="CreateMultiArray"></span><code>function <b>CreateMultiArray</b>(AData: array of single): <a  href="multiarray.TMultiArray.html">TMultiArray</a>;</code></td>
+<td class="itemcode"><span id="CreateMultiArray"></span><code>function <strong>CreateMultiArray</strong>(AData: array of single): <a href="multiarray.TMultiArray.html">TMultiArray</a>;</code></td>
 </tr>
 <tr><td colspan="1">
 &nbsp;</td></tr>
 </table>
 <table class="detail wide_list">
 <tr class="list">
-<td class="itemcode"><span id="CreateMultiArray"></span><code>function <b>CreateMultiArray</b>(AData: single): <a  href="multiarray.TMultiArray.html">TMultiArray</a>;</code></td>
+<td class="itemcode"><span id="CreateMultiArray"></span><code>function <strong>CreateMultiArray</strong>(AData: single): <a href="multiarray.TMultiArray.html">TMultiArray</a>;</code></td>
 </tr>
 <tr><td colspan="1">
 &nbsp;</td></tr>
 </table>
 <table class="detail wide_list">
 <tr class="list">
-<td class="itemcode"><span id="DebugMultiArray"></span><code>procedure <b>DebugMultiArray</b>(A: <a  href="multiarray.TMultiArray.html">TMultiArray</a>);</code></td>
+<td class="itemcode"><span id="DebugMultiArray"></span><code>procedure <strong>DebugMultiArray</strong>(A: <a href="multiarray.TMultiArray.html">TMultiArray</a>);</code></td>
 </tr>
 <tr><td colspan="1">
 &nbsp;</td></tr>
 </table>
 <table class="detail wide_list">
 <tr class="list">
-<td class="itemcode"><span id="DynArrayToVector"></span><code>function <b>DynArrayToVector</b>(A: array of longint): <a  href="multiarray.html#TLongVector">TLongVector</a>;</code></td>
+<td class="itemcode"><span id="DynArrayToVector"></span><code>function <strong>DynArrayToVector</strong>(A: array of longint): <a href="multiarray.html#TLongVector">TLongVector</a>;</code></td>
 </tr>
 <tr><td colspan="1">
 &nbsp;</td></tr>
 </table>
 <table class="detail wide_list">
 <tr class="list">
-<td class="itemcode"><span id="GenerateMultiArray"></span><code>function <b>GenerateMultiArray</b>(Shape: array of longint; GenFunc: <a  href="multiarray.html#TGenFunc">TGenFunc</a>; Params: array of single): <a  href="multiarray.TMultiArray.html">TMultiArray</a>;</code></td>
+<td class="itemcode"><span id="GenerateMultiArray"></span><code>function <strong>GenerateMultiArray</strong>(Shape: array of longint; GenFunc: <a href="multiarray.html#TGenFunc">TGenFunc</a>; Params: array of single): <a href="multiarray.TMultiArray.html">TMultiArray</a>;</code></td>
 </tr>
 <tr><td colspan="1">
 &nbsp;</td></tr>
 </table>
 <table class="detail wide_list">
 <tr class="list">
-<td class="itemcode"><span id="GetVirtualData"></span><code>function <b>GetVirtualData</b>(A: <a  href="multiarray.TMultiArray.html">TMultiArray</a>): <a  href="multiarray.html#TSingleVector">TSingleVector</a>;</code></td>
+<td class="itemcode"><span id="GetVirtualData"></span><code>function <strong>GetVirtualData</strong>(A: <a href="multiarray.TMultiArray.html">TMultiArray</a>): <a href="multiarray.html#TSingleVector">TSingleVector</a>;</code></td>
 </tr>
 <tr><td colspan="1">
 &nbsp;</td></tr>
 </table>
 <table class="detail wide_list">
 <tr class="list">
-<td class="itemcode"><span id="Matmul"></span><code>function <b>Matmul</b>(A, B: <a  href="multiarray.TMultiArray.html">TMultiArray</a>): <a  href="multiarray.TMultiArray.html">TMultiArray</a>;</code></td>
+<td class="itemcode"><span id="Matmul"></span><code>function <strong>Matmul</strong>(A, B: <a href="multiarray.TMultiArray.html">TMultiArray</a>): <a href="multiarray.TMultiArray.html">TMultiArray</a>;</code></td>
 </tr>
 <tr><td colspan="1">
 &nbsp;</td></tr>
 </table>
 <table class="detail wide_list">
 <tr class="list">
-<td class="itemcode"><span id="Maximum"></span><code>function <b>Maximum</b>(A, B: <a  href="multiarray.TMultiArray.html">TMultiArray</a>): <a  href="multiarray.TMultiArray.html">TMultiArray</a>;</code></td>
+<td class="itemcode"><span id="Maximum"></span><code>function <strong>Maximum</strong>(A, B: <a href="multiarray.TMultiArray.html">TMultiArray</a>): <a href="multiarray.TMultiArray.html">TMultiArray</a>;</code></td>
 </tr>
 <tr><td colspan="1">
 &nbsp;</td></tr>
 </table>
 <table class="detail wide_list">
 <tr class="list">
-<td class="itemcode"><span id="Multiply"></span><code>function <b>Multiply</b>(A, B: <a  href="multiarray.TMultiArray.html">TMultiArray</a>): <a  href="multiarray.TMultiArray.html">TMultiArray</a>;</code></td>
+<td class="itemcode"><span id="Multiply"></span><code>function <strong>Multiply</strong>(A, B: <a href="multiarray.TMultiArray.html">TMultiArray</a>): <a href="multiarray.TMultiArray.html">TMultiArray</a>;</code></td>
 </tr>
 <tr><td colspan="1">
 &nbsp;</td></tr>
 </table>
 <table class="detail wide_list">
 <tr class="list">
-<td class="itemcode"><span id="OffsetToIndex"></span><code>function <b>OffsetToIndex</b>(A: <a  href="multiarray.TMultiArray.html">TMultiArray</a>; Offset: longint): <a  href="multiarray.html#TLongVector">TLongVector</a>;</code></td>
+<td class="itemcode"><span id="OffsetToIndex"></span><code>function <strong>OffsetToIndex</strong>(A: <a href="multiarray.TMultiArray.html">TMultiArray</a>; Offset: longint): <a href="multiarray.html#TLongVector">TLongVector</a>;</code></td>
 </tr>
 <tr><td colspan="1">
 &nbsp;</td></tr>
 </table>
 <table class="detail wide_list">
 <tr class="list">
-<td class="itemcode"><span id="Power"></span><code>function <b>Power</b>(A, B: <a  href="multiarray.TMultiArray.html">TMultiArray</a>): <a  href="multiarray.TMultiArray.html">TMultiArray</a>; overload;</code></td>
+<td class="itemcode"><span id="Power"></span><code>function <strong>Power</strong>(A, B: <a href="multiarray.TMultiArray.html">TMultiArray</a>): <a href="multiarray.TMultiArray.html">TMultiArray</a>; overload;</code></td>
 </tr>
 <tr><td colspan="1">
 &nbsp;</td></tr>
 </table>
 <table class="detail wide_list">
 <tr class="list">
-<td class="itemcode"><span id="PrintMultiArray"></span><code>procedure <b>PrintMultiArray</b>(A: <a  href="multiarray.TMultiArray.html">TMultiArray</a>);</code></td>
+<td class="itemcode"><span id="PrintMultiArray"></span><code>procedure <strong>PrintMultiArray</strong>(A: <a href="multiarray.TMultiArray.html">TMultiArray</a>);</code></td>
 </tr>
 <tr><td colspan="1">
 &nbsp;</td></tr>
 </table>
 <table class="detail wide_list">
 <tr class="list">
-<td class="itemcode"><span id="Range"></span><code>function <b>Range</b>(Start, Stop: longint): <a  href="multiarray.html#TLongVector">TLongVector</a>; overload;</code></td>
+<td class="itemcode"><span id="Range"></span><code>function <strong>Range</strong>(Start, Stop, step: longint): <a href="multiarray.html#TLongVector">TLongVector</a>; overload;</code></td>
 </tr>
 <tr><td colspan="1">
 &nbsp;</td></tr>
 </table>
 <table class="detail wide_list">
 <tr class="list">
-<td class="itemcode"><span id="Range"></span><code>function <b>Range</b>(Start, Stop, step: longint): <a  href="multiarray.html#TLongVector">TLongVector</a>; overload;</code></td>
+<td class="itemcode"><span id="Range"></span><code>function <strong>Range</strong>(Start, Stop: longint): <a href="multiarray.html#TLongVector">TLongVector</a>; overload;</code></td>
 </tr>
 <tr><td colspan="1">
 &nbsp;</td></tr>
 </table>
 <table class="detail wide_list">
 <tr class="list">
-<td class="itemcode"><span id="ReadCSV"></span><code>function <b>ReadCSV</b>(FileName: string): <a  href="multiarray.TMultiArray.html">TMultiArray</a>;</code></td>
+<td class="itemcode"><span id="ReadCSV"></span><code>function <strong>ReadCSV</strong>(FileName: string): <a href="multiarray.TMultiArray.html">TMultiArray</a>;</code></td>
 </tr>
 <tr><td colspan="1">
 &nbsp;</td></tr>
 </table>
 <table class="detail wide_list">
 <tr class="list">
-<td class="itemcode"><span id="ShapeToStrides"></span><code>function <b>ShapeToStrides</b>(AShape: <a  href="multiarray.html#TLongVector">TLongVector</a>): <a  href="multiarray.html#TLongVector">TLongVector</a>;</code></td>
+<td class="itemcode"><span id="ShapeToStrides"></span><code>function <strong>ShapeToStrides</strong>(AShape: <a href="multiarray.html#TLongVector">TLongVector</a>): <a href="multiarray.html#TLongVector">TLongVector</a>;</code></td>
 </tr>
 <tr><td colspan="1">
 &nbsp;</td></tr>
 </table>
 <table class="detail wide_list">
 <tr class="list">
-<td class="itemcode"><span id="SqueezeMultiArray"></span><code>procedure <b>SqueezeMultiArray</b>(var A: <a  href="multiarray.TMultiArray.html">TMultiArray</a>);</code></td>
+<td class="itemcode"><span id="SqueezeMultiArray"></span><code>procedure <strong>SqueezeMultiArray</strong>(var A: <a href="multiarray.TMultiArray.html">TMultiArray</a>);</code></td>
 </tr>
 <tr><td colspan="1">
 &nbsp;</td></tr>
 </table>
 <table class="detail wide_list">
 <tr class="list">
-<td class="itemcode"><span id="Transpose"></span><code>function <b>Transpose</b>(A: <a  href="multiarray.TMultiArray.html">TMultiArray</a>): <a  href="multiarray.TMultiArray.html">TMultiArray</a>;</code></td>
+<td class="itemcode"><span id="Transpose"></span><code>function <strong>Transpose</strong>(A: <a href="multiarray.TMultiArray.html">TMultiArray</a>): <a href="multiarray.TMultiArray.html">TMultiArray</a>;</code></td>
 </tr>
 <tr><td colspan="1">
 &nbsp;</td></tr>
 </table>
 <table class="detail wide_list">
 <tr class="list">
-<td class="itemcode"><span id="VectorEqual"></span><code>function <b>VectorEqual</b>(A, B: <a  href="multiarray.html#TSingleVector">TSingleVector</a>): boolean;</code></td>
+<td class="itemcode"><span id="VectorEqual"></span><code>function <strong>VectorEqual</strong>(A, B: <a href="multiarray.html#TSingleVector">TSingleVector</a>): boolean;</code></td>
 </tr>
 <tr><td colspan="1">
 &nbsp;</td></tr>
 </table>
 <table class="detail wide_list">
 <tr class="list">
-<td class="itemcode"><span id="VectorEqual"></span><code>function <b>VectorEqual</b>(A, B: <a  href="multiarray.html#TLongVector">TLongVector</a>): boolean;</code></td>
+<td class="itemcode"><span id="VectorEqual"></span><code>function <strong>VectorEqual</strong>(A, B: <a href="multiarray.html#TLongVector">TLongVector</a>): boolean;</code></td>
 </tr>
 <tr><td colspan="1">
 &nbsp;</td></tr>
@@ -383,42 +371,42 @@ A unit containing TMultiArray, multidimensional array data structure with single
 <h3 class="detail">Types</h3>
 <table class="detail wide_list">
 <tr class="list">
-<td class="itemcode"><span id="TLongVector"></span><code><b>TLongVector</b> = array of longint;</code></td>
+<td class="itemcode"><span id="TLongVector"></span><code><strong>TLongVector</strong> = array of longint;</code></td>
 </tr>
 <tr><td colspan="1">
 &nbsp;</td></tr>
 </table>
 <table class="detail wide_list">
 <tr class="list">
-<td class="itemcode"><span id="TLongVectorArr"></span><code><b>TLongVectorArr</b> = array of <a  href="multiarray.html#TLongVector">TLongVector</a>;</code></td>
+<td class="itemcode"><span id="TLongVectorArr"></span><code><strong>TLongVectorArr</strong> = array of <a href="multiarray.html#TLongVector">TLongVector</a>;</code></td>
 </tr>
 <tr><td colspan="1">
 &nbsp;</td></tr>
 </table>
 <table class="detail wide_list">
 <tr class="list">
-<td class="itemcode"><span id="TSingleVector"></span><code><b>TSingleVector</b> = array of single;</code></td>
+<td class="itemcode"><span id="TSingleVector"></span><code><strong>TSingleVector</strong> = array of single;</code></td>
 </tr>
 <tr><td colspan="1">
 &nbsp;</td></tr>
 </table>
 <table class="detail wide_list">
 <tr class="list">
-<td class="itemcode"><span id="TGenFunc"></span><code><b>TGenFunc</b> = function(Params: array of single): single;</code></td>
+<td class="itemcode"><span id="TGenFunc"></span><code><strong>TGenFunc</strong> = function(Params: array of single): single;</code></td>
 </tr>
 <tr><td colspan="1">
 &nbsp;</td></tr>
 </table>
 <table class="detail wide_list">
 <tr class="list">
-<td class="itemcode"><span id="TUFunc"></span><code><b>TUFunc</b> = function(a: single; params: array of single): single;</code></td>
+<td class="itemcode"><span id="TUFunc"></span><code><strong>TUFunc</strong> = function(a: single; params: array of single): single;</code></td>
 </tr>
 <tr><td colspan="1">
 &nbsp;</td></tr>
 </table>
 <table class="detail wide_list">
 <tr class="list">
-<td class="itemcode"><span id="TBFunc"></span><code><b>TBFunc</b> = function(a, b: single): single;</code></td>
+<td class="itemcode"><span id="TBFunc"></span><code><strong>TBFunc</strong> = function(a, b: single): single;</code></td>
 </tr>
 <tr><td colspan="1">
 &nbsp;</td></tr>
@@ -426,11 +414,11 @@ A unit containing TMultiArray, multidimensional array data structure with single
 <h3 class="detail">Variables</h3>
 <table class="detail wide_list">
 <tr class="list">
-<td class="itemcode"><span id="GLOBAL_FUNC_DEBUG"></span><code><b>GLOBAL_FUNC_DEBUG</b>: boolean;</code></td>
+<td class="itemcode"><span id="GLOBAL_FUNC_DEBUG"></span><code><strong>GLOBAL_FUNC_DEBUG</strong>: boolean;</code></td>
 </tr>
 <tr><td colspan="1">
 &nbsp;</td></tr>
 </table>
-<hr><span class="appinfo"><em>Generated by <a  href="https://github.com/pasdoc/pasdoc/wiki">PasDoc 0.15.0</a>. </em>
+<hr><span class="appinfo"><em>Generated by <a href="https://github.com/pasdoc/pasdoc/wiki">PasDoc 0.15.0</a>. </em>
 </span>
 </td></tr></table></body></html>
