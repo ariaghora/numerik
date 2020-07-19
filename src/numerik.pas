@@ -151,7 +151,7 @@ begin
   end;
 
   if Not KeepDims then
-    SqueezeMultiArray(Result);
+    SqueezeMultiArrayAt(Result, axis);
 end;
 
 function Mean(A: TMultiArray; axis: integer = -1): TMultiArray; overload;
