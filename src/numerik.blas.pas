@@ -21,7 +21,12 @@ const
   CBLAS_TRANS = 112;
   CBLAS_CONJ_TRANS = 113;
 
+function Add_BLAS(A, B: TMultiArray): TMultiArray;
 function MatMul_BLAS(A, B: TMultiArray): TMultiArray;
+
+procedure cblas_saxpy(N: longint; A: single; X: TSingleVector; INCX: longint;
+  Y: TSingleVector; INCY: longint);
+  external 'libopenblas.dll';
 
 procedure cblas_sgemm(Order: longint; TransA: longint; TransB: longint;
   M: longint; N: longint; K: longint; alpha: single; A: TSingleVector;
@@ -35,6 +40,16 @@ function LAPACKE_sgesvd(MatrixLayout: longint; JOBU, JOBVT: char;
   external LIB_NAME;
 
 implementation
+
+function Add_BLAS(A, B: TMultiArray): TMultiArray;
+begin
+  Result := AllocateMultiArray(A.Size,
+                               False    // do not allocate the memory yet
+                               ).Reshape(A.Shape);
+  Result.Data := nil;
+  Result.Data := CopyVector(B.GetVirtualData);
+  cblas_saxpy(A.Size, 1, A.GetVirtualData, 1, Result.Data, 1);
+end;
 
 function MatMul_BLAS(A, B: TMultiArray): TMultiArray;
 var

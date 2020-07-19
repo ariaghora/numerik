@@ -112,13 +112,21 @@ procedure TTestMultiArray.TestReduceBig;
 var
   i: integer;
   expected: TSingleVector;
+  t: TDateTime;
 begin
-  M := Random([10000, 100]);
+  WriteLn('Generating a 10000x1000 array... ');
+  M := Random([10000, 1000]);
   M := M / M;
+
+  t := Now;
+  WriteLn('Reducing array... ');
   M := Sum(M, 0);
-  SetLength(expected, 100);
-  for i := 0 to 99 do
+  WriteLn(MilliSecondsBetween(Now, t), 'ms');
+
+  SetLength(expected, 1000);
+  for i := 0 to 999 do
     expected[i] := 10000;
+
   AssertTrue(VectorEqual(M.GetVirtualData, expected));
 end;
 

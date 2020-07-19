@@ -68,7 +68,7 @@ type
   end;
 
   function All: TLongVector;
-  function AllocateMultiArray(Size: longint): TMultiArray;
+  function AllocateMultiArray(Size: longint; AllocateData: boolean=true): TMultiArray;
   function ApplyBFunc(A, B: TMultiArray; BFunc: TBFunc; PrintDebug: Boolean = False;
     FuncName: string = ''): TMultiArray;
   function ApplyUFunc(A: TMultiArray; UFunc: TUFunc; Params: array of single): TMultiArray;
@@ -203,9 +203,10 @@ uses
     Exit([]);
   end;
 
-  function AllocateMultiArray(Size: longint): TMultiArray;
+  function AllocateMultiArray(Size: longint; AllocateData: boolean=true): TMultiArray;
   begin
-    SetLength(Result.Data, Size);
+    if AllocateData then
+      SetLength(Result.Data, Size);
     SetLength(Result.Shape, 1);
     Result.IsContiguous := True;
     Result.Shape[0] := Size;
@@ -315,9 +316,14 @@ uses
     if not(specialize VectorEqual<TLongVector>(A.Shape, B.Shape)) then
     begin
       BcastResult := BroadcastArrays(A, B);
+
       Result := ApplyBFunc(BcastResult.A, BcastResult.B, BFunc, PrintDebug, FuncName);
     end else
     begin
+
+      if FuncName = 'ADD' then
+        Exit(Add_BLAS(A, B));
+
       Result := AllocateMultiArray(A.Size);
       Result := Result.Reshape(A.Shape); // should be reset strides
       Result.ResetIndices;
