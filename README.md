@@ -52,7 +52,3 @@ end.
 ```
 
 Read the API reference [here](http://ariaghora.github.io/numerik).
-
-### TODO:
-- [x] ~~Array slicing~~
-- [x] ~~BLAS support~~(for now only matrix multiplication is supported)
