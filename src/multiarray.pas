@@ -90,6 +90,7 @@ type
   function Transpose(A: TMultiArray): TMultiArray;
 
   procedure DebugMultiArray(A: TMultiArray);
+  procedure EnsureNDims(A: TMultiArray; NDims: integer);
   procedure PrintMultiArray(A: TMultiArray);
   procedure SqueezeMultiArrayAt(var A: TMultiArray; axis: integer);
   procedure SqueezeMultiArray(var A: TMultiArray);
@@ -367,7 +368,13 @@ uses
     begin
       Write('> Axis ', i, ' ==> '); specialize PrintVector<TLongVector>(A.Indices[i]);
     end;
+  end;
 
+  procedure EnsureNDims(A: TMultiArray; NDims: integer);
+  begin
+    if A.NDims <> NDims then
+      raise Exception.Create('A.NDims must be equals to ' + IntToStr(NDims) + '. ' +
+                              'Got ' + IntToStr(A.NDims) + ' instead.');
   end;
 
   procedure PrintMatrix(A: TMultiArray);

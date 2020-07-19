@@ -186,6 +186,8 @@ var
   U, Sigma, VT: TMultiArray;
   Superb, SigmaVal: TSingleVector;
 begin
+  EnsureNDims(A, 2);
+
   m := A.Shape[0];
   n := A.Shape[1];
   SetLength(Superb, min(m, n) - 1);
