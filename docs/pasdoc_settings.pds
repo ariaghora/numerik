@@ -36,7 +36,7 @@ AutoAbstract=0
 AutoLink=0
 HandleMacros=1
 UseTipueSearch=1
-OpenHTML=0
+OpenHTML=1
 LineBreakQuality=0
 SpecialMarkerTreatment=1
 Title=
@@ -44,12 +44,6 @@ VizGraphClasses=0
 VizGraphUses=0
 CheckSpelling=0
 LatexGraphicsPackage=0
-
-[AutoLinkExclude]
-Count=0
-
-[AdditionalFiles]
-Count=0
 
 [Defines]
 Count=2
@@ -62,6 +56,9 @@ Count=0
 [Footer]
 Count=0
 
+[AutoLinkExclude]
+Count=0
+
 [IncludeDirectories]
 Count=1
 Item_0=..\src
@@ -70,6 +67,9 @@ Item_0=..\src
 Count=2
 Item_0=..\src\multiarray.pas
 Item_1=..\src\numerik.pas
+
+[AdditionalFiles]
+Count=0
 
 [HyphenatedWords]
 Count=0
