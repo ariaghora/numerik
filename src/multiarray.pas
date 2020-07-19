@@ -91,6 +91,7 @@ type
 
   procedure DebugMultiArray(A: TMultiArray);
   procedure PrintMultiArray(A: TMultiArray);
+  procedure SqueezeMultiArrayAt(var A: TMultiArray; axis: integer);
   procedure SqueezeMultiArray(var A: TMultiArray);
 
   function CopyVector(v: TSingleVector): TSingleVector;
@@ -394,63 +395,48 @@ uses
 
   procedure PrintMultiArray(A: TMultiArray);
   var
-    tmp: TMultiArray;
-  var
     Digit, DecPlace, MaxDims: integer;
-    MaxNum: single;
-    s: string = '';
+    MaxNUm: single;
+    s: string;
 
-    procedure Pr(A: TMultiArray; it: longint);
+    procedure PrintHelper(A: TMultiArray; it: longint);
     var
-      i, j: longint;
+      i, j: integer;
+      tmp: TMultiArray;
     begin
-
-      if it > 0 then
-      begin
-        s := s + DupeString(']', A.NDims) + ',';
-        s := s + DupeString(sLineBreak, A.NDims);
-        s := s + DupeString(' ', MaxDims - A.NDims);
-        s := s + DupeString('[', A.NDims);
-      end;
-
-      if A.NDims < 2 then
+      if A.NDims = 0 then
       begin
         for j := 0 to A.Size - 1 do
         begin
-
           s := s + Format('%' + IntToStr(Digit + DecPlace + 2) + '.' +
                           IntToStr(DecPlace) +'f', [A.Get(j)]);
-
-          if j < A.Size - 1 then
-          begin
-            s := s + ',';
-          end;
         end;
-        exit;
+        Exit;
       end;
 
+      if it > 0 then
+      begin
+        s := s + ',' + DupeString(sLineBreak, A.NDims);
+        s := s + DupeString(' ', MaxDims - A.NDims);
+      end;
+      s := s + '[';
       for i := 0 to A.Shape[0] - 1 do
       begin
-        tmp := A.Slice([[i]]).Contiguous; //<== A potential bottleneck
-        SqueezeMultiArray(tmp);
-        Pr(tmp, i);
+        tmp := A.Slice([[i]]);
+        SqueezeMultiArrayAt(tmp, 0);
+        PrintHelper(tmp, i);
       end;
-
+      s := s + ']';
     end;
-  begin
-    MaxDims := A.NDims;
 
+  begin
+    s := '';
+    MaxDims := A.NDims;
     MaxNum := MaxValue(A.Data);
     Digit := Ceil(Log10(MaxNum));
     DecPlace := 2;
-
-    // TODO: Consider when the minimum is negative,
-    // i.e., an extra '-' character
-
-    Write(DupeString('[', MaxDims));
-    Pr(A, 0);
-    Write(s);
-    WriteLn(DupeString(']', MaxDims));
+    PrintHelper(A, 0);
+    WriteLn(s);
   end;
 
   function CopyVector(v: TSingleVector): TSingleVector;
@@ -586,6 +572,16 @@ uses
     Result.Indices := NewIndices;
   end;
 
+  procedure SqueezeMultiArrayAt(var A: TMultiArray; axis: integer);
+  begin
+    if A.Shape[axis] = 1 then
+    begin
+      specialize DeleteFromVector<TLongVector>(A.Shape, axis, 1);
+      specialize DeleteFromVector<TLongVector>(A.Strides, axis, 1);
+      specialize DeleteFromVector<TLongVectorArr>(A.Indices, axis, 1);
+    end;
+  end;
+
   procedure SqueezeMultiArray(var A: TMultiArray);
   var
     len, i: integer;
@@ -594,9 +590,7 @@ uses
     for i := len - 1 downto 0 do
       if A.Shape[i] = 1 then
       begin
-        specialize DeleteFromVector<TLongVector>(A.Shape, i, 1);
-        specialize DeleteFromVector<TLongVector>(A.Strides, i, 1);
-        specialize DeleteFromVector<TLongVectorArr>(A.Indices, i, 1);
+        SqueezeMultiArrayAt(A, i);
       end;
   end;
 
