@@ -85,6 +85,7 @@ type
   function OffsetToIndex(A: TMultiArray; Offset: longint): TLongVector;
   function Range(Start, Stop, step: longint): TLongVector; overload;
   function Range(Start, Stop: longint): TLongVector; overload;
+  function Ravel(A: TMultiArray): TMultiArray;
   function ReadCSV(FileName: string): TMultiArray;
   function ShapeToStrides(AShape: TLongVector): TLongVector;
   function Transpose(A: TMultiArray): TMultiArray;
@@ -92,10 +93,13 @@ type
   procedure DebugMultiArray(A: TMultiArray);
   procedure EnsureNDims(A: TMultiArray; NDims: integer);
   procedure PrintMultiArray(A: TMultiArray);
+  procedure Permute(var A: TMultiArray);
   procedure SqueezeMultiArrayAt(var A: TMultiArray; axis: integer);
   procedure SqueezeMultiArray(var A: TMultiArray);
 
-  function CopyVector(v: TSingleVector): TSingleVector;
+  function CopyVector(V: TSingleVector): TSingleVector;
+  procedure ShuffleVector(var V: array of longint);
+  procedure ShuffleVector(var V: array of single);
   function VectorEqual(A, B: TSingleVector): boolean;
   function VectorEqual(A, B: TLongVector): boolean;
 
@@ -458,6 +462,32 @@ uses
     Exit(specialize CopyVector<TSingleVector>(v));
   end;
 
+  generic procedure ShuffleVector<T>(var V: array of T);
+  var
+    i, p: integer;
+    tmp: T;
+
+  begin
+    { Fisher-Yates shuffle algorithm }
+    for i := Length(V) downto 1 do
+    begin
+      p := RandomRange(0, i);
+      tmp := V[i - 1];
+      V[i - 1] := V[p];
+      V[p] := tmp;
+    end;
+  end;
+
+  procedure ShuffleVector(var V: array of longint);
+  begin
+    specialize ShuffleVector<longint>(V);
+  end;
+
+  procedure ShuffleVector(var V: array of single);
+  begin
+    specialize ShuffleVector<single>(V);
+  end;
+
   function VectorEqual(A, B: TSingleVector): boolean;
   begin
     Exit(specialize VectorEqual<TSingleVector>(A, B));
@@ -525,6 +555,11 @@ uses
     Exit(Range(Start, Stop, 1));
   end;
 
+  function Ravel(A: TMultiArray): TMultiArray;
+  begin
+    Exit(A.GetVirtualData);
+  end;
+
   function ReadCSV(FileName: string): TMultiArray;
   var
     sl: TStringList;
@@ -584,6 +619,15 @@ uses
     for i := 0 to High(Result.Indices) do
       NewIndices[i] := Result.Indices[High(Result.Indices) - i];
     Result.Indices := NewIndices;
+  end;
+
+  procedure Permute(var A: TMultiArray);
+  begin
+    if A.NDims = 0 then Exit;
+
+    ShuffleVector(A.Indices[0]);
+    A.IsContiguous := False;
+    A := A.Contiguous;
   end;
 
   procedure SqueezeMultiArrayAt(var A: TMultiArray; axis: integer);
