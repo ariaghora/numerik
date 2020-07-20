@@ -44,10 +44,12 @@ type
       rather than copied. If Deep is true, then the actual data is copied. }
     function Copy(Deep: boolean = True): TMultiArray;
 
+    { Get i-th item of the flattened array }
     function Get(i: longint): single; overload;
     function Get(idx: TLongVector): TMultiArray; overload;
     function GetVirtualData: TSingleVector;
     function IndexToStridedOffset(Index: array of longint): longint;
+    function Item: Single;
     function Matmul(Other: TMultiArray): TMultiArray;
     function Reshape(NewShape: TLongVector): TMultiArray;
 
@@ -61,6 +63,7 @@ type
     property IsContiguous: boolean read FIsContiguous write FIsContiguous;
     property NDims: integer read GetNDims;
     property Size: longint read GetSize;
+    property Items[idx: array of TLongVector]: TMultiArray read Slice; default;
   end;
 
   TBroadcastResult = record
@@ -93,6 +96,7 @@ type
   procedure DebugMultiArray(A: TMultiArray);
   procedure EnsureNDims(A: TMultiArray; NDims: integer);
   procedure PrintMultiArray(A: TMultiArray);
+  { Shuffle an array based on the first index }
   procedure Permute(var A: TMultiArray);
   procedure SqueezeMultiArrayAt(var A: TMultiArray; axis: integer);
   procedure SqueezeMultiArray(var A: TMultiArray);
@@ -124,6 +128,8 @@ type
   { @exclude } operator explicit(A: array of longint) B: TLongVector;
   { @exclude } operator :=(A: TLongVector) B: TSingleVector;
   { @exclude } operator explicit(A: TLongVector) B: TSingleVector;
+  { @exclude } operator :=(A: longint) B: TLongVector;
+  { @exclude } operator explicit(A: longint) B: TLongVector;
 
 var
   GLOBAL_FUNC_DEBUG: boolean;
@@ -131,7 +137,7 @@ var
 implementation
 
 uses
-  numerik, numerik.blas;
+  numerik.blas;
 
   generic function CopyVector<T>(v: T): T;
   var
@@ -140,15 +146,6 @@ uses
     SetLength(Result, Length(v));
     for i := 0 to High(v) do
       Result[i] := v[i];
-  end;
-
-  generic function SliceVector<T>(v: T; start, stop: longint): T;
-  var
-    i: longint;
-  begin
-    SetLength(Result, stop - start);
-    for i := start to stop - 1 do
-      Result[i - start] := v[i];
   end;
 
   generic function Prod<T>(Data: array of T): T;
@@ -291,6 +288,7 @@ uses
   function CreateMultiArray(AData: single): TMultiArray;
   begin
     Result := CreateMultiArray([AData]);
+    SqueezeMultiArray(Result);
   end;
 
   function ArrayEqual(A, B: TMultiArray): boolean;
@@ -793,6 +791,12 @@ uses
     Result.ResetIndices;
   end;
 
+  function TMultiArray.Item: Single;
+  begin
+    if NDims > 0 then raise Exception.Create('');
+    Exit(Data[0]);
+  end;
+
   function TMultiArray.Matmul(Other: TMultiArray): TMultiArray;
   begin
     Exit(multiarray.Matmul(Self, Other));
@@ -969,6 +973,7 @@ uses
   operator :=(A: single) B: TMultiArray;
   begin
     B := CreateMultiArray(A);
+    SqueezeMultiArray(B);
   end;
 
   operator := (A: array of single) B: TMultiArray;
@@ -978,7 +983,7 @@ uses
 
   operator explicit(A: single) B: TMultiArray;
   begin
-    B := CreateMultiArray(A);
+    B := A;
   end;
 
   operator :=(A: array of longint) B: TLongVector;
@@ -988,7 +993,7 @@ uses
 
   operator explicit(A: array of longint) B: TLongVector;
   begin
-    B := DynArrayToVector(A);
+    B := A;
   end;
 
   operator :=(A: TLongVector) B: TSingleVector;
@@ -1003,8 +1008,18 @@ uses
   var
     i: longint;
   begin
-    SetLength(B, Length(A));
-    for i := 0 to High(A) do B[i] := A[i];
+    B := A;
+  end;
+
+  operator :=(A: longint) B: TLongVector;
+  begin
+    SetLength(B, 1);
+    B[0] := A;
+  end;
+
+  operator explicit(A: longint) B: TLongVector;
+  begin
+    B := A;
   end;
 
 initialization
