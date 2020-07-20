@@ -29,7 +29,7 @@ type
 
 { Compute the mean of a A along axis. The default axis is -1, meaning the mean is
   computed over all items in A. }
-function Mean(A: TMultiArray; axis: integer = -1): TMultiArray; overload;
+function Mean(A: TMultiArray; axis: integer = -1; KeepDims: boolean=False): TMultiArray; overload;
 
 function Round(A: TMultiArray): TMultiArray; overload;
 
@@ -156,11 +156,13 @@ begin
     SqueezeMultiArrayAt(Result, axis);
 end;
 
-function Mean(A: TMultiArray; axis: integer = -1): TMultiArray; overload;
+function Mean(A: TMultiArray; axis: integer = -1; KeepDims: boolean=False): TMultiArray; overload;
 begin
   if axis = -1 then
     Exit(math.Mean(A.GetVirtualData));
-  Exit(Sum(A, axis) / A.Shape[axis]);
+  Result := Sum(A, axis) / A.Shape[axis];
+  if KeepDims then
+    SqueezeMultiArrayAt(Result, axis);
 end;
 
 function _Round(X: single; params: array of single): single;
