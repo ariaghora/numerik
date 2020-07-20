@@ -30,36 +30,35 @@ type
     function GetNDims: integer;
     function GetSize: longint;
     function OffsetToStrided(Offset: longint): longint; inline;
+    procedure ResetIndices;
   public
     DataOffset: longint;
     Data:  array of single;
     Indices: TLongVectorArr;
     Shape: TLongVector;
     Strides: TLongVector;
-
     { Returns contiguous copy of this array }
     function Contiguous: TMultiArray;
-
     { Perform copying of this array. By default, the actual data is referenced
       rather than copied. If Deep is true, then the actual data is copied. }
     function Copy(Deep: boolean = True): TMultiArray;
-
     { Get i-th item of the flattened array }
     function Get(i: longint): single; overload;
-    function Get(idx: TLongVector): TMultiArray; overload;
+    { Returns a TSingleVector containing "strided" data, instead of the actual
+      data. }
     function GetVirtualData: TSingleVector;
-    function IndexToStridedOffset(Index: array of longint): longint;
+    { Convert Self to a single-typed scalar if NDims=0 }
     function Item: Single;
+    { Multiply self with other 2-dimensional TMultiArray }
     function Matmul(Other: TMultiArray): TMultiArray;
+    { Reshape a TMultiArray into a specified shape }
     function Reshape(NewShape: TLongVector): TMultiArray;
-
     { Perform multidimensional slicing.
       For now Slice will return contiguous. }
     function Slice(idx: array of TLongVector): TMultiArray;
-
+    { Perform transpose. If NDims > 2, the reverse the axis }
     function T: TMultiArray;
     procedure Put(i: array of integer; x: single);
-    procedure ResetIndices;
     property IsContiguous: boolean read FIsContiguous write FIsContiguous;
     property NDims: integer read GetNDims;
     property Size: longint read GetSize;
@@ -85,6 +84,7 @@ type
   function GenerateMultiArray(Shape: array of longint; GenFunc: TGenFunc;
     Params: array of single): TMultiArray;
   function GetVirtualData(A: TMultiArray): TSingleVector;
+  function IndexToStridedOffset(Index: array of longint; Strides: TLongVector): longint;
   function OffsetToIndex(A: TMultiArray; Offset: longint): TLongVector;
   function Range(Start, Stop, step: longint): TLongVector; overload;
   function Range(Start, Stop: longint): TLongVector; overload;
@@ -668,12 +668,12 @@ uses
     begin
       r := Indices[0][Offset div Shape[1]];
       c := Indices[1][Offset mod Shape[1]];
-      Exit(IndexToStridedOffset([r, c]) + DataOffset);
+      Exit(IndexToStridedOffset([r, c], Self.Strides) + DataOffset);
     end
     else
     begin
       Index := OffsetToIndex(Self, Offset);
-      Exit(IndexToStridedOffset(index) {+ DataOffset})
+      Exit(IndexToStridedOffset(index, Self.Strides) {+ DataOffset})
     end;
   end;
 
@@ -693,7 +693,7 @@ uses
     Exit(multiarray.GetVirtualData(Self));
   end;
 
-  function TMultiArray.IndexToStridedOffset(Index: array of longint): longint;
+  function IndexToStridedOffset(Index: array of longint; Strides: TLongVector): longint;
   var
     i: integer;
   begin
@@ -749,48 +749,6 @@ uses
     Exit(Data[OffsetToStrided(i)]);
   end;
 
-  function TMultiArray.Get(idx: TLongVector): TMultiArray;
-  var
-    i, Offset: longint;
-    NewIdx, NewShape, NewStrides: TLongVector;
-  begin
-    if Length(idx) > Self.NDims then
-      raise Exception.Create('Index out of bounds');
-
-    if Self.NDims = 1 then
-      Exit(Self.Get(idx[0]));
-
-    if Length(idx) < Self.NDims then
-    begin
-      SetLength(NewIdx, Self.NDims);
-      for i := 0 to High(idx) do
-        NewIdx[i] := idx[i];
-
-      SetLength(NewShape, Self.NDims - Length(idx));
-      for i := Length(idx) to High(Self.Shape) do
-        NewShape[i - Length(idx)] := Self.Shape[i];
-
-      SetLength(NewStrides, Self.NDims - Length(idx));
-      for i := Length(idx) to High(Self.Strides) do
-        NewStrides[i - Length(idx)] := Self.Strides[i];
-    end
-    else
-    begin
-      NewIdx := Idx;
-      NewShape := [1];
-      NewStrides := [1];
-    end;
-
-    Offset := IndexToStridedOffset(NewIdx);
-
-    Result := CreateEmptyFTensor(False);
-    Result.Data := Self.Data;
-    Result.Shape := NewShape;
-    Result.Strides := NewStrides;
-    Result.DataOffset := Self.DataOffset + Offset;
-    Result.ResetIndices;
-  end;
-
   function TMultiArray.Item: Single;
   begin
     if NDims > 0 then raise Exception.Create('');
@@ -842,7 +800,7 @@ uses
 
   procedure TMultiArray.Put(i: array of integer; x: single);
   begin
-    Data[Self.IndexToStridedOffset(i)] := x;
+    Data[IndexToStridedOffset(i, Self.Strides)] := x;
   end;
 
   procedure TMultiArray.ResetIndices;
