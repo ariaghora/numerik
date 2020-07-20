@@ -111,6 +111,7 @@ type
   { @exclude } operator * (A, B: TMultiArray) C: TMultiArray;
   { @exclude } operator / (A, B: TMultiArray) C: TMultiArray;
   { @exclude } operator ** (A, B: TMultiArray) C: TMultiArray;
+  { @exclude } operator = (A, B: TMultiArray) C: TMultiArray;
   { @exclude } operator > (A, B: TMultiArray) C: TMultiArray;
   { @exclude } operator := (A: single) B: TMultiArray;
   { @exclude } operator := (A: array of single) B: TMultiArray;
@@ -819,6 +820,11 @@ uses
     Exit(a / b);
   end;
 
+  function _EqualsTo(a, b: single): single;
+  begin
+    Exit(Single(Integer(a = b)));
+  end;
+
   function _GreaterThan(a, b: single): single;
   begin
     Exit(Single(Integer(a > b)));
@@ -904,6 +910,11 @@ uses
   operator ** (A, B: TMultiArray) C: TMultiArray;
   begin
     C := Power(A, B);
+  end;
+
+  operator = (A, B: TMultiArray) C: TMultiArray;
+  begin
+    C := ApplyBFunc(A, B, @_EqualsTo, GLOBAL_FUNC_DEBUG, 'EQUALS_TO');
   end;
 
   operator > (A, B: TMultiArray) C: TMultiArray;

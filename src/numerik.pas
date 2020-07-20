@@ -31,6 +31,8 @@ type
   computed over all items in A. }
 function Mean(A: TMultiArray; axis: integer = -1): TMultiArray; overload;
 
+function Round(A: TMultiArray): TMultiArray; overload;
+
 { Compute the sum of a A along axis. The default axis is -1, meaning the sum is
   computed over all items in A. }
 function Sum(A: TMultiArray; axis: integer = -1): TMultiArray; overload;
@@ -159,6 +161,16 @@ begin
   if axis = -1 then
     Exit(math.Mean(A.GetVirtualData));
   Exit(Sum(A, axis) / A.Shape[axis]);
+end;
+
+function _Round(X: single; params: array of single): single;
+begin
+  Exit(System.round(X));
+end;
+
+function Round(A: TMultiArray): TMultiArray;
+begin
+  Exit(ApplyUFunc(A, @_Round, []));
 end;
 
 function Sum(A: TMultiArray; axis: integer = -1): TMultiArray;
