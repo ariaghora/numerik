@@ -56,6 +56,7 @@ type
     { Perform multidimensional slicing.
       For now Slice will return contiguous. }
     function Slice(idx: array of TLongVector): TMultiArray;
+    function Squeeze: TMultiArray;
     { Perform transpose. If NDims > 2, the reverse the axis }
     function T: TMultiArray;
     procedure Put(i: array of integer; x: single);
@@ -137,7 +138,7 @@ var
 implementation
 
 uses
-  numerik.blas;
+  numerik, numerik.blas;
 
   generic function CopyVector<T>(v: T): T;
   var
@@ -448,8 +449,8 @@ uses
   begin
     s := '';
     MaxDims := A.NDims;
-    MaxNum := MaxValue(A.Data);
-    Digit := Ceil(Log10(MaxNum));
+    MaxNum := MaxValue(Abs(A).Data);
+    Digit := Ceil(Log10(MaxNum + 1));
     DecPlace := 2;
     PrintHelper(A, 0);
     WriteLn(s);
@@ -791,6 +792,12 @@ uses
       end
     end;
     Result := Result.Contiguous;
+  end;
+
+  function TMultiArray.Squeeze: TMultiArray;
+  begin
+    Result := Self.Copy();
+    SqueezeMultiArray(Result);
   end;
 
   function TMultiArray.T: TMultiArray;

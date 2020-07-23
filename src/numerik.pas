@@ -25,8 +25,17 @@ type
     U, Sigma, VT: TMultiArray;
   end;
 
-{ ----------- Arithmetic------------------------------------------------------ }
+{ ----------- Basic array creation --------------------------------------------}
+{ Create multiarray with shape Shape containing Ones }
+function FullMultiArray(Shape: TLongVector; val: single): TMultiArray;
+{ Create multiarray with shape Shape containing Ones }
+function Ones(Shape: TLongVector): TMultiArray;
+{ Create multiarray with shape Shape containing zeros }
+function Zeros(Shape: TLongVector): TMultiArray;
 
+{ ----------- Arithmetic ----------------------------------------------------- }
+
+function Abs(A: TMultiArray): TMultiArray; overload;
 { Compute the mean of a A along axis. The default axis is -1, meaning the mean is
   computed over all items in A. }
 function Mean(A: TMultiArray; axis: integer = -1; KeepDims: boolean=False): TMultiArray; overload;
@@ -35,7 +44,7 @@ function Round(A: TMultiArray): TMultiArray; overload;
 
 { Compute the sum of a A along axis. The default axis is -1, meaning the sum is
   computed over all items in A. }
-function Sum(A: TMultiArray; axis: integer = -1): TMultiArray; overload;
+function Sum(A: TMultiArray; axis: integer = -1; KeepDims: boolean=False): TMultiArray; overload;
 
 { ----------- Trigonometry --------------------------------------------------- }
 
@@ -156,7 +165,42 @@ begin
     SqueezeMultiArrayAt(Result, axis);
 end;
 
-function Mean(A: TMultiArray; axis: integer = -1; KeepDims: boolean=False): TMultiArray; overload;
+function _Abs(X: single; params: array of single): single;
+begin
+  Exit(System.Abs(X));
+end;
+
+function _Const(Params: array of single): single;
+begin
+  Exit(Params[0]);
+end;
+
+function FullMultiArray(Shape: TLongVector; val: single): TMultiArray;
+begin
+  Exit(GenerateMultiArray(Shape, @_Const, [val]));
+end;
+
+function Ones(Shape: TLongVector): TMultiArray;
+begin
+  Exit(GenerateMultiArray(Shape, @_Const, [1]));
+end;
+
+function _Zero(Params: array of single): single;
+begin
+  Exit(0);
+end;
+
+function Zeros(Shape: TLongVector): TMultiArray;
+begin
+  Exit(GenerateMultiArray(Shape, @_Zero, []));
+end;
+
+function Abs(A: TMultiArray): TMultiArray;
+begin
+  Exit(ApplyUFunc(A, @_Abs, []));
+end;
+
+function Mean(A: TMultiArray; axis: integer = -1; KeepDims: boolean=False): TMultiArray;
 begin
   if axis = -1 then
     Exit(math.Mean(A.GetVirtualData));
@@ -175,11 +219,54 @@ begin
   Exit(ApplyUFunc(A, @_Round, []));
 end;
 
-function Sum(A: TMultiArray; axis: integer = -1): TMultiArray;
+function Sum(A: TMultiArray; axis: integer = -1; KeepDims: boolean=False): TMultiArray;
+var
+  outdata: TSingleVector;
+  i, j: longint;
 begin
-  if axis = -1 then
+  { Specific case for vector (NDims=1) or summation over all elements }
+  if (axis = -1) or (A.NDims = 1) then
     Exit(math.Sum(A.GetVirtualData));
-  Exit(ReduceAlongAxis(A, @Add, axis));
+
+  { Specific case for matrix }
+  if A.NDims = 2 then
+  begin
+    if axis = 0 then { Case 1: column-wise sum }
+    begin
+      SetLength(outdata, A.Shape[1]);
+      for i := 0 to A.Shape[1] - 1 do
+      begin
+        outdata[i] := 0;
+        for j := 0 to A.Shape[0] - 1 do
+        begin
+          outdata[i] := outdata[i] + A.Get(IndexToStridedOffset([j, i], A.Strides));
+        end;
+      end;
+      if KeepDims then
+        Exit(CreateMultiArray(outdata).Reshape([1, A.Shape[1]]))
+      else
+        Exit(CreateMultiArray(outdata));
+    end
+    else if axis = 1 then { Case 2: row-wise sum }
+    begin
+      SetLength(outdata, A.Shape[0]);
+      for i := 0 to A.Shape[0] - 1 do
+      begin
+        outdata[i] := 0;
+        for j := 0 to A.Shape[1] - 1 do
+        begin
+          outdata[i] := outdata[i] + A.Get(IndexToStridedOffset([i, j], A.Strides));
+        end;
+      end;
+      if KeepDims then
+        Exit(CreateMultiArray(outdata).Reshape([A.Shape[0], 1]))
+      else
+        Exit(CreateMultiArray(outdata));
+    end;
+  end;
+
+  { Sum along axis for arbitrary dimension }
+  Exit(ReduceAlongAxis(A, @Add, axis, KeepDims));
 end;
 
 function PseudoInverse(A: TMultiArray): TMultiArray;
