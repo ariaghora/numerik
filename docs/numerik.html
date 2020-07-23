@@ -54,7 +54,7 @@ A unit containing:
 <td class="itemcode"><code>function <strong><a href="numerik.html#Exp">Exp</a></strong>(A: <a href="multiarray.TMultiArray.html">TMultiArray</a>): <a href="multiarray.TMultiArray.html">TMultiArray</a>; overload;</code></td>
 </tr>
 <tr class="list2">
-<td class="itemcode"><code>function <strong><a href="numerik.html#Mean">Mean</a></strong>(A: <a href="multiarray.TMultiArray.html">TMultiArray</a>; axis: integer = -1): <a href="multiarray.TMultiArray.html">TMultiArray</a>; overload;</code></td>
+<td class="itemcode"><code>function <strong><a href="numerik.html#Mean">Mean</a></strong>(A: <a href="multiarray.TMultiArray.html">TMultiArray</a>; axis: integer = -1; KeepDims: boolean=False): <a href="multiarray.TMultiArray.html">TMultiArray</a>; overload;</code></td>
 </tr>
 <tr class="list">
 <td class="itemcode"><code>function <strong><a href="numerik.html#PseudoInverse">PseudoInverse</a></strong>(A: <a href="multiarray.TMultiArray.html">TMultiArray</a>): <a href="multiarray.TMultiArray.html">TMultiArray</a>;</code></td>
@@ -69,12 +69,15 @@ A unit containing:
 <td class="itemcode"><code>function <strong><a href="numerik.html#ReduceAlongAxis">ReduceAlongAxis</a></strong>(A: <a href="multiarray.TMultiArray.html">TMultiArray</a>; ReduceFunc: <a href="numerik.html#TReduceFunc">TReduceFunc</a>; axis: integer; KeepDims: Boolean = False): <a href="multiarray.TMultiArray.html">TMultiArray</a>;</code></td>
 </tr>
 <tr class="list">
-<td class="itemcode"><code>function <strong><a href="numerik.html#Sin">Sin</a></strong>(A: <a href="multiarray.TMultiArray.html">TMultiArray</a>): <a href="multiarray.TMultiArray.html">TMultiArray</a>; overload;</code></td>
+<td class="itemcode"><code>function <strong><a href="numerik.html#Round">Round</a></strong>(A: <a href="multiarray.TMultiArray.html">TMultiArray</a>): <a href="multiarray.TMultiArray.html">TMultiArray</a>; overload;</code></td>
 </tr>
 <tr class="list2">
-<td class="itemcode"><code>function <strong><a href="numerik.html#Sum">Sum</a></strong>(A: <a href="multiarray.TMultiArray.html">TMultiArray</a>; axis: integer = -1): <a href="multiarray.TMultiArray.html">TMultiArray</a>; overload;</code></td>
+<td class="itemcode"><code>function <strong><a href="numerik.html#Sin">Sin</a></strong>(A: <a href="multiarray.TMultiArray.html">TMultiArray</a>): <a href="multiarray.TMultiArray.html">TMultiArray</a>; overload;</code></td>
 </tr>
 <tr class="list">
+<td class="itemcode"><code>function <strong><a href="numerik.html#Sum">Sum</a></strong>(A: <a href="multiarray.TMultiArray.html">TMultiArray</a>; axis: integer = -1): <a href="multiarray.TMultiArray.html">TMultiArray</a>; overload;</code></td>
+</tr>
+<tr class="list2">
 <td class="itemcode"><code>function <strong><a href="numerik.html#SVD">SVD</a></strong>(A: <a href="multiarray.TMultiArray.html">TMultiArray</a>; SigmasAsMatrix: Boolean=False): <a href="numerik.TSVDResult.html">TSVDResult</a>;</code></td>
 </tr>
 </table>
@@ -115,7 +118,7 @@ Compute element wise exponent over A</p>
 </table>
 <table class="detail wide_list">
 <tr class="list">
-<td class="itemcode"><span id="Mean"></span><code>function <strong>Mean</strong>(A: <a href="multiarray.TMultiArray.html">TMultiArray</a>; axis: integer = -1): <a href="multiarray.TMultiArray.html">TMultiArray</a>; overload;</code></td>
+<td class="itemcode"><span id="Mean"></span><code>function <strong>Mean</strong>(A: <a href="multiarray.TMultiArray.html">TMultiArray</a>; axis: integer = -1; KeepDims: boolean=False): <a href="multiarray.TMultiArray.html">TMultiArray</a>; overload;</code></td>
 </tr>
 <tr><td colspan="1">
 <p>
@@ -157,6 +160,13 @@ Wrapper for pascal's Random function, as a TMultiArray.</p>
 <p>
 Reduce TMultiArray along a specified axis with specified ReduceFunc. This is for convenience rather than performance.</p>
 </td></tr>
+</table>
+<table class="detail wide_list">
+<tr class="list">
+<td class="itemcode"><span id="Round"></span><code>function <strong>Round</strong>(A: <a href="multiarray.TMultiArray.html">TMultiArray</a>): <a href="multiarray.TMultiArray.html">TMultiArray</a>; overload;</code></td>
+</tr>
+<tr><td colspan="1">
+&nbsp;</td></tr>
 </table>
 <table class="detail wide_list">
 <tr class="list">

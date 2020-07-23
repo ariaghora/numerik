@@ -62,43 +62,35 @@ Multidimensional array data structure.</p>
 </tr>
 <tr class="list">
 <td class="visibility"><a href="legend.html"><img  src="public.gif" alt="Public" title="Public"></a></td>
-<td class="itemcode"><code>function <strong><a href="multiarray.TMultiArray.html#Get">Get</a></strong>(idx: <a href="multiarray.html#TLongVector">TLongVector</a>): <a href="multiarray.TMultiArray.html">TMultiArray</a>; overload;</code></td>
-</tr>
-<tr class="list2">
-<td class="visibility"><a href="legend.html"><img  src="public.gif" alt="Public" title="Public"></a></td>
 <td class="itemcode"><code>function <strong><a href="multiarray.TMultiArray.html#Get">Get</a></strong>(i: longint): single; overload;</code></td>
 </tr>
-<tr class="list">
+<tr class="list2">
 <td class="visibility"><a href="legend.html"><img  src="public.gif" alt="Public" title="Public"></a></td>
 <td class="itemcode"><code>function <strong><a href="multiarray.TMultiArray.html#GetVirtualData">GetVirtualData</a></strong>: <a href="multiarray.html#TSingleVector">TSingleVector</a>;</code></td>
 </tr>
-<tr class="list2">
-<td class="visibility"><a href="legend.html"><img  src="public.gif" alt="Public" title="Public"></a></td>
-<td class="itemcode"><code>function <strong><a href="multiarray.TMultiArray.html#IndexToStridedOffset">IndexToStridedOffset</a></strong>(Index: array of longint): longint;</code></td>
-</tr>
 <tr class="list">
+<td class="visibility"><a href="legend.html"><img  src="public.gif" alt="Public" title="Public"></a></td>
+<td class="itemcode"><code>function <strong><a href="multiarray.TMultiArray.html#Item">Item</a></strong>: Single;</code></td>
+</tr>
+<tr class="list2">
 <td class="visibility"><a href="legend.html"><img  src="public.gif" alt="Public" title="Public"></a></td>
 <td class="itemcode"><code>function <strong><a href="multiarray.TMultiArray.html#Matmul">Matmul</a></strong>(Other: <a href="multiarray.TMultiArray.html">TMultiArray</a>): <a href="multiarray.TMultiArray.html">TMultiArray</a>;</code></td>
 </tr>
-<tr class="list2">
+<tr class="list">
 <td class="visibility"><a href="legend.html"><img  src="public.gif" alt="Public" title="Public"></a></td>
 <td class="itemcode"><code>function <strong><a href="multiarray.TMultiArray.html#Reshape">Reshape</a></strong>(NewShape: <a href="multiarray.html#TLongVector">TLongVector</a>): <a href="multiarray.TMultiArray.html">TMultiArray</a>;</code></td>
 </tr>
-<tr class="list">
+<tr class="list2">
 <td class="visibility"><a href="legend.html"><img  src="public.gif" alt="Public" title="Public"></a></td>
 <td class="itemcode"><code>function <strong><a href="multiarray.TMultiArray.html#Slice">Slice</a></strong>(idx: array of <a href="multiarray.html#TLongVector">TLongVector</a>): <a href="multiarray.TMultiArray.html">TMultiArray</a>;</code></td>
 </tr>
-<tr class="list2">
+<tr class="list">
 <td class="visibility"><a href="legend.html"><img  src="public.gif" alt="Public" title="Public"></a></td>
 <td class="itemcode"><code>function <strong><a href="multiarray.TMultiArray.html#T">T</a></strong>: <a href="multiarray.TMultiArray.html">TMultiArray</a>;</code></td>
 </tr>
-<tr class="list">
-<td class="visibility"><a href="legend.html"><img  src="public.gif" alt="Public" title="Public"></a></td>
-<td class="itemcode"><code>procedure <strong><a href="multiarray.TMultiArray.html#Put">Put</a></strong>(i: array of integer; x: single);</code></td>
-</tr>
 <tr class="list2">
 <td class="visibility"><a href="legend.html"><img  src="public.gif" alt="Public" title="Public"></a></td>
-<td class="itemcode"><code>procedure <strong><a href="multiarray.TMultiArray.html#ResetIndices">ResetIndices</a></strong>;</code></td>
+<td class="itemcode"><code>procedure <strong><a href="multiarray.TMultiArray.html#Put">Put</a></strong>(i: array of integer; x: single);</code></td>
 </tr>
 </table>
 <span id="PasDoc-Properties"></span><h3 class="summary">Properties</h3>
@@ -114,6 +106,10 @@ Multidimensional array data structure.</p>
 <tr class="list">
 <td class="visibility"><a href="legend.html"><img  src="public.gif" alt="Public" title="Public"></a></td>
 <td class="itemcode"><code>property <strong><a href="multiarray.TMultiArray.html#Size">Size</a></strong>: longint read GetSize;</code></td>
+</tr>
+<tr class="list2">
+<td class="visibility"><a href="legend.html"><img  src="public.gif" alt="Public" title="Public"></a></td>
+<td class="itemcode"><code>property <strong><a href="multiarray.TMultiArray.html#Items">Items</a></strong>[idx:arrayofTLongVector]: <a href="multiarray.TMultiArray.html">TMultiArray</a> read <a href="multiarray.TMultiArray.html#Slice">Slice</a>;</code></td>
 </tr>
 </table>
 <h2 class="description">Description</h2>
@@ -182,18 +178,12 @@ Perform copying of this array. By default, the actual data is referenced rather 
 <table class="detail wide_list">
 <tr class="list">
 <td class="visibility"><a href="legend.html"><img  src="public.gif" alt="Public" title="Public"></a></td>
-<td class="itemcode"><span id="Get"></span><code>function <strong>Get</strong>(idx: <a href="multiarray.html#TLongVector">TLongVector</a>): <a href="multiarray.TMultiArray.html">TMultiArray</a>; overload;</code></td>
-</tr>
-<tr><td colspan="2">
-&nbsp;</td></tr>
-</table>
-<table class="detail wide_list">
-<tr class="list">
-<td class="visibility"><a href="legend.html"><img  src="public.gif" alt="Public" title="Public"></a></td>
 <td class="itemcode"><span id="Get"></span><code>function <strong>Get</strong>(i: longint): single; overload;</code></td>
 </tr>
 <tr><td colspan="2">
-&nbsp;</td></tr>
+<p>
+Get i-th item of the flattened array</p>
+</td></tr>
 </table>
 <table class="detail wide_list">
 <tr class="list">
@@ -201,15 +191,19 @@ Perform copying of this array. By default, the actual data is referenced rather 
 <td class="itemcode"><span id="GetVirtualData"></span><code>function <strong>GetVirtualData</strong>: <a href="multiarray.html#TSingleVector">TSingleVector</a>;</code></td>
 </tr>
 <tr><td colspan="2">
-&nbsp;</td></tr>
+<p>
+Returns a TSingleVector containing &quot;strided&quot; data, instead of the actual data.</p>
+</td></tr>
 </table>
 <table class="detail wide_list">
 <tr class="list">
 <td class="visibility"><a href="legend.html"><img  src="public.gif" alt="Public" title="Public"></a></td>
-<td class="itemcode"><span id="IndexToStridedOffset"></span><code>function <strong>IndexToStridedOffset</strong>(Index: array of longint): longint;</code></td>
+<td class="itemcode"><span id="Item"></span><code>function <strong>Item</strong>: Single;</code></td>
 </tr>
 <tr><td colspan="2">
-&nbsp;</td></tr>
+<p>
+Convert Self to a single-typed scalar if NDims=0</p>
+</td></tr>
 </table>
 <table class="detail wide_list">
 <tr class="list">
@@ -217,7 +211,9 @@ Perform copying of this array. By default, the actual data is referenced rather 
 <td class="itemcode"><span id="Matmul"></span><code>function <strong>Matmul</strong>(Other: <a href="multiarray.TMultiArray.html">TMultiArray</a>): <a href="multiarray.TMultiArray.html">TMultiArray</a>;</code></td>
 </tr>
 <tr><td colspan="2">
-&nbsp;</td></tr>
+<p>
+Multiply self with other 2-dimensional TMultiArray</p>
+</td></tr>
 </table>
 <table class="detail wide_list">
 <tr class="list">
@@ -225,7 +221,9 @@ Perform copying of this array. By default, the actual data is referenced rather 
 <td class="itemcode"><span id="Reshape"></span><code>function <strong>Reshape</strong>(NewShape: <a href="multiarray.html#TLongVector">TLongVector</a>): <a href="multiarray.TMultiArray.html">TMultiArray</a>;</code></td>
 </tr>
 <tr><td colspan="2">
-&nbsp;</td></tr>
+<p>
+Reshape a TMultiArray into a specified shape</p>
+</td></tr>
 </table>
 <table class="detail wide_list">
 <tr class="list">
@@ -243,20 +241,14 @@ Perform multidimensional slicing. For now Slice will return contiguous.</p>
 <td class="itemcode"><span id="T"></span><code>function <strong>T</strong>: <a href="multiarray.TMultiArray.html">TMultiArray</a>;</code></td>
 </tr>
 <tr><td colspan="2">
-&nbsp;</td></tr>
+<p>
+Perform transpose. If NDims &gt; 2, the reverse the axis</p>
+</td></tr>
 </table>
 <table class="detail wide_list">
 <tr class="list">
 <td class="visibility"><a href="legend.html"><img  src="public.gif" alt="Public" title="Public"></a></td>
 <td class="itemcode"><span id="Put"></span><code>procedure <strong>Put</strong>(i: array of integer; x: single);</code></td>
-</tr>
-<tr><td colspan="2">
-&nbsp;</td></tr>
-</table>
-<table class="detail wide_list">
-<tr class="list">
-<td class="visibility"><a href="legend.html"><img  src="public.gif" alt="Public" title="Public"></a></td>
-<td class="itemcode"><span id="ResetIndices"></span><code>procedure <strong>ResetIndices</strong>;</code></td>
 </tr>
 <tr><td colspan="2">
 &nbsp;</td></tr>
@@ -282,6 +274,14 @@ Perform multidimensional slicing. For now Slice will return contiguous.</p>
 <tr class="list">
 <td class="visibility"><a href="legend.html"><img  src="public.gif" alt="Public" title="Public"></a></td>
 <td class="itemcode"><span id="Size"></span><code>property <strong>Size</strong>: longint read GetSize;</code></td>
+</tr>
+<tr><td colspan="2">
+&nbsp;</td></tr>
+</table>
+<table class="detail wide_list">
+<tr class="list">
+<td class="visibility"><a href="legend.html"><img  src="public.gif" alt="Public" title="Public"></a></td>
+<td class="itemcode"><span id="Items"></span><code>property <strong>Items</strong>[idx:arrayofTLongVector]: <a href="multiarray.TMultiArray.html">TMultiArray</a> read <a href="multiarray.TMultiArray.html#Slice">Slice</a>;</code></td>
 </tr>
 <tr><td colspan="2">
 &nbsp;</td></tr>
