@@ -52,3 +52,5 @@ end.
 ```
 
 Read the API reference [here](http://ariaghora.github.io/numerik).
+
+Interested in neural networks? Numerik is being integrated with [Noe](https://github.com/ariaghora/noe), neural network framework for pascal.
