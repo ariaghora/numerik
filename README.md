@@ -30,7 +30,7 @@ begin
   { Multidimensional slicing }
   RowIndices := [0, 3];
   ColIndices := [0, 1, 3, 4];
-  B := A.Slice([RowIndices, ColIndices]);
+  B := A[[ RowIndices, ColIndices ]]; // Equivalent to A.Slice([RowIndices, ColIndices])
   PrintMultiArray(B);
 
   { Math operation }
