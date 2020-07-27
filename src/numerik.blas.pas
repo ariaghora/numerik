@@ -10,15 +10,25 @@ uses
   multiarray;
 
 const
+{$IFDEF UNIX}
+  {$IFDEF LINUX }
+  LIB_NAME = 'libopenblas.so';
+  {$ENDIF}
+  {$IFDEF DARWIN}
+  LIB_NAME = 'libopenblas.dylib';
+  {$ENDIF}
+{$ENDIF}
 
+{$IFDEF WINDOWS}
   LIB_NAME = 'libopenblas.dll';
+{$ENDIF}
 
   LAPACK_ROW_MAJOR = 101;
   LAPACK_COL_MAJOR = 102;
-  CBLAS_ROW_MAJOR = 101;
-  CBLAS_COL_MAJOR = 102;
-  CBLAS_NO_TRANS = 111;
-  CBLAS_TRANS = 112;
+  CBLAS_ROW_MAJOR  = 101;
+  CBLAS_COL_MAJOR  = 102;
+  CBLAS_NO_TRANS   = 111;
+  CBLAS_TRANS      = 112;
   CBLAS_CONJ_TRANS = 113;
 
 function Add_BLAS(A, B: TMultiArray): TMultiArray;
@@ -26,7 +36,7 @@ function MatMul_BLAS(A, B: TMultiArray): TMultiArray;
 
 procedure cblas_saxpy(N: longint; A: single; X: TSingleVector; INCX: longint;
   Y: TSingleVector; INCY: longint);
-  external 'libopenblas.dll';
+  external LIB_NAME;
 
 procedure cblas_sgemm(Order: longint; TransA: longint; TransB: longint;
   M: longint; N: longint; K: longint; alpha: single; A: TSingleVector;
