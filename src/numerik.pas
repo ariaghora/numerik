@@ -36,6 +36,8 @@ function Zeros(Shape: TLongVector): TMultiArray;
 { ----------- Arithmetic ----------------------------------------------------- }
 
 function Abs(A: TMultiArray): TMultiArray; overload;
+function ArgMax(A: TMultiArray; axis: integer = -1; KeepDims: boolean=False): TMultiArray; overload;
+function Max(A: TMultiArray; axis: integer = -1; KeepDims: boolean=False): TMultiArray; overload;
 { Compute the mean of a A along axis. The default axis is -1, meaning the mean is
   computed over all items in A. }
 function Mean(A: TMultiArray; axis: integer = -1; KeepDims: boolean=False): TMultiArray; overload;
@@ -59,6 +61,7 @@ function Sin(A: TMultiArray): TMultiArray; overload;
 
 { Compute element wise exponent over A }
 function Exp(A: TMultiArray): TMultiArray; overload;
+function Ln(A: TMultiArray): TMultiArray; overload;
 
 { ----------- Random number generator ---------------------------------------- }
 
@@ -112,6 +115,16 @@ begin
   Exit(ApplyUFunc(A, @_Exp, []));
 end;
 
+function _Ln(X: single; params: array of single): single;
+begin
+  Exit(System.Ln(X));
+end;
+
+function Ln(A: TMultiArray): TMultiArray;
+begin
+  Exit(ApplyUFunc(A, @_Ln, []));
+end;
+
 function _Sin(X: single; params: array of single): single;
 begin
   Exit(System.Sin(X));
@@ -150,10 +163,10 @@ var
 begin
   SetLength(IterIndices, Length(A.Indices));
   for i := 0 to High(IterIndices) do
-    IterIndices[i] := []; // slicing by [ALL, ALL, ..., ALL]
+    IterIndices[i] := []; // slicing by [_ALL_, _ALL_, ..., _ALL_]
 
   IterIndices[axis] := [0];
-  Result := A.Slice(IterIndices);  // Slice([ALL, ..., [0], ..., ALL])
+  Result := A.Slice(IterIndices);  // Slice([_ALL_, ..., [0], ..., _ALL_])
 
   for i := 1 to A.Shape[axis] - 1 do
   begin
@@ -200,6 +213,42 @@ begin
   Exit(ApplyUFunc(A, @_Abs, []));
 end;
 
+function ArgMax(const x: array of Single): Integer;
+var
+  Index: Integer;
+  MaxValue: Single;
+begin
+  Result := -1;
+  MaxValue := -MaxSingle;
+  for Index := 0 to high(x) do begin
+    if x[Index] > MaxValue then begin
+      Result := Index;
+      MaxValue := x[Index];
+    end;
+  end;
+end;
+
+function ArgMax(A: TMultiArray; axis: integer = -1; KeepDims: boolean=False): TMultiArray;
+var
+  i: longint;
+begin
+  if axis = -1 then
+    Exit(ArgMax(A.GetVirtualData));
+  for i := 0 to A.Shape[axis] - 1 do
+  begin
+
+  end;
+end;
+
+function Max(A: TMultiArray; axis: integer = -1; KeepDims: boolean=False): TMultiArray;
+begin
+  if axis = -1 then
+    Exit(math.MaxValue(A.GetVirtualData));
+  //if KeepDims then
+  //  Exit();
+  Exit(ReduceAlongAxis(A, @Maximum, axis, KeepDims));
+end;
+
 function Mean(A: TMultiArray; axis: integer = -1; KeepDims: boolean=False): TMultiArray;
 begin
   if axis = -1 then
@@ -224,7 +273,7 @@ var
   outdata: TSingleVector;
   i, j: longint;
 begin
-  { Specific case for vector (NDims=1) or summation over all elements }
+  { Specific case for vector (NDims=1) or summation over _ALL_ elements }
   if (axis = -1) or (A.NDims = 1) then
     Exit(math.Sum(A.GetVirtualData));
 
@@ -283,7 +332,7 @@ end;
 
 function SVD(A: TMultiArray; SigmasAsMatrix: Boolean=False): TSVDResult;
 var
-  i, m, n, info: integer;
+  i, m, n: integer;
   U, Sigma, VT: TMultiArray;
   Superb, SigmaVal: TSingleVector;
 begin
@@ -297,7 +346,7 @@ begin
   U := AllocateMultiArray(m ** 2).Reshape([m, m]);
   VT := AllocateMultiArray(n ** 2).Reshape([n, n]);
 
-  info := LAPACKE_sgesvd(LAPACK_ROW_MAJOR, 'A', 'A', m, n, CopyVector(A.GetVirtualData),
+  LAPACKE_sgesvd(LAPACK_ROW_MAJOR, 'A', 'A', m, n, CopyVector(A.GetVirtualData),
     n, SigmaVal, U.Data, m, VT.Data, n, Superb);
 
   Result.U := U;
