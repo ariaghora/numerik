@@ -70,7 +70,7 @@ type
     A, B: TMultiArray;
   end;
 
-  function All: TLongVector;
+  function _ALL_: TLongVector;
   function AllocateMultiArray(Size: longint; AllocateData: boolean=true): TMultiArray;
   function ApplyBFunc(A, B: TMultiArray; BFunc: TBFunc; PrintDebug: Boolean = False;
     FuncName: string = ''): TMultiArray;
@@ -144,6 +144,7 @@ uses
   var
     i: longint;
   begin
+    Result := nil;
     SetLength(Result, Length(v));
     for i := 0 to High(v) do
       Result[i] := v[i];
@@ -201,13 +202,14 @@ uses
     WriteLn;
   end;
 
-  function All: TLongVector;
+  function _ALL_: TLongVector;
   begin
     Exit([]);
   end;
 
   function AllocateMultiArray(Size: longint; AllocateData: boolean=true): TMultiArray;
   begin
+    Result.Data := nil;
     if AllocateData then
       SetLength(Result.Data, Size);
     SetLength(Result.Shape, 1);
@@ -512,6 +514,7 @@ uses
   var
     i: longint;
   begin
+    Result := nil;
     SetLength(Result, A.Size);
     for i := 0 to A.Size - 1 do
       Result[i] := A.Get(i);
@@ -631,6 +634,7 @@ uses
 
   procedure SqueezeMultiArrayAt(var A: TMultiArray; axis: integer);
   begin
+    if Length(A.Shape) > 0 then
     if A.Shape[axis] = 1 then
     begin
       specialize DeleteFromVector<TLongVector>(A.Shape, axis, 1);
@@ -653,7 +657,7 @@ uses
 
   generic function TMultiArray.OffsetToStrided(Offset: longint): longint;
   var
-    r, c, i, cnt: longint;
+    r, c: longint;
     index: TLongVector;
   begin
     if IsContiguous then Exit(Offset);
@@ -872,6 +876,8 @@ uses
   begin
     if (A.NDims <> 2) or (B.NDims <> 2) then
       raise Exception.Create('Only arrays with NDims=2 are supporter for Matmul');
+    if (A.Shape[1] <> B.Shape[0]) then
+      raise Exception.Create('A.Shape[1] must be equal to B.Shape[0]');
     Exit(MatMul_BLAS(A, B));
   end;
 
@@ -970,8 +976,6 @@ uses
   end;
 
   operator explicit(A: TLongVector) B: TSingleVector;
-  var
-    i: longint;
   begin
     B := A;
   end;
