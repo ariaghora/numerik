@@ -2,7 +2,9 @@ Numerik is a numerical library for object pascal. It supports:
 - Multidimensional array data structure with single precision
 - Efficient array broadcasting and multidimensional slicing
 - Some arithmetic and linear algebra functionalities
-- BLAS-accelerated operation (requires `libopenblas.dll` which can be obtained from [here](https://github.com/xianyi/OpenBLAS/releases))
+- BLAS-accelerated operation 
+  - Windows: requires `libopenblas.dll` which can be obtained from [here](https://github.com/xianyi/OpenBLAS/releases)
+  - Ubuntu: requires `libopenblas-base libopenblas-dev liblapacke liblapacke-dev`
 
 ### Example
 ```pascal
