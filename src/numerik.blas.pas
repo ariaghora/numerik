@@ -47,7 +47,7 @@ procedure cblas_sgemm(Order: longint; TransA: longint; TransB: longint;
 function LAPACKE_sgesvd(MatrixLayout: longint; JOBU, JOBVT: char;
   M, N: longint; A: TSingleVector; LDA: longint; S, U: TSingleVector;
   LDU: longint; VT: TSingleVector; LDVT: longint; Superb: TSingleVector): longint;
-  external LIB_NAME;
+  external {$IFDEF WINDOWS}LIB_NAME{$ENDIF}{$IFDEF UNIX}'liblapacke.so'{$ENDIF};
 
 implementation
 

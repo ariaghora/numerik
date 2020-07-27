@@ -103,6 +103,7 @@ type
   procedure SqueezeMultiArray(var A: TMultiArray);
 
   function CopyVector(V: TSingleVector): TSingleVector;
+  function CopyVector(V: TLongVector): TLongVector;
   procedure ShuffleVector(var V: array of longint);
   procedure ShuffleVector(var V: array of single);
   function VectorEqual(A, B: TSingleVector): boolean;
@@ -140,7 +141,7 @@ implementation
 uses
   numerik, numerik.blas;
 
-  generic function CopyVector<T>(v: T): T;
+  generic function _CopyVector<T>(v: T): T;
   var
     i: longint;
   begin
@@ -169,7 +170,7 @@ uses
       Result[High(Data) - i] := Data[i];
   end;
 
-  generic function VectorEqual<T>(A, B: T): boolean;
+  generic function _VectorEqual<T>(A, B: T): boolean;
   var
     i: longint;
   begin
@@ -319,7 +320,7 @@ uses
   begin
     if (PrintDebug or GLOBAL_FUNC_DEBUG) then TimeThen := Now;
 
-    if not(specialize VectorEqual<TLongVector>(A.Shape, B.Shape)) then
+    if not(VectorEqual(A.Shape, B.Shape)) then
     begin
       BcastResult := BroadcastArrays(A, B);
 
@@ -460,10 +461,15 @@ uses
 
   function CopyVector(v: TSingleVector): TSingleVector;
   begin
-    Exit(specialize CopyVector<TSingleVector>(v));
+    Exit(specialize _CopyVector<TSingleVector>(v));
   end;
 
-  generic procedure ShuffleVector<T>(var V: array of T);
+  function CopyVector(v: TLongVector): TLongVector;
+  begin
+    Exit(specialize _CopyVector<TLongVector>(v));
+  end;
+
+  generic procedure _ShuffleVector<T>(var V: array of T);
   var
     i, p: integer;
     tmp: T;
@@ -481,22 +487,22 @@ uses
 
   procedure ShuffleVector(var V: array of longint);
   begin
-    specialize ShuffleVector<longint>(V);
+    specialize _ShuffleVector<longint>(V);
   end;
 
   procedure ShuffleVector(var V: array of single);
   begin
-    specialize ShuffleVector<single>(V);
+    specialize _ShuffleVector<single>(V);
   end;
 
   function VectorEqual(A, B: TSingleVector): boolean;
   begin
-    Exit(specialize VectorEqual<TSingleVector>(A, B));
+    Exit(specialize _VectorEqual<TSingleVector>(A, B));
   end;
 
   function VectorEqual(A, B: TLongVector): boolean;
   begin
-    Exit(specialize VectorEqual<TLongVector>(A, B));
+    Exit(specialize _VectorEqual<TLongVector>(A, B));
   end;
 
   function GenerateMultiArray(Shape: array of longint; GenFunc: TGenFunc;
@@ -734,8 +740,8 @@ uses
     else
       Result.Data := self.Data;
     Result.DataOffset := Self.DataOffset;
-    Result.Shape := specialize CopyVector<TLongVector>(self.Shape);
-    Result.Strides := specialize CopyVector<TLongVector>(self.Strides);
+    Result.Shape := CopyVector(self.Shape);
+    Result.Strides := CopyVector(self.Strides);
 
     for i := 0 to NDims - 1 do
     begin
