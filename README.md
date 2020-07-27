@@ -30,7 +30,7 @@ begin
   { Multidimensional slicing }
   RowIndices := [0, 3];
   ColIndices := [0, 1, 3, 4];
-  B := A.Slice([RowIndices, ColIndices]);
+  B := A[[ RowIndices, ColIndices ]]; // Equivalent to A.Slice([RowIndices, ColIndices])
   PrintMultiArray(B);
 
   { Math operation }
@@ -52,3 +52,5 @@ end.
 ```
 
 Read the API reference [here](http://ariaghora.github.io/numerik).
+
+Interested in neural networks? Numerik is being integrated with [Noe](https://github.com/ariaghora/noe), neural network framework for pascal.
