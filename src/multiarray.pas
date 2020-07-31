@@ -75,7 +75,7 @@ type
   function ApplyBFunc(A, B: TMultiArray; BFunc: TBFunc; PrintDebug: Boolean = False;
     FuncName: string = ''): TMultiArray;
   function ApplyUFunc(A: TMultiArray; UFunc: TUFunc; Params: array of single): TMultiArray;
-  function ArrayEqual(A, B: TMultiArray): boolean;
+  function ArrayEqual(A, B: TMultiArray; Tol: single=0): boolean;
   function AsStrided(A: TMultiArray; Shape, Strides: TLongVector): TMultiArray;
   function BroadcastArrays(A, B: TMultiArray): TBroadcastResult;
   function CreateEmptyFTensor(Contiguous: boolean = True): TMultiArray;
@@ -295,10 +295,13 @@ uses
     SqueezeMultiArray(Result);
   end;
 
-  function ArrayEqual(A, B: TMultiArray): boolean;
+  function ArrayEqual(A, B: TMultiArray; Tol: single=0): boolean;
+  var
+    InTol: boolean=True;
   begin
-    Exit(VectorEqual(A.GetVirtualData, B.GetVirtualData) and
-         VectorEqual(A.Shape, B.Shape));
+    InTol := Mean(Abs(A - B)).Get(0) <= Tol;
+    WriteLn(Intol);
+    Exit(VectorEqual(A.Shape, B.Shape) and InTol);
   end;
 
   function AsStrided(A: TMultiArray; Shape, Strides: TLongVector): TMultiArray;
