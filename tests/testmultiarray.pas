@@ -26,6 +26,8 @@ type
     procedure TestReduceSimple;
     procedure TestReduceStacked;
     procedure TestReduceBig;
+
+    procedure TestVstack;
   end;
 
 var
@@ -128,6 +130,13 @@ begin
     expected[i] := 10000;
 
   AssertTrue(VectorEqual(M.GetVirtualData, expected));
+end;
+
+procedure TTestMultiArray.TestVstack;
+begin
+  M := VStack([TMultiArray([1, 2, 3, 4]).Reshape([2, 2]), Ones([2, 2])]);
+  N := TMultiArray([1, 2, 3, 4, 1, 1, 1, 1]).Reshape([4, 2]);
+  AssertTrue(ArrayEqual(M, N));
 end;
 
 initialization

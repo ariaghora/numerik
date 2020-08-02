@@ -93,6 +93,7 @@ type
   function ReadCSV(FileName: string): TMultiArray;
   function ShapeToStrides(AShape: TLongVector): TLongVector;
   function Transpose(A: TMultiArray): TMultiArray;
+  function VStack(arr: array of TMultiArray): TMultiArray;
 
   procedure DebugMultiArray(A: TMultiArray);
   procedure EnsureNDims(A: TMultiArray; NDims: integer);
@@ -629,6 +630,38 @@ uses
     for i := 0 to High(Result.Indices) do
       NewIndices[i] := Result.Indices[High(Result.Indices) - i];
     Result.Indices := NewIndices;
+  end;
+
+  function VStack(arr: array of TMultiArray): TMultiArray;
+  var
+    i, offset, Height, Width, Prod: LongInt;
+    A: TMultiArray;
+  begin
+    if Length(arr) <= 1 then
+      raise Exception.Create('VStack requires one or more TMultiArray(s).');
+
+    { Precompute the output height and width }
+    Prod := 1;
+    Height := 0;
+    for A in arr do
+    begin
+      if A.NDims > 2 then
+        raise Exception.Create('VStack for NDims>2 has not been implemented.');
+      Height := Height + A.Shape[0];
+      Prod := Prod * A.Size;
+    end;
+
+    Width := arr[0].Shape[1];
+    Result := AllocateMultiArray(Prod).Reshape([Height, Width]);
+
+    offset := 0;
+    for A in arr do
+    begin
+      for i := offset to offset + A.Size - 1 do
+        Result.Data[i] := A.Get(i - offset);
+      Inc(offset, A.Size);
+    end;
+
   end;
 
   procedure Permute(var A: TMultiArray);
