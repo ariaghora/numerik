@@ -230,10 +230,39 @@ end;
 
 function ArgMax(A: TMultiArray; axis: integer = -1; KeepDims: boolean=False): TMultiArray;
 var
-  i: longint;
+  i, j: longint;
 begin
   if axis = -1 then
     Exit(ArgMax(A.GetVirtualData));
+
+  if A.NDims = 2 then
+  begin
+    if axis = 0 then
+    begin
+      if KeepDims then
+        Result := AllocateMultiArray(A.Shape[1]).Reshape([1, A.Shape[1]])
+      else
+        Result := AllocateMultiArray(A.Shape[1]);
+
+      for i := 0 to A.Shape[1] - 1 do
+        Result.Data[i] := ArgMax(A[[_ALL_, i]].GetVirtualData);
+    end
+    else if axis = 1 then
+    begin
+      if KeepDims then
+        Result := AllocateMultiArray(A.Shape[0]).Reshape([1, A.Shape[0]])
+      else
+        Result := AllocateMultiArray(A.Shape[0]);
+      for i := 0 to A.Shape[0] - 1 do
+        Result.Data[i] := ArgMax(A[[i, _ALL_]].GetVirtualData);
+    end
+    else
+      raise Exception.Create('ArgMax: Invalid index');
+
+  end
+  else
+    raise Exception.Create('Argmax for NDims>3 has not been implemented');
+
   for i := 0 to A.Shape[axis] - 1 do
   begin
 

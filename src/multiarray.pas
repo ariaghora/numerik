@@ -300,7 +300,6 @@ uses
     InTol: boolean=True;
   begin
     InTol := Mean(Abs(A - B)).Get(0) <= Tol;
-    WriteLn(Intol);
     Exit(VectorEqual(A.Shape, B.Shape) and InTol);
   end;
 
