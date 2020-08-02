@@ -5,7 +5,7 @@ Numerik is a numerical library for object pascal. It supports:
 - BLAS-accelerated operation 
   
 ### Installation
-- The easiest way is to install through "numerik.source.lpk" package inside "pkg" directory. Open the package, complie, and add to project
+- If you use lazarus, the easiest way is to install through "numerik.source.lpk" package inside "pkg" directory. Open the package, compile, and add to project.
 - Provide the required libraries:
   - Windows: Provide `libopenblas.dll` which can be obtained from [here](https://github.com/xianyi/OpenBLAS/releases)
   - Ubuntu: Install `libopenblas-base libopenblas-dev liblapacke liblapacke-dev`
