@@ -243,14 +243,15 @@ begin
         Result := AllocateMultiArray(A.Shape[1]).Reshape([1, A.Shape[1]])
       else
         Result := AllocateMultiArray(A.Shape[1]);
-
       for i := 0 to A.Shape[1] - 1 do
         Result.Data[i] := ArgMax(A[[_ALL_, i]].GetVirtualData);
     end
     else if axis = 1 then
     begin
       if KeepDims then
-        Result := AllocateMultiArray(A.Shape[0]).Reshape([1, A.Shape[0]])
+      begin
+        Result := AllocateMultiArray(A.Shape[0]).Reshape([A.Shape[0], 1])
+      end
       else
         Result := AllocateMultiArray(A.Shape[0]);
       for i := 0 to A.Shape[0] - 1 do
