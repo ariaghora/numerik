@@ -62,6 +62,7 @@ function Sin(A: TMultiArray): TMultiArray; overload;
 { Compute element wise exponent over A }
 function Exp(A: TMultiArray): TMultiArray; overload;
 function Ln(A: TMultiArray): TMultiArray; overload;
+function Sqrt(A: TMultiArray): TMultiArray; overload;
 
 { ----------- Random number generator ---------------------------------------- }
 
@@ -81,6 +82,9 @@ function PseudoInverse(A: TMultiArray): TMultiArray;
 
 { Perform singular value decomposition (SVD) over a matrix A }
 function SVD(A: TMultiArray; SigmasAsMatrix: Boolean=False): TSVDResult;
+
+{ ----------- Pairwise distances----- ---------------------------------------- }
+function EuclideanDistances(X, Y: TMultiArray): TMultiArray;
 
 
 implementation
@@ -123,6 +127,16 @@ end;
 function Ln(A: TMultiArray): TMultiArray;
 begin
   Exit(ApplyUFunc(A, @_Ln, []));
+end;
+
+function _Sqrt(X: single; params: array of single): single;
+begin
+  Exit(System.Sqrt(X));
+end;
+
+function Sqrt(A: TMultiArray): TMultiArray; overload;
+begin
+  Exit(ApplyUFunc(A, @_Sqrt, []));
 end;
 
 function _Sin(X: single; params: array of single): single;
@@ -393,6 +407,21 @@ begin
   end;
 
   superb := nil;
+end;
+
+function EuclideanDistances(X, Y: TMultiArray): TMultiArray;
+var
+  xnewshape, ynewshape: TLongVector;
+begin
+  xnewshape := CopyVector(X.Shape);
+  ynewshape := CopyVector(Y.Shape);
+  SetLength(xnewshape, Length(xnewshape) + 1);
+  SetLength(ynewshape, Length(ynewshape) + 1);
+
+  xnewshape[High(xnewshape)] := 1;
+  ynewshape[High(ynewshape)] := 1;
+
+  Exit(Sqrt(Sum((X.Reshape(xnewshape) - Y.Reshape(ynewshape).T) ** 2, 1)))
 end;
 
 end.
