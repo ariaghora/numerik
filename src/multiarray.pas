@@ -56,6 +56,7 @@ type
     { Perform multidimensional slicing.
       For now Slice will return contiguous. }
     function Slice(idx: array of TLongVector): TMultiArray;
+    function SliceBool(BoolIdx: array of TLongVector): TMultiArray;
     function Squeeze: TMultiArray;
     { Perform transpose. If NDims > 2, the reverse the axis }
     function T: TMultiArray;
@@ -113,6 +114,7 @@ type
   function Add(A, B: TMultiArray): TMultiArray;
   function Matmul(A, B: TMultiArray): TMultiArray;
   function Maximum(A, B: TMultiArray): TMultiArray;
+  function Minimum(A, B: TMultiArray): TMultiArray;
   function Multiply(A, B: TMultiArray): TMultiArray;
   function Power(A, B: TMultiArray): TMultiArray; overload;
 
@@ -131,8 +133,17 @@ type
   { @exclude } operator explicit(A: array of longint) B: TLongVector;
   { @exclude } operator :=(A: TLongVector) B: TSingleVector;
   { @exclude } operator explicit(A: TLongVector) B: TSingleVector;
+  { @exclude } operator :=(A: TSingleVector) B: TLongVector;
+  { @exclude } operator explicit(A: TSingleVector) B: TLongVector;
   { @exclude } operator :=(A: longint) B: TLongVector;
   { @exclude } operator explicit(A: longint) B: TLongVector;
+
+  // 1-dim array to TSingleVector
+  { @exclude } operator :=(A: TMultiArray) B: TSingleVector;
+  { @exclude } operator explicit(A: TMultiArray) B: TSingleVector;
+  // 1-dim array to TLongVector
+  { @exclude } operator :=(A: TMultiArray) B: TLongVector;
+  { @exclude } operator explicit(A: TMultiArray) B: TLongVector;
 
 var
   GLOBAL_FUNC_DEBUG: boolean;
@@ -797,7 +808,7 @@ uses
 
   function TMultiArray.Item: Single;
   begin
-    if NDims > 0 then raise Exception.Create('');
+    if Size > 1 then raise Exception.Create('Can only convert 1-length array.');
     Exit(Data[0]);
   end;
 
@@ -837,6 +848,33 @@ uses
       end
     end;
     Result := Result.Contiguous;
+  end;
+
+  function TMultiArray.SliceBool(BoolIdx: array of TLongVector): TMultiArray;
+  var
+    i, j, Cnt: longint;
+    NewIdx: array of TLongVector;
+  begin
+    SetLength(NewIdx, Length(BoolIdx));
+    for i := 0 to High(BoolIdx) do
+    begin
+      if Length(BoolIdx[i]) <> Shape[i] then
+        raise Exception.Create('Length of BoolIdx[' + IntToStr(i) +
+                               '] <> Array''s Shape[' + IntToStr(i) + ']');
+
+      Cnt := 0;
+      SetLength(NewIdx[i], Length(BoolIdx[i]));
+      for j := 0 to High(BoolIdx[i]) do
+      begin
+        if BoolIdx[i][j] > 0 then
+        begin
+          NewIdx[i][Cnt] := j;
+          Inc(Cnt);
+        end;
+      end;
+      SetLength(NewIdx[i], Cnt);
+    end;
+    Exit(self[NewIdx]);
   end;
 
   function TMultiArray.Squeeze: TMultiArray;
@@ -888,6 +926,16 @@ uses
     Exit(Single(Integer(a > b)));
   end;
 
+  function _Max(a, b: single): single;
+  begin
+    Exit(math.max(a, b))
+  end;
+
+  function _Min(a, b: single): single;
+  begin
+    Exit(math.min(a, b))
+  end;
+
   function _Multiply(a, b: single): single;
   begin
     Exit(a * b);
@@ -922,14 +970,14 @@ uses
     Exit(MatMul_BLAS(A, B));
   end;
 
-  function _Max(a, b: single): single;
-  begin
-    Exit(math.max(a, b))
-  end;
-
   function Maximum(A, B: TMultiArray): TMultiArray;
   begin
     Exit(ApplyBFunc(A, B, @_Max));
+  end;
+
+  function Minimum(A, B: TMultiArray): TMultiArray;
+  begin
+    Exit(ApplyBFunc(A, B, @_Min));
   end;
 
   function Multiply(A, B: TMultiArray): TMultiArray;
@@ -1021,6 +1069,19 @@ uses
     B := A;
   end;
 
+  operator :=(A: TSingleVector) B: TLongVector;
+  var
+    i: longint;
+  begin
+    SetLength(B, Length(A));
+    for i := 0 to High(A) do B[i] := Round(A[i]);
+  end;
+
+  operator explicit(A: TSingleVector) B: TLongVector;
+  begin
+    B := A;
+  end;
+
   operator :=(A: longint) B: TLongVector;
   begin
     SetLength(B, 1);
@@ -1028,6 +1089,30 @@ uses
   end;
 
   operator explicit(A: longint) B: TLongVector;
+  begin
+    B := A;
+  end;
+
+  operator :=(A: TMultiArray) B: TSingleVector;
+  begin
+    if A.Squeeze.NDims > 1 then
+      raise Exception.Create('Can only convert MultiArray with NDims=1');
+    B := A.GetVirtualData;
+  end;
+
+  operator explicit(A: TMultiArray) B: TSingleVector;
+  begin
+    B := A;
+  end;
+
+  operator :=(A: TMultiArray) B: TLongVector;
+  begin
+    if A.Squeeze.NDims > 1 then
+      raise Exception.Create('Can only convert MultiArray with NDims=1');
+    B := A.GetVirtualData;
+  end;
+
+  operator explicit(A: TMultiArray) B: TLongVector;
   begin
     B := A;
   end;
