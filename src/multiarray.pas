@@ -73,6 +73,7 @@ type
 
   function _ALL_: TLongVector;
   function AllocateMultiArray(Size: longint; AllocateData: boolean=true): TMultiArray;
+  function Any(X: TMultiArray; Axis: longint = -1): TMultiArray;
   function ApplyBFunc(A, B: TMultiArray; BFunc: TBFunc; PrintDebug: Boolean = False;
     FuncName: string = ''): TMultiArray;
   function ApplyUFunc(A: TMultiArray; UFunc: TUFunc; Params: array of single): TMultiArray;
@@ -94,6 +95,7 @@ type
   function ReadCSV(FileName: string): TMultiArray;
   function ShapeToStrides(AShape: TLongVector): TLongVector;
   function Transpose(A: TMultiArray): TMultiArray;
+  function Unique(A: TMultiArray; Axis: integer = -1): TMultiArray;
   function VStack(arr: array of TMultiArray): TMultiArray;
 
   procedure DebugMultiArray(A: TMultiArray);
@@ -329,6 +331,32 @@ uses
     //Result.Indices := A.Indices;
     Result.ResetIndices;
   end;
+
+  function Any(X: TMultiArray; Axis: longint = -1): TMultiArray;
+  var
+    idx: TLongVectorArr;
+    vals: TSingleVector;
+    i: longint;
+  begin
+    if Axis + 1 > X.NDims then
+      raise Exception.Create('Axis is greater than X.NDims.');
+
+    SetLength(idx, X.NDims);
+    for i := 0 to High(idx) do
+      idx[i] := [];
+
+    if Axis = -1 then
+      Exit(Sum(X) > 0);
+
+    SetLength(vals, X.Shape[Axis]);
+    for i := 0 to X.Shape[Axis] - 1 do
+    begin
+      idx[Axis] := i;
+      Vals[i] := Any(X[idx]).Item;
+    end;
+    Exit(Vals);
+  end;
+
 
   function ApplyBFunc(A, B: TMultiArray; BFunc: TBFunc; PrintDebug: Boolean = False;
     FuncName: string = ''): TMultiArray;
@@ -648,6 +676,28 @@ uses
     Result.Indices := NewIndices;
   end;
 
+  function Unique(A: TMultiArray; Axis: integer = -1): TMultiArray;
+  var
+    tmpSingles: TSingleVector;
+    i, NumUnique: longint;
+  begin
+    if Axis > 0 then
+      raise Exception.Create('`Unique` along axis is not implemented yet.');
+
+    NumUnique := 0;
+    SetLength(tmpSingles, 0);
+    for i := 0 to A.Size - 1 do
+    begin
+      if not (A.Get(i) in tmpSingles) then
+      begin
+        SetLength(tmpSingles, NumUnique + 1);
+        tmpSingles[NumUnique] := A.Get(i);
+        Inc(NumUnique);
+      end;
+    end;
+    Exit(tmpSingles);
+  end;
+
   function VStack(arr: array of TMultiArray): TMultiArray;
   var
     i, offset, Height, Width, Prod: LongInt;
@@ -668,7 +718,7 @@ uses
     end;
 
     Width := arr[0].Shape[1];
-    Result := AllocateMultiArray(Prod).Reshape([Height, Width]);
+    Result := AllocateMultiArray(Height * Width).Reshape([Height, Width]);
 
     offset := 0;
     for A in arr do
