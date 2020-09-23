@@ -118,6 +118,8 @@ type
   function Multiply(A, B: TMultiArray): TMultiArray;
   function Power(A, B: TMultiArray): TMultiArray; overload;
 
+  { @exclude } operator in (A: single; B: TSingleVector) C: boolean;
+
   { @exclude } operator + (A, B: TMultiArray) C: TMultiArray;
   { @exclude } operator - (A: TMultiArray) B: TMultiArray;
   { @exclude } operator - (A, B: TMultiArray) C: TMultiArray;
@@ -126,6 +128,8 @@ type
   { @exclude } operator ** (A, B: TMultiArray) C: TMultiArray;
   { @exclude } operator = (A, B: TMultiArray) C: TMultiArray;
   { @exclude } operator > (A, B: TMultiArray) C: TMultiArray;
+  { @exclude } operator in (A: TMultiArray; B: array of TMultiArray) C: boolean;
+
   { @exclude } operator := (A: single) B: TMultiArray;
   { @exclude } operator := (A: array of single) B: TMultiArray;
   { @exclude } operator explicit(A: single) B: TMultiArray;
@@ -140,10 +144,10 @@ type
 
   // 1-dim array to TSingleVector
   { @exclude } operator :=(A: TMultiArray) B: TSingleVector;
-  { @exclude } operator explicit(A: TMultiArray) B: TSingleVector;
+  //{ @exclude } operator explicit(A: TMultiArray) B: TSingleVector;
   // 1-dim array to TLongVector
   { @exclude } operator :=(A: TMultiArray) B: TLongVector;
-  { @exclude } operator explicit(A: TMultiArray) B: TLongVector;
+  //{ @exclude } operator explicit(A: TMultiArray) B: TLongVector;
 
 var
   GLOBAL_FUNC_DEBUG: boolean;
@@ -311,8 +315,9 @@ uses
   var
     InTol: boolean=True;
   begin
-    InTol := Mean(Abs(A - B)).Get(0) <= Tol;
-    Exit(VectorEqual(A.Shape, B.Shape) and InTol);
+    if not VectorEqual(A.Shape, B.Shape) then Exit(False);
+    InTol := Mean(Abs(A - B)).Item <= Tol;
+    Exit(InTol);
   end;
 
   function AsStrided(A: TMultiArray; Shape, Strides: TLongVector): TMultiArray;
@@ -874,7 +879,7 @@ uses
       end;
       SetLength(NewIdx[i], Cnt);
     end;
-    Exit(self[NewIdx]);
+    Exit(self[NewIdx].Contiguous);
   end;
 
   function TMultiArray.Squeeze: TMultiArray;
@@ -990,6 +995,19 @@ uses
     Exit(ApplyBFunc(A, B, @_Power));
   end;
 
+  operator in (A: single; B: TSingleVector) C: boolean;
+  var
+    i: integer;
+  begin
+    C := False;
+    for i := 0 to High(B) do
+      if A = B[i] then
+      begin
+        C := True;
+        Exit;
+      end;
+  end;
+
   operator +(A, B: TMultiArray) C: TMultiArray;
   begin
     C := Add(A, B);
@@ -1028,6 +1046,19 @@ uses
   operator > (A, B: TMultiArray) C: TMultiArray;
   begin
     C := ApplyBFunc(A, B, @_GreaterThan, GLOBAL_FUNC_DEBUG, 'GREATER_THAN');
+  end;
+
+  operator in (A: TMultiArray; B: array of TMultiArray) C: boolean;
+  var
+    X: TMultiArray;
+  begin
+    C := False;
+    for X in B do
+      if ArrayEqual(A, X) then
+      begin
+        C := True;
+        Exit;
+      end;
   end;
 
   operator :=(A: single) B: TMultiArray;
