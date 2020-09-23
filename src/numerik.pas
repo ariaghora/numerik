@@ -37,7 +37,9 @@ function Zeros(Shape: TLongVector): TMultiArray;
 
 function Abs(A: TMultiArray): TMultiArray; overload;
 function ArgMax(A: TMultiArray; axis: integer = -1; KeepDims: boolean=False): TMultiArray; overload;
+function ArgMin(A: TMultiArray; axis: integer = -1; KeepDims: boolean=False): TMultiArray; overload;
 function Max(A: TMultiArray; axis: integer = -1; KeepDims: boolean=False): TMultiArray; overload;
+function Min(A: TMultiArray; axis: integer = -1; KeepDims: boolean=False): TMultiArray; overload;
 { Compute the mean of a A along axis. The default axis is -1, meaning the mean is
   computed over all items in A. }
 function Mean(A: TMultiArray; axis: integer = -1; KeepDims: boolean=False): TMultiArray; overload;
@@ -284,13 +286,75 @@ begin
   end;
 end;
 
+function ArgMin(const x: array of Single): Integer;
+var
+  Index: Integer;
+  MinValue: Single;
+begin
+  Result := -1;
+  MinValue := MaxSingle;
+  for Index := 0 to high(x) do begin
+    if x[Index] < MinValue then begin
+      Result := Index;
+      MinValue := x[Index];
+    end;
+  end;
+end;
+
+function ArgMin(A: TMultiArray; axis: integer = -1; KeepDims: boolean=False): TMultiArray;
+var
+  i, j: longint;
+begin
+  if axis = -1 then
+    Exit(ArgMin(A.GetVirtualData));
+
+  if A.NDims = 2 then
+  begin
+    if axis = 0 then
+    begin
+      if KeepDims then
+        Result := AllocateMultiArray(A.Shape[1]).Reshape([1, A.Shape[1]])
+      else
+        Result := AllocateMultiArray(A.Shape[1]);
+      for i := 0 to A.Shape[1] - 1 do
+        Result.Data[i] := ArgMin(A[[_ALL_, i]].GetVirtualData);
+    end
+    else if axis = 1 then
+    begin
+      if KeepDims then
+      begin
+        Result := AllocateMultiArray(A.Shape[0]).Reshape([A.Shape[0], 1])
+      end
+      else
+        Result := AllocateMultiArray(A.Shape[0]);
+      for i := 0 to A.Shape[0] - 1 do
+        Result.Data[i] := ArgMin(A[[i, _ALL_]].GetVirtualData);
+    end
+    else
+      raise Exception.Create('ArgMin: Invalid index');
+
+  end
+  else
+    raise Exception.Create('Argmin for NDims>3 has not been implemented');
+
+  for i := 0 to A.Shape[axis] - 1 do
+  begin
+
+  end;
+end;
+
 function Max(A: TMultiArray; axis: integer = -1; KeepDims: boolean=False): TMultiArray;
 begin
   if axis = -1 then
     Exit(math.MaxValue(A.GetVirtualData));
-  //if KeepDims then
-  //  Exit();
   Exit(ReduceAlongAxis(A, @Maximum, axis, KeepDims));
+end;
+
+function Min(A: TMultiArray; axis: integer = -1; KeepDims: boolean=False): TMultiArray;
+begin
+  if axis = -1 then
+    Exit(math.MinValue(A.GetVirtualData));
+  Exit(ReduceAlongAxis(A, @Minimum, axis, KeepDims));
 end;
 
 function Mean(A: TMultiArray; axis: integer = -1; KeepDims: boolean=False): TMultiArray;
