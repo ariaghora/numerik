@@ -361,9 +361,7 @@ function Mean(A: TMultiArray; axis: integer = -1; KeepDims: boolean=False): TMul
 begin
   if axis = -1 then
     Exit(math.Mean(A.GetVirtualData));
-  Result := Sum(A, axis) / A.Shape[axis];
-  if KeepDims then
-    SqueezeMultiArrayAt(Result, axis);
+  Result := Sum(A, axis, KeepDims) / A.Shape[axis];
 end;
 
 function _Round(X: single; params: array of single): single;
