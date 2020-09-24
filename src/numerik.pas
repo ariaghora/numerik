@@ -63,6 +63,7 @@ function Sin(A: TMultiArray): TMultiArray; overload;
 
 { Compute element wise exponent over A }
 function Exp(A: TMultiArray): TMultiArray; overload;
+function Log2(A: TMultiArray): TMultiArray; overload;
 function Ln(A: TMultiArray): TMultiArray; overload;
 function Sqrt(A: TMultiArray): TMultiArray; overload;
 
@@ -119,6 +120,16 @@ end;
 function Exp(A: TMultiArray): TMultiArray;
 begin
   Exit(ApplyUFunc(A, @_Exp, []));
+end;
+
+function _Log2(X: single; params: array of single): single;
+begin
+  Exit(math.Log2(X));
+end;
+
+function Log2(A: TMultiArray): TMultiArray;
+begin
+  Exit(ApplyUFunc(A, @_Log2, []));
 end;
 
 function _Ln(X: single; params: array of single): single;
