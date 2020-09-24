@@ -71,6 +71,10 @@ type
     A, B: TMultiArray;
   end;
 
+  TUniqueResult = record
+    UniqueValues, Counts: TMultiArray;
+  end;
+
   function _ALL_: TLongVector;
   function AllocateMultiArray(Size: longint; AllocateData: boolean=true): TMultiArray;
   function Any(X: TMultiArray; Axis: longint = -1): TMultiArray;
@@ -78,6 +82,7 @@ type
     FuncName: string = ''): TMultiArray;
   function ApplyUFunc(A: TMultiArray; UFunc: TUFunc; Params: array of single): TMultiArray;
   function ArrayEqual(A, B: TMultiArray; Tol: single=0): boolean;
+  function ArraySort(A: TMultiArray; Axis: integer = -1): TMultiArray;
   function AsStrided(A: TMultiArray; Shape, Strides: TLongVector): TMultiArray;
   function BroadcastArrays(A, B: TMultiArray): TBroadcastResult;
   function CreateEmptyFTensor(Contiguous: boolean = True): TMultiArray;
@@ -87,6 +92,8 @@ type
   function GenerateMultiArray(Shape: array of longint; GenFunc: TGenFunc;
     Params: array of single): TMultiArray;
   function GetVirtualData(A: TMultiArray): TSingleVector;
+  { Get linear index of x in A. Returns -1 if not found. }
+  function IndexOf(x: Single; A: TMultiArray): longint;
   function IndexToStridedOffset(Index: array of longint; Strides: TLongVector): longint;
   function OffsetToIndex(A: TMultiArray; Offset: longint): TLongVector;
   function Range(Start, Stop, step: longint): TLongVector; overload;
@@ -95,7 +102,7 @@ type
   function ReadCSV(FileName: string): TMultiArray;
   function ShapeToStrides(AShape: TLongVector): TLongVector;
   function Transpose(A: TMultiArray): TMultiArray;
-  function Unique(A: TMultiArray; Axis: integer = -1): TMultiArray;
+  function Unique(A: TMultiArray; Axis: integer = -1; ReturnCounts: boolean = False): TUniqueResult;
   function VStack(arr: array of TMultiArray): TMultiArray;
 
   procedure DebugMultiArray(A: TMultiArray);
@@ -130,6 +137,9 @@ type
   { @exclude } operator ** (A, B: TMultiArray) C: TMultiArray;
   { @exclude } operator = (A, B: TMultiArray) C: TMultiArray;
   { @exclude } operator > (A, B: TMultiArray) C: TMultiArray;
+  { @exclude } operator >= (A, B: TMultiArray) C: TMultiArray;
+  { @exclude } operator < (A, B: TMultiArray) C: TMultiArray;
+  { @exclude } operator <= (A, B: TMultiArray) C: TMultiArray;
   { @exclude } operator in (A: TMultiArray; B: array of TMultiArray) C: boolean;
 
   { @exclude } operator := (A: single) B: TMultiArray;
@@ -146,10 +156,10 @@ type
 
   // 1-dim array to TSingleVector
   { @exclude } operator :=(A: TMultiArray) B: TSingleVector;
-  //{ @exclude } operator explicit(A: TMultiArray) B: TSingleVector;
+  { @exclude } operator explicit(A: TMultiArray) B: TSingleVector;
   // 1-dim array to TLongVector
   { @exclude } operator :=(A: TMultiArray) B: TLongVector;
-  //{ @exclude } operator explicit(A: TMultiArray) B: TLongVector;
+  { @exclude } operator explicit(A: TMultiArray) B: TLongVector;
 
 var
   GLOBAL_FUNC_DEBUG: boolean;
@@ -320,6 +330,61 @@ uses
     if not VectorEqual(A.Shape, B.Shape) then Exit(False);
     InTol := Mean(Abs(A - B)).Item <= Tol;
     Exit(InTol);
+  end;
+
+  function CompareSingle(const d1,d2): integer;
+  var
+    i1 : float absolute d1;
+    i2 : single absolute d2;
+  begin
+    if i1=i2 then
+      Result:=0
+    else if i1<i2 then Result:=-1
+    else Result:=1;
+  end;
+
+  generic procedure Quicksort<T>(var arr: array of T);
+    procedure QSort(Left, Right: longint);
+    var
+      i, j: longint;
+      tmp, pivot: T;
+    begin
+      i := Left;
+      j := Right;
+      pivot := arr[(Left + Right) shr 1];
+      repeat
+        while pivot > arr[i] do
+          Inc(i);
+        while pivot < arr[j] do
+          Dec(j);
+        if i <= j then
+        begin
+          tmp := arr[i];
+          arr[i] := arr[j];
+          arr[j] := tmp;
+          Dec(j);
+          Inc(i);
+        end;
+      until i > j;
+      if Left < j then
+        QSort(Left, j);
+      if i < Right then
+        QSort(i, Right);
+    end;
+  begin
+    QSort(0, Length(arr) - 1);
+  end;
+
+  function ArraySort(A: TMultiArray; Axis: integer): TMultiArray;
+  var
+    arr: TSingleVector;
+  begin
+    if Axis > -1 then
+      raise Exception.Create('Sorting with axis > -1 is not supported yet.');
+
+    arr := CopyVector(A.GetVirtualData);
+    specialize Quicksort<single>(arr);
+    Exit(arr);
   end;
 
   function AsStrided(A: TMultiArray; Shape, Strides: TLongVector): TMultiArray;
@@ -676,9 +741,9 @@ uses
     Result.Indices := NewIndices;
   end;
 
-  function Unique(A: TMultiArray; Axis: integer = -1): TMultiArray;
+  function Unique(A: TMultiArray; Axis: integer = -1; ReturnCounts: boolean = False): TUniqueResult;
   var
-    tmpSingles: TSingleVector;
+    tmpSingles, tmpCounts: TSingleVector;
     i, NumUnique: longint;
   begin
     if Axis > 0 then
@@ -686,16 +751,27 @@ uses
 
     NumUnique := 0;
     SetLength(tmpSingles, 0);
+    if ReturnCounts then SetLength(tmpCounts, 0);
     for i := 0 to A.Size - 1 do
     begin
       if not (A.Get(i) in tmpSingles) then
       begin
         SetLength(tmpSingles, NumUnique + 1);
         tmpSingles[NumUnique] := A.Get(i);
+        if ReturnCounts then
+        begin
+          SetLength(tmpCounts, NumUnique + 1);
+          tmpCounts[NumUnique] := 1;
+        end;
         Inc(NumUnique);
-      end;
+      end
+      else if ReturnCounts then
+        tmpCounts[IndexOf(A.Get(i), tmpSingles)] := tmpCounts[IndexOf(A.Get(i), tmpSingles)] + 1;
     end;
-    Exit(tmpSingles);
+    Result.UniqueValues := tmpSingles;
+
+    if ReturnCounts then Result.Counts := tmpCounts;
+    //Exit(tmpSingles);
   end;
 
   function VStack(arr: array of TMultiArray): TMultiArray;
@@ -803,6 +879,16 @@ uses
   begin
     if Self.IsContiguous then Exit(Self.Data);
     Exit(multiarray.GetVirtualData(Self));
+  end;
+
+  function IndexOf(x: Single; A: TMultiArray): longint;
+  var
+    i: longint;
+  begin
+    Result := -1;
+    for i := 0 to A.Size - 1 do
+      if x = A.Get(i) then
+        Exit(i);
   end;
 
   function IndexToStridedOffset(Index: array of longint; Strides: TLongVector): longint;
@@ -981,6 +1067,21 @@ uses
     Exit(Single(Integer(a > b)));
   end;
 
+  function _GreaterEqualThan(a, b: single): single;
+  begin
+    Exit(Single(Integer(a >= b)));
+  end;
+
+  function _LessThan(a, b: single): single;
+  begin
+    Exit(Single(Integer(a < b)));
+  end;
+
+  function _LessEqualThan(a, b: single): single;
+  begin
+    Exit(Single(Integer(a <= b)));
+  end;
+
   function _Max(a, b: single): single;
   begin
     Exit(math.max(a, b))
@@ -1096,6 +1197,21 @@ uses
   operator > (A, B: TMultiArray) C: TMultiArray;
   begin
     C := ApplyBFunc(A, B, @_GreaterThan, GLOBAL_FUNC_DEBUG, 'GREATER_THAN');
+  end;
+
+  operator >= (A, B: TMultiArray) C: TMultiArray;
+  begin
+    C := ApplyBFunc(A, B, @_GreaterEqualThan, GLOBAL_FUNC_DEBUG, 'GREATER_EQUAL_THAN');
+  end;
+
+  operator<(A, B: TMultiArray)C: TMultiArray;
+  begin
+    C := ApplyBFunc(A, B, @_LessThan, GLOBAL_FUNC_DEBUG, 'LESS_THAN');
+  end;
+
+  operator<=(A, B: TMultiArray)C: TMultiArray;
+  begin
+    C := ApplyBFunc(A, B, @_LessEqualThan, GLOBAL_FUNC_DEBUG, 'LESS_EQUAL_THAN');
   end;
 
   operator in (A: TMultiArray; B: array of TMultiArray) C: boolean;
