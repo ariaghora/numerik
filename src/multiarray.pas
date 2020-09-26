@@ -658,7 +658,7 @@ uses
       begin
         s := s + FloatToStr(A[[row, col]].Item);
         if col < A.Shape[1] - 1 then
-          s := s + ',';
+          s := s + delimiter;
       end;
       sl.Add(s);
     end;

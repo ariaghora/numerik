@@ -45,16 +45,46 @@ A unit containing:
 <span id="PasDoc-FuncsProcs"></span><h3 class="summary">Functions and Procedures</h3>
 <table class="summary wide_list">
 <tr class="list">
-<td class="itemcode"><code>function <strong><a href="numerik.html#Cos">Cos</a></strong>(A: <a href="multiarray.TMultiArray.html">TMultiArray</a>): <a href="multiarray.TMultiArray.html">TMultiArray</a>; overload;</code></td>
+<td class="itemcode"><code>function <strong><a href="numerik.html#Abs">Abs</a></strong>(A: <a href="multiarray.TMultiArray.html">TMultiArray</a>): <a href="multiarray.TMultiArray.html">TMultiArray</a>; overload;</code></td>
 </tr>
 <tr class="list2">
+<td class="itemcode"><code>function <strong><a href="numerik.html#ArgMax">ArgMax</a></strong>(A: <a href="multiarray.TMultiArray.html">TMultiArray</a>; axis: integer = -1; KeepDims: boolean=False): <a href="multiarray.TMultiArray.html">TMultiArray</a>; overload;</code></td>
+</tr>
+<tr class="list">
+<td class="itemcode"><code>function <strong><a href="numerik.html#ArgMin">ArgMin</a></strong>(A: <a href="multiarray.TMultiArray.html">TMultiArray</a>; axis: integer = -1; KeepDims: boolean=False): <a href="multiarray.TMultiArray.html">TMultiArray</a>; overload;</code></td>
+</tr>
+<tr class="list2">
+<td class="itemcode"><code>function <strong><a href="numerik.html#Cos">Cos</a></strong>(A: <a href="multiarray.TMultiArray.html">TMultiArray</a>): <a href="multiarray.TMultiArray.html">TMultiArray</a>; overload;</code></td>
+</tr>
+<tr class="list">
 <td class="itemcode"><code>function <strong><a href="numerik.html#DegToRad">DegToRad</a></strong>(A: <a href="multiarray.TMultiArray.html">TMultiArray</a>): <a href="multiarray.TMultiArray.html">TMultiArray</a>; overload;</code></td>
+</tr>
+<tr class="list2">
+<td class="itemcode"><code>function <strong><a href="numerik.html#EuclideanDistances">EuclideanDistances</a></strong>(X, Y: <a href="multiarray.TMultiArray.html">TMultiArray</a>): <a href="multiarray.TMultiArray.html">TMultiArray</a>;</code></td>
 </tr>
 <tr class="list">
 <td class="itemcode"><code>function <strong><a href="numerik.html#Exp">Exp</a></strong>(A: <a href="multiarray.TMultiArray.html">TMultiArray</a>): <a href="multiarray.TMultiArray.html">TMultiArray</a>; overload;</code></td>
 </tr>
 <tr class="list2">
+<td class="itemcode"><code>function <strong><a href="numerik.html#FullMultiArray">FullMultiArray</a></strong>(Shape: <a href="multiarray.html#TLongVector">TLongVector</a>; val: single): <a href="multiarray.TMultiArray.html">TMultiArray</a>;</code></td>
+</tr>
+<tr class="list">
+<td class="itemcode"><code>function <strong><a href="numerik.html#Ln">Ln</a></strong>(A: <a href="multiarray.TMultiArray.html">TMultiArray</a>): <a href="multiarray.TMultiArray.html">TMultiArray</a>; overload;</code></td>
+</tr>
+<tr class="list2">
+<td class="itemcode"><code>function <strong><a href="numerik.html#Log2">Log2</a></strong>(A: <a href="multiarray.TMultiArray.html">TMultiArray</a>): <a href="multiarray.TMultiArray.html">TMultiArray</a>; overload;</code></td>
+</tr>
+<tr class="list">
+<td class="itemcode"><code>function <strong><a href="numerik.html#Max">Max</a></strong>(A: <a href="multiarray.TMultiArray.html">TMultiArray</a>; axis: integer = -1; KeepDims: boolean=False): <a href="multiarray.TMultiArray.html">TMultiArray</a>; overload;</code></td>
+</tr>
+<tr class="list2">
 <td class="itemcode"><code>function <strong><a href="numerik.html#Mean">Mean</a></strong>(A: <a href="multiarray.TMultiArray.html">TMultiArray</a>; axis: integer = -1; KeepDims: boolean=False): <a href="multiarray.TMultiArray.html">TMultiArray</a>; overload;</code></td>
+</tr>
+<tr class="list">
+<td class="itemcode"><code>function <strong><a href="numerik.html#Min">Min</a></strong>(A: <a href="multiarray.TMultiArray.html">TMultiArray</a>; axis: integer = -1; KeepDims: boolean=False): <a href="multiarray.TMultiArray.html">TMultiArray</a>; overload;</code></td>
+</tr>
+<tr class="list2">
+<td class="itemcode"><code>function <strong><a href="numerik.html#Ones">Ones</a></strong>(Shape: <a href="multiarray.html#TLongVector">TLongVector</a>): <a href="multiarray.TMultiArray.html">TMultiArray</a>;</code></td>
 </tr>
 <tr class="list">
 <td class="itemcode"><code>function <strong><a href="numerik.html#PseudoInverse">PseudoInverse</a></strong>(A: <a href="multiarray.TMultiArray.html">TMultiArray</a>): <a href="multiarray.TMultiArray.html">TMultiArray</a>;</code></td>
@@ -75,10 +105,16 @@ A unit containing:
 <td class="itemcode"><code>function <strong><a href="numerik.html#Sin">Sin</a></strong>(A: <a href="multiarray.TMultiArray.html">TMultiArray</a>): <a href="multiarray.TMultiArray.html">TMultiArray</a>; overload;</code></td>
 </tr>
 <tr class="list">
-<td class="itemcode"><code>function <strong><a href="numerik.html#Sum">Sum</a></strong>(A: <a href="multiarray.TMultiArray.html">TMultiArray</a>; axis: integer = -1): <a href="multiarray.TMultiArray.html">TMultiArray</a>; overload;</code></td>
+<td class="itemcode"><code>function <strong><a href="numerik.html#Sqrt">Sqrt</a></strong>(A: <a href="multiarray.TMultiArray.html">TMultiArray</a>): <a href="multiarray.TMultiArray.html">TMultiArray</a>; overload;</code></td>
 </tr>
 <tr class="list2">
+<td class="itemcode"><code>function <strong><a href="numerik.html#Sum">Sum</a></strong>(A: <a href="multiarray.TMultiArray.html">TMultiArray</a>; axis: integer = -1; KeepDims: boolean=False): <a href="multiarray.TMultiArray.html">TMultiArray</a>; overload;</code></td>
+</tr>
+<tr class="list">
 <td class="itemcode"><code>function <strong><a href="numerik.html#SVD">SVD</a></strong>(A: <a href="multiarray.TMultiArray.html">TMultiArray</a>; SigmasAsMatrix: Boolean=False): <a href="numerik.TSVDResult.html">TSVDResult</a>;</code></td>
+</tr>
+<tr class="list2">
+<td class="itemcode"><code>function <strong><a href="numerik.html#Zeros">Zeros</a></strong>(Shape: <a href="multiarray.html#TLongVector">TLongVector</a>): <a href="multiarray.TMultiArray.html">TMultiArray</a>;</code></td>
 </tr>
 </table>
 <span id="PasDoc-Types"></span><h3 class="summary">Types</h3>
@@ -89,6 +125,29 @@ A unit containing:
 </table>
 <h2 class="description">Description</h2>
 <h3 class="detail">Functions and Procedures</h3>
+<table class="detail wide_list">
+<tr class="list">
+<td class="itemcode"><span id="Abs"></span><code>function <strong>Abs</strong>(A: <a href="multiarray.TMultiArray.html">TMultiArray</a>): <a href="multiarray.TMultiArray.html">TMultiArray</a>; overload;</code></td>
+</tr>
+<tr><td colspan="1">
+<p>
+&mdash;&mdash;&mdash;&ndash; Arithmetic &mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&ndash;</p>
+</td></tr>
+</table>
+<table class="detail wide_list">
+<tr class="list">
+<td class="itemcode"><span id="ArgMax"></span><code>function <strong>ArgMax</strong>(A: <a href="multiarray.TMultiArray.html">TMultiArray</a>; axis: integer = -1; KeepDims: boolean=False): <a href="multiarray.TMultiArray.html">TMultiArray</a>; overload;</code></td>
+</tr>
+<tr><td colspan="1">
+&nbsp;</td></tr>
+</table>
+<table class="detail wide_list">
+<tr class="list">
+<td class="itemcode"><span id="ArgMin"></span><code>function <strong>ArgMin</strong>(A: <a href="multiarray.TMultiArray.html">TMultiArray</a>; axis: integer = -1; KeepDims: boolean=False): <a href="multiarray.TMultiArray.html">TMultiArray</a>; overload;</code></td>
+</tr>
+<tr><td colspan="1">
+&nbsp;</td></tr>
+</table>
 <table class="detail wide_list">
 <tr class="list">
 <td class="itemcode"><span id="Cos"></span><code>function <strong>Cos</strong>(A: <a href="multiarray.TMultiArray.html">TMultiArray</a>): <a href="multiarray.TMultiArray.html">TMultiArray</a>; overload;</code></td>
@@ -109,6 +168,15 @@ Convert degree to radian element wise over A</p>
 </table>
 <table class="detail wide_list">
 <tr class="list">
+<td class="itemcode"><span id="EuclideanDistances"></span><code>function <strong>EuclideanDistances</strong>(X, Y: <a href="multiarray.TMultiArray.html">TMultiArray</a>): <a href="multiarray.TMultiArray.html">TMultiArray</a>;</code></td>
+</tr>
+<tr><td colspan="1">
+<p>
+&mdash;&mdash;&mdash;&ndash; Pairwise distances&mdash;&ndash; &mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;&mdash;-</p>
+</td></tr>
+</table>
+<table class="detail wide_list">
+<tr class="list">
 <td class="itemcode"><span id="Exp"></span><code>function <strong>Exp</strong>(A: <a href="multiarray.TMultiArray.html">TMultiArray</a>): <a href="multiarray.TMultiArray.html">TMultiArray</a>; overload;</code></td>
 </tr>
 <tr><td colspan="1">
@@ -118,11 +186,57 @@ Compute element wise exponent over A</p>
 </table>
 <table class="detail wide_list">
 <tr class="list">
+<td class="itemcode"><span id="FullMultiArray"></span><code>function <strong>FullMultiArray</strong>(Shape: <a href="multiarray.html#TLongVector">TLongVector</a>; val: single): <a href="multiarray.TMultiArray.html">TMultiArray</a>;</code></td>
+</tr>
+<tr><td colspan="1">
+<p>
+Create multiarray with shape Shape containing Ones</p>
+</td></tr>
+</table>
+<table class="detail wide_list">
+<tr class="list">
+<td class="itemcode"><span id="Ln"></span><code>function <strong>Ln</strong>(A: <a href="multiarray.TMultiArray.html">TMultiArray</a>): <a href="multiarray.TMultiArray.html">TMultiArray</a>; overload;</code></td>
+</tr>
+<tr><td colspan="1">
+&nbsp;</td></tr>
+</table>
+<table class="detail wide_list">
+<tr class="list">
+<td class="itemcode"><span id="Log2"></span><code>function <strong>Log2</strong>(A: <a href="multiarray.TMultiArray.html">TMultiArray</a>): <a href="multiarray.TMultiArray.html">TMultiArray</a>; overload;</code></td>
+</tr>
+<tr><td colspan="1">
+&nbsp;</td></tr>
+</table>
+<table class="detail wide_list">
+<tr class="list">
+<td class="itemcode"><span id="Max"></span><code>function <strong>Max</strong>(A: <a href="multiarray.TMultiArray.html">TMultiArray</a>; axis: integer = -1; KeepDims: boolean=False): <a href="multiarray.TMultiArray.html">TMultiArray</a>; overload;</code></td>
+</tr>
+<tr><td colspan="1">
+&nbsp;</td></tr>
+</table>
+<table class="detail wide_list">
+<tr class="list">
 <td class="itemcode"><span id="Mean"></span><code>function <strong>Mean</strong>(A: <a href="multiarray.TMultiArray.html">TMultiArray</a>; axis: integer = -1; KeepDims: boolean=False): <a href="multiarray.TMultiArray.html">TMultiArray</a>; overload;</code></td>
 </tr>
 <tr><td colspan="1">
 <p>
 Compute the mean of a A along axis. The default axis is -1, meaning the mean is computed over all items in A.</p>
+</td></tr>
+</table>
+<table class="detail wide_list">
+<tr class="list">
+<td class="itemcode"><span id="Min"></span><code>function <strong>Min</strong>(A: <a href="multiarray.TMultiArray.html">TMultiArray</a>; axis: integer = -1; KeepDims: boolean=False): <a href="multiarray.TMultiArray.html">TMultiArray</a>; overload;</code></td>
+</tr>
+<tr><td colspan="1">
+&nbsp;</td></tr>
+</table>
+<table class="detail wide_list">
+<tr class="list">
+<td class="itemcode"><span id="Ones"></span><code>function <strong>Ones</strong>(Shape: <a href="multiarray.html#TLongVector">TLongVector</a>): <a href="multiarray.TMultiArray.html">TMultiArray</a>;</code></td>
+</tr>
+<tr><td colspan="1">
+<p>
+Create multiarray with shape Shape containing Ones</p>
 </td></tr>
 </table>
 <table class="detail wide_list">
@@ -179,7 +293,14 @@ Compute element wise sine over A</p>
 </table>
 <table class="detail wide_list">
 <tr class="list">
-<td class="itemcode"><span id="Sum"></span><code>function <strong>Sum</strong>(A: <a href="multiarray.TMultiArray.html">TMultiArray</a>; axis: integer = -1): <a href="multiarray.TMultiArray.html">TMultiArray</a>; overload;</code></td>
+<td class="itemcode"><span id="Sqrt"></span><code>function <strong>Sqrt</strong>(A: <a href="multiarray.TMultiArray.html">TMultiArray</a>): <a href="multiarray.TMultiArray.html">TMultiArray</a>; overload;</code></td>
+</tr>
+<tr><td colspan="1">
+&nbsp;</td></tr>
+</table>
+<table class="detail wide_list">
+<tr class="list">
+<td class="itemcode"><span id="Sum"></span><code>function <strong>Sum</strong>(A: <a href="multiarray.TMultiArray.html">TMultiArray</a>; axis: integer = -1; KeepDims: boolean=False): <a href="multiarray.TMultiArray.html">TMultiArray</a>; overload;</code></td>
 </tr>
 <tr><td colspan="1">
 <p>
@@ -193,6 +314,15 @@ Compute the sum of a A along axis. The default axis is -1, meaning the sum is co
 <tr><td colspan="1">
 <p>
 Perform singular value decomposition (SVD) over a matrix A</p>
+</td></tr>
+</table>
+<table class="detail wide_list">
+<tr class="list">
+<td class="itemcode"><span id="Zeros"></span><code>function <strong>Zeros</strong>(Shape: <a href="multiarray.html#TLongVector">TLongVector</a>): <a href="multiarray.TMultiArray.html">TMultiArray</a>;</code></td>
+</tr>
+<tr><td colspan="1">
+<p>
+Create multiarray with shape Shape containing zeros</p>
 </td></tr>
 </table>
 <h3 class="detail">Types</h3>
