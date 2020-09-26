@@ -95,6 +95,7 @@ type
   { Get linear index of x in A. Returns -1 if not found. }
   function IndexOf(x: Single; A: TMultiArray): longint;
   function IndexToStridedOffset(Index: array of longint; Strides: TLongVector): longint;
+  function MatToStringList(A: TMultiArray; delimiter: string=','): TStringList;
   function OffsetToIndex(A: TMultiArray; Offset: longint): TLongVector;
   function Range(Start, Stop, step: longint): TLongVector; overload;
   function Range(Start, Stop: longint): TLongVector; overload;
@@ -112,6 +113,7 @@ type
   procedure Permute(var A: TMultiArray);
   procedure SqueezeMultiArrayAt(var A: TMultiArray; axis: integer);
   procedure SqueezeMultiArray(var A: TMultiArray);
+  procedure WriteCSV(A: TMultiArray; filename: string);
 
   function CopyVector(V: TSingleVector): TSingleVector;
   function CopyVector(V: TLongVector): TLongVector;
@@ -563,6 +565,15 @@ uses
     WriteLn(s);
   end;
 
+  procedure WriteCSV(A: TMultiArray; filename: string);
+  var
+    sl: TStringList;
+  begin
+    sl := MatToStringList(A, ',');
+    sl.SaveToFile(filename);
+    sl.Free;
+  end;
+
   function CopyVector(v: TSingleVector): TSingleVector;
   begin
     Exit(specialize _CopyVector<TSingleVector>(v));
@@ -628,6 +639,30 @@ uses
     SetLength(Result, A.Size);
     for i := 0 to A.Size - 1 do
       Result[i] := A.Get(i);
+  end;
+
+  function MatToStringList(A: TMultiArray; delimiter: string=','): TStringList;
+  var
+    sl: TStringList;
+    row, col: longint;
+    s: string;
+  begin
+    if A.NDims > 2 then
+      raise Exception.Create('Cannot save array with NDims>2 to CSV.');
+
+    sl := TStringList.Create;
+    for row := 0 to A.Shape[0] - 1 do
+    begin
+      s := '';
+      for col := 0 to A.Shape[1] - 1 do
+      begin
+        s := s + FloatToStr(A[[row, col]].Item);
+        if col < A.Shape[1] - 1 then
+          s := s + ',';
+      end;
+      sl.Add(s);
+    end;
+    Exit(sl);
   end;
 
   function OffsetToIndex(A: TMultiArray; Offset: longint): TLongVector;
