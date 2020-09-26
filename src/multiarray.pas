@@ -92,6 +92,7 @@ type
   function GenerateMultiArray(Shape: array of longint; GenFunc: TGenFunc;
     Params: array of single): TMultiArray;
   function GetVirtualData(A: TMultiArray): TSingleVector;
+  function Im2Col(X: TMultiArray; FH, FW, Stride, Pad: longint): TMultiArray;
   { Get linear index of x in A. Returns -1 if not found. }
   function IndexOf(x: Single; A: TMultiArray): longint;
   function IndexToStridedOffset(Index: array of longint; Strides: TLongVector): longint;
@@ -103,6 +104,7 @@ type
   function ReadCSV(FileName: string): TMultiArray;
   function ShapeToStrides(AShape: TLongVector): TLongVector;
   function Transpose(A: TMultiArray): TMultiArray;
+  function Transpose(A: TMultiArray; NewAxis: TLongVector): TMultiArray;
   function Unique(A: TMultiArray; Axis: integer = -1; ReturnCounts: boolean = False): TUniqueResult;
   function VStack(arr: array of TMultiArray): TMultiArray;
 
@@ -756,7 +758,7 @@ uses
   function Transpose(A: TMultiArray): TMultiArray;
   var
     i: integer;
-    NewIndices: array of array of longint;
+    NewIndices: TLongVectorArr = nil;
   begin
     Result := A.Copy();
     Result.FIsContiguous := False;
@@ -766,6 +768,22 @@ uses
     for i := 0 to High(Result.Indices) do
       NewIndices[i] := Result.Indices[High(Result.Indices) - i];
     Result.Indices := NewIndices;
+  end;
+
+  function Transpose(A: TMultiArray; NewAxis: TLongVector): TMultiArray;
+  var
+    OutShape: TLongVector = nil;
+    OutStrides: TLongVector = nil;
+    i: integer;
+  begin
+    SetLength(OutShape, Length(NewAxis));
+    SetLength(OutStrides, Length(NewAxis));
+    for i := 0 to High(NewAxis) do
+    begin
+      OutShape[i] := A.Shape[NewAxis[i]];
+      OutStrides[i] := A.Strides[NewAxis[i]];
+    end;
+    Exit(AsStrided(A, OutShape, OutStrides));
   end;
 
   function Unique(A: TMultiArray; Axis: integer = -1; ReturnCounts: boolean = False): TUniqueResult;
@@ -906,6 +924,31 @@ uses
   begin
     if Self.IsContiguous then Exit(Self.Data);
     Exit(multiarray.GetVirtualData(Self));
+  end;
+
+  function Im2Col(X: TMultiArray; FH, FW, Stride, Pad: longint): TMultiArray;
+  var
+    N, C, H, W: longint;
+    NN, CC, HH, WW: longint;
+    OutH, OutW: longint;
+    col: TMultiArray;
+  begin
+    N := X.Shape[0];
+    C := X.Shape[1];
+    H := X.Shape[2];
+    W := X.Shape[3];
+
+    NN := X.Strides[0];
+    CC := X.Strides[1];
+    HH := X.Strides[2];
+    WW := X.Strides[3];
+
+    OutH := (H - FH) div Stride + 1;
+    OutW := (W - FW) div Stride + 1;
+
+    col := AsStrided(X, [N, OutH, OutW, C, FH, FW],
+      [NN, Stride * HH, Stride * WW, CC, HH, WW]).Contiguous;
+    Exit(col.Reshape([N * OutH * OutW, C * FH * FW]).T);
   end;
 
   function IndexOf(x: Single; A: TMultiArray): longint;
