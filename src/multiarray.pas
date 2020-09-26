@@ -430,6 +430,7 @@ uses
       BcastResult := BroadcastArrays(A, B);
 
       Result := ApplyBFunc(BcastResult.A, BcastResult.B, BFunc, PrintDebug, FuncName);
+      Result.IsContiguous:=True;
     end else
     begin
 
@@ -441,7 +442,7 @@ uses
 
       Result := AllocateMultiArray(A.Size);
       Result := Result.Reshape(A.Shape); // should be reset strides
-      Result.ResetIndices;
+      Result.IsContiguous := True;
       for i := 0 to A.Size - 1 do
         Result.Data[i] := BFunc(A.Get(i), B.Get(i));
 

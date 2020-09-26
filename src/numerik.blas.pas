@@ -76,6 +76,7 @@ begin
   Result.Data := nil;
   Result.Data := CopyVector(B.GetVirtualData);
   cblas_saxpy(A.Size, 1, A.GetVirtualData, 1, Result.Data, 1);
+  Result.IsContiguous := True;
 end;
 
 
@@ -128,9 +129,9 @@ end;
 function MatMul_BACKEND(A, B: TMultiArray): TMultiArray;
 begin
   if cblas_sgemm <> nil then
-    Exit(MatMul_BLAS(A, B))
+    Exit(MatMul_BLAS(A.Contiguous, B.Contiguous))
   else
-    Exit(MatMul_Native(A, B));
+    Exit(MatMul_Native(A.Contiguous, B.Contiguous));
 end;
 
 function IsBLASAvailable: boolean;
