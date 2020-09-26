@@ -332,17 +332,6 @@ uses
     Exit(InTol);
   end;
 
-  function CompareSingle(const d1,d2): integer;
-  var
-    i1 : float absolute d1;
-    i2 : single absolute d2;
-  begin
-    if i1=i2 then
-      Result:=0
-    else if i1<i2 then Result:=-1
-    else Result:=1;
-  end;
-
   generic procedure Quicksort<T>(var arr: array of T);
     procedure QSort(Left, Right: longint);
     var
@@ -440,8 +429,11 @@ uses
     end else
     begin
 
-      if FuncName = 'ADD' then
+      if (FuncName = 'ADD') and (cblas_saxpy <> nil) then
         Exit(Add_BLAS(A, B));
+
+      if (FuncName = 'SUB') and (cblas_saxpy <> nil) then
+        Exit(Sub_BLAS(A, B));
 
       Result := AllocateMultiArray(A.Size);
       Result := Result.Reshape(A.Shape); // should be reset strides
@@ -1123,7 +1115,7 @@ uses
       raise Exception.Create('Only arrays with NDims=2 are supporter for Matmul');
     if (A.Shape[1] <> B.Shape[0]) then
       raise Exception.Create('A.Shape[1] must be equal to B.Shape[0]');
-    Exit(MatMul_BLAS(A, B));
+    Exit(MatMul_BACKEND(A, B));
   end;
 
   function Maximum(A, B: TMultiArray): TMultiArray;
