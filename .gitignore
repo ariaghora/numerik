@@ -3,5 +3,6 @@ lib/
 *.exe
 *.lps
 *.dll
+*.ppu
 *.a
 *.o
