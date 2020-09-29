@@ -30,7 +30,6 @@ type
     function GetNDims: integer;
     function GetSize: longint;
     function OffsetToStrided(Offset: longint): longint; inline;
-    procedure ResetIndices;
   public
     DataOffset: longint;
     Data:  array of single;
@@ -61,6 +60,7 @@ type
     { Perform transpose. If NDims > 2, the reverse the axis }
     function T: TMultiArray;
     procedure Put(i: array of integer; x: single);
+    procedure ResetIndices;
     property IsContiguous: boolean read FIsContiguous write FIsContiguous;
     property NDims: integer read GetNDims;
     property Size: longint read GetSize;
@@ -75,6 +75,17 @@ type
     UniqueValues, Counts: TMultiArray;
   end;
 
+  TNDIter = record
+    Shape: TLongVector;
+    Strides: TLongVector;
+    CurrentVirt: TLongVector;
+    Current: TLongVector;
+    CurrentOffset: longint;
+    NDims: longint;
+    procedure Advance(X: TMultiArray);
+    procedure Reset(X: TMultiArray);
+  end;
+
   function _ALL_: TLongVector;
   function AllocateMultiArray(Size: longint; AllocateData: boolean=true): TMultiArray;
   function Any(X: TMultiArray; Axis: longint = -1): TMultiArray;
@@ -85,6 +96,7 @@ type
   function ArraySort(A: TMultiArray; Axis: integer = -1): TMultiArray;
   function AsStrided(A: TMultiArray; Shape, Strides: TLongVector): TMultiArray;
   function BroadcastArrays(A, B: TMultiArray): TBroadcastResult;
+  function Contiguous(X: TMultiArray): TMultiArray;
   function CreateEmptyFTensor(Contiguous: boolean = True): TMultiArray;
   function CreateMultiArray(AData: array of single): TMultiArray;
   function CreateMultiArray(AData: single): TMultiArray;
@@ -301,6 +313,24 @@ uses
     Result.B.ResetIndices;
   end;
 
+  function Contiguous(X: TMultiArray): TMultiArray;
+  var
+    it: TNDIter;
+    i: longint;
+  begin
+    it.Reset(X);
+    SetLength(Result.Data, X.Size);
+    for i := 0 to X.Size - 1 do
+    begin
+      it.Advance(X);
+      Result.Data[i] := X.Data[it.CurrentOffset];
+    end;
+    Result.Shape := CopyVector(X.Shape);
+    Result.Strides := ShapeToStrides(X.Shape);
+    Result.ResetIndices;
+    Result.IsContiguous:=True;
+  end;
+
   function CreateEmptyFTensor(Contiguous: boolean = True):TMultiArray;
   begin
     Result.IsContiguous := Contiguous;
@@ -386,7 +416,6 @@ uses
     Result.Data := A.Data;
     Result.Shape := Shape;
     Result.Strides := Strides;
-    //Result.Indices := A.Indices;
     Result.ResetIndices;
   end;
 
@@ -422,6 +451,7 @@ uses
     i: longint;
     BcastResult: TBroadcastResult;
     TimeThen: TDateTime;
+    ItA, ItB: TNDIter;
   begin
     if (PrintDebug or GLOBAL_FUNC_DEBUG) then TimeThen := Now;
 
@@ -440,11 +470,17 @@ uses
       if (FuncName = 'SUB') and (cblas_saxpy <> nil) then
         Exit(Sub_BLAS(A, B));
 
+      ItA.Reset(A);
+      ItB.Reset(B);
       Result := AllocateMultiArray(A.Size);
       Result := Result.Reshape(A.Shape); // should be reset strides
       Result.IsContiguous := True;
       for i := 0 to A.Size - 1 do
-        Result.Data[i] := BFunc(A.Get(i), B.Get(i));
+      begin
+        ItA.Advance(A);
+        ItB.Advance(B);
+        Result.Data[i] := BFunc(A.Data[ItA.CurrentOffset], B.Data[ItB.CurrentOffset]);
+      end;
 
       if (PrintDebug or GLOBAL_FUNC_DEBUG) then
         WriteLn('Function ' + FuncName + ' executed in ',
@@ -528,17 +564,19 @@ uses
     MaxNUm: single;
     s: string;
 
+
     procedure PrintHelper(A: TMultiArray; it: longint);
     var
       i, j: integer;
       tmp: TMultiArray;
+      iter: TNDIter;
     begin
       if A.NDims = 0 then
       begin
         for j := 0 to A.Size - 1 do
         begin
           s := s + Format('%' + IntToStr(Digit + DecPlace + 2) + '.' +
-                          IntToStr(DecPlace) +'f', [A.Get(j)]);
+                          IntToStr(DecPlace) +'f, ', [A.Data[j]]);
         end;
         Exit;
       end;
@@ -933,6 +971,7 @@ uses
     NN, CC, HH, WW: longint;
     OutH, OutW: longint;
     col: TMultiArray;
+    tthen: TDateTime;
   begin
     N := X.Shape[0];
     C := X.Shape[1];
@@ -972,16 +1011,9 @@ uses
   end;
 
   function TMultiArray.Contiguous: TMultiArray;
-  var
-    i: integer;
   begin
     if IsContiguous then Exit(self);
-    Result := AllocateMultiArray(Self.Size).Reshape(Self.Shape);
-    Result.ResetIndices;
-    Result.IsContiguous := True;
-    SetLength(Result.Data, Self.Size);
-    for i := 0 to Self.Size - 1 do
-      Result.Data[i] := Self.Get(i);
+    Exit(multiarray.Contiguous(Self));
   end;
 
   function TMultiArray.Copy(Deep: boolean = True): TMultiArray;
@@ -1116,6 +1148,43 @@ uses
       for j := 0 to Shape[i] - 1 do
         Indices[i][j] := j;
     end;
+  end;
+
+  { TNDIter }
+
+  procedure TNDIter.Advance(X: TMultiArray);
+  var
+    i, j, sum: longint;
+  begin
+    sum := 0;
+    for i := 0 to NDims - 1 do
+    begin
+      Inc(sum, Strides[i] * X.Indices[i][CurrentVirt[i]]);
+    end;
+    CurrentOffset := sum;
+
+    Inc(CurrentVirt[NDims - 1]);
+    for i := NDims - 1 downto 1 do
+    begin
+      if CurrentVirt[i] >= Shape[i] then
+      begin
+        CurrentVirt[i] := 0;
+        Inc(CurrentVirt[i - 1]);
+      end;
+    end;
+  end;
+
+  procedure TNDIter.Reset(X: TMultiArray);
+  var
+    i: integer;
+  begin
+    CurrentOffset := 0;
+    NDims := X.NDims;
+    Strides := X.Strides;
+    Shape := X.Shape;
+    SetLength(CurrentVirt, X.NDims);
+    for i := 0 to High(CurrentVirt) do
+      CurrentVirt[i] := 0;
   end;
 
   function _Add(a, b: single): single;

@@ -59,6 +59,7 @@ procedure TTestMultiArray.TestBroadcastReshaped;
 begin
   M := [1, 2, 3];
   M := M.Reshape([3, 1]) * M.Reshape([1, 3]);
+
   AssertTrue(VectorEqual(M.GetVirtualData, [1, 2, 3, 2, 4, 6, 3, 6, 9]));
 end;
 
