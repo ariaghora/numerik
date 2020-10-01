@@ -1065,7 +1065,8 @@ uses
   var
     i: integer;
   begin
-    Assert((specialize Prod<longint>(NewShape)) = (specialize Prod<longint>(Shape)), 'Impossible reshape.');
+    if (specialize Prod<longint>(NewShape)) <> (specialize Prod<longint>(Shape)) then
+      raise Exception.Create('Impossible reshape.');
     Result.Data := self.Data;
     Result.DataOffset := self.DataOffset;
     SetLength(Result.Shape, Length(NewShape));

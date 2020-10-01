@@ -86,8 +86,11 @@ function PseudoInverse(A: TMultiArray): TMultiArray;
 { Perform singular value decomposition (SVD) over a matrix A }
 function SVD(A: TMultiArray; SigmasAsMatrix: Boolean=False): TSVDResult;
 
-{ ----------- Pairwise distances----- ---------------------------------------- }
+{ ----------- Pairwise distances --------------------------------------------- }
 function EuclideanDistances(X, Y: TMultiArray): TMultiArray;
+
+{ ----------- Convolutions  }
+function Conv2d(X, W: TMultiArray; Stride, Pad: longint): TMultiArray;
 
 
 implementation
@@ -495,6 +498,21 @@ begin
   ynewshape[High(ynewshape)] := 1;
 
   Exit(Sqrt(Sum((X.Reshape(xnewshape) - Y.Reshape(ynewshape).T) ** 2, 1)))
+end;
+
+function Conv2d(X, W: TMultiArray; Stride, Pad: longint): TMultiArray;
+var
+  OutH, OutW: longint;
+  WCol, Cols: TMultiArray;
+begin
+  OutH := (X.Shape[2] - W.Shape[2]) div Stride + 1;
+  OutW := (X.Shape[3] - W.Shape[3]) div Stride + 1;
+  WCol := W.Reshape([W.Shape[0], W.Shape[1] * W.Shape[2] * W.Shape[3]]);
+
+  Cols := Im2Col(X, W.Shape[2], w.Shape[3], Stride, Pad);
+
+  Result := WCol.matmul(Cols);
+  Result := Result.Reshape([X.Shape[0], W.Shape[0], OutH, OutW]).Contiguous;
 end;
 
 end.
