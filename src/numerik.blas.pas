@@ -27,10 +27,10 @@ const
 
   LAPACK_ROW_MAJOR = 101;
   LAPACK_COL_MAJOR = 102;
-  CBLAS_ROW_MAJOR  = 101;
-  CBLAS_COL_MAJOR  = 102;
-  CBLAS_NO_TRANS   = 111;
-  CBLAS_TRANS      = 112;
+  CBLAS_ROW_MAJOR = 101;
+  CBLAS_COL_MAJOR = 102;
+  CBLAS_NO_TRANS = 111;
+  CBLAS_TRANS = 112;
   CBLAS_CONJ_TRANS = 113;
 
 type
@@ -38,15 +38,20 @@ type
     M: longint; N: longint; K: longint; alpha: single; A: TSingleVector;
     lda: longint; B: TSingleVector; ldb: longint; beta: single;
     C: TSingleVector; ldc: longint); cdecl;
-  TCblasSaxpy = procedure(N: longint; A: single; X: TSingleVector; INCX: longint;
-    Y: TSingleVector; INCY: longint); cdecl;
+  TCblasSaxpy = procedure(N: longint; A: single; X: TSingleVector;
+    INCX: longint; Y: TSingleVector; INCY: longint); cdecl;
+  TLAPACKESgels = function(MatrixLayout: longint; Trans: char;
+    M, N, NRHS: longint; A: TSingleVector; LDA: longint; B: TSingleVector;
+    LDB: longint): longint; cdecl;
   TLAPACKESgeSVD = function(MatrixLayout: longint; JOBU, JOBVT: char;
     M, N: longint; A: TSingleVector; LDA: longint; S, U: TSingleVector;
-    LDU: longint; VT: TSingleVector; LDVT: longint; Superb: TSingleVector): longint; cdecl;
+    LDU: longint; VT: TSingleVector; LDVT: longint;
+    Superb: TSingleVector): longint; cdecl;
 
 var
   cblas_saxpy: TCblasSaxpy;
   cblas_sgemm: TCblassgemm;
+  LAPACKE_sgels: TLAPACKESgels;
   LAPACKE_sgesvd: TLAPACKESgeSVD;
   BLASlibHandle: THandle = NilHandle;
   LAPACKElibHandle: THandle = NilHandle;
@@ -70,9 +75,9 @@ uses
 
 function Add_BLAS(A, B: TMultiArray): TMultiArray;
 begin
-  Result := AllocateMultiArray(A.Size,
-                               False    // do not allocate the memory yet
-                               ).Reshape(A.Shape);
+  Result := AllocateMultiArray(A.Size, False
+    // do not allocate the memory yet
+    ).Reshape(A.Shape);
   Result.Data := nil;
   Result.Data := CopyVector(B.GetVirtualData);
   cblas_saxpy(A.Size, 1, A.GetVirtualData, 1, Result.Data, 1);
@@ -82,9 +87,9 @@ end;
 
 function Sub_BLAS(A, B: TMultiArray): TMultiArray;
 begin
-  Result := AllocateMultiArray(A.Size,
-                               False    // do not allocate the memory yet
-                               ).Reshape(A.Shape);
+  Result := AllocateMultiArray(A.Size, False
+    // do not allocate the memory yet
+    ).Reshape(A.Shape);
   Result.Data := nil;
   Result.Data := CopyVector(A.GetVirtualData);
   cblas_saxpy(A.Size, -1, B.GetVirtualData, 1, Result.Data, 1);
@@ -113,7 +118,8 @@ var
   i, j, k: longint;
   sum: double;
 begin
-  Result := AllocateMultiArray(A.Shape[0] * B.Shape[1]).Reshape([A.Shape[0], B.Shape[1]]);
+  Result := AllocateMultiArray(A.Shape[0] * B.Shape[1]).Reshape(
+    [A.Shape[0], B.Shape[1]]);
   //SetLength(Result.Val, A.Shape[0] * B.Shape[1]);
   for i := 0 to A.shape[0] - 1 do
     for j := 0 to B.Shape[1] - 1 do
@@ -146,12 +152,14 @@ end;
 
 initialization
 
-BLASlibHandle := LoadLibrary(BLAS_LIB_NAME);
-LAPACKElibHandle := LoadLibrary(LAPACKE_LIB_NAME);
+  BLASlibHandle := LoadLibrary(BLAS_LIB_NAME);
+  LAPACKElibHandle := LoadLibrary(LAPACKE_LIB_NAME);
 
-cblas_sgemm := TCblassgemm(GetProcedureAddress(BLASlibHandle, 'cblas_sgemm'));
-cblas_saxpy := TCblasSaxpy(GetProcedureAddress(BLASlibHandle, 'cblas_saxpy'));
-LAPACKE_sgesvd := TLAPACKESgeSVD(GetProcedureAddress(LAPACKElibHandle, 'LAPACKE_sgesvd'));
+  cblas_sgemm := TCblassgemm(GetProcedureAddress(BLASlibHandle, 'cblas_sgemm'));
+  cblas_saxpy := TCblasSaxpy(GetProcedureAddress(BLASlibHandle, 'cblas_saxpy'));
+  LAPACKE_sgels := TLAPACKESgels(GetProcedureAddress(LAPACKElibHandle,
+    'LAPACKE_sgels'));
+  LAPACKE_sgesvd := TLAPACKESgeSVD(GetProcedureAddress(LAPACKElibHandle,
+    'LAPACKE_sgesvd'));
 
 end.
-

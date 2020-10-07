@@ -80,6 +80,9 @@ function RandG(mean, stddev: float; Shape: array of longint): TMultiArray; overl
 function ReduceAlongAxis(A: TMultiArray; ReduceFunc: TReduceFunc; axis: integer;
      KeepDims: Boolean = False): TMultiArray;
 
+
+{ ----------- Linear algebra ------------------------------------------------- }
+
 { Perform pseudoinverse over a matrix A }
 function PseudoInverse(A: TMultiArray): TMultiArray;
 
