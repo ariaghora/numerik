@@ -122,7 +122,7 @@ type
 
   procedure DebugMultiArray(A: TMultiArray);
   procedure EnsureNDims(A: TMultiArray; NDims: integer);
-  procedure PrintMultiArray(A: TMultiArray);
+  procedure PrintMultiArray(A: TMultiArray; DecPlace: longint = 2);
   { Shuffle an array based on the first index }
   procedure Permute(var A: TMultiArray);
   procedure SqueezeMultiArrayAt(var A: TMultiArray; axis: integer);
@@ -558,9 +558,9 @@ uses
     end;
   end;
 
-  procedure PrintMultiArray(A: TMultiArray);
+  procedure PrintMultiArray(A: TMultiArray; DecPlace: longint = 2);
   var
-    Digit, DecPlace, MaxDims: integer;
+    Digit, MaxDims: integer;
     MaxNUm: single;
     s: string;
 
@@ -601,7 +601,6 @@ uses
     MaxDims := A.NDims;
     MaxNum := MaxValue(Abs(A).Data);
     Digit := Ceil(Log10(MaxNum + 1));
-    DecPlace := 2;
     PrintHelper(A, 0);
     WriteLn(s);
   end;
