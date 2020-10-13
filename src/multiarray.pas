@@ -82,6 +82,7 @@ type
     Current: TLongVector;
     CurrentOffset: longint;
     NDims: longint;
+    function Next(X: TMultiArray): single;
     procedure Advance(X: TMultiArray);
     procedure Reset(X: TMultiArray);
   end;
@@ -479,12 +480,25 @@ uses
       Result := AllocateMultiArray(A.Size);
       Result := Result.Reshape(A.Shape); // should be reset strides
       Result.IsContiguous := True;
-      for i := 0 to A.Size - 1 do
+
+      for i := 0 to A.Size div 8 - 1 do
       begin
-        ItA.Advance(A);
-        ItB.Advance(B);
-        Result.Data[i] := BFunc(A.Data[ItA.CurrentOffset], B.Data[ItB.CurrentOffset]);
+        Result.Data[i * 8 + 0] := BFunc(ItA.Next(A), ItB.Next(B));
+        Result.Data[i * 8 + 1] := BFunc(ItA.Next(A), ItB.Next(B));
+        Result.Data[i * 8 + 2] := BFunc(ItA.Next(A), ItB.Next(B));
+        Result.Data[i * 8 + 3] := BFunc(ItA.Next(A), ItB.Next(B));
+        Result.Data[i * 8 + 4] := BFunc(ItA.Next(A), ItB.Next(B));
+        Result.Data[i * 8 + 5] := BFunc(ItA.Next(A), ItB.Next(B));
+        Result.Data[i * 8 + 6] := BFunc(ItA.Next(A), ItB.Next(B));
+        Result.Data[i * 8 + 7] := BFunc(ItA.Next(A), ItB.Next(B));
       end;
+      for i := (A.Size div 8) * 8 to (A.Size div 8) * 8 + (A.Size mod 8) - 1 do
+        Result.Data[i] := BFunc(ItA.Next(A), ItB.Next(B));
+
+      //for i := 0 to A.Size - 1 do
+      //begin
+      //  Result.Data[i] := BFunc(ItA.Next(A), ItB.Next(B));
+      //end;
 
       if (PrintDebug or GLOBAL_FUNC_DEBUG) then
         WriteLn('Function ' + FuncName + ' executed in ',
@@ -1155,6 +1169,12 @@ uses
 
   { TNDIter }
 
+  function TNDIter.Next(X: TMultiArray): single;
+  begin
+    Advance(X);
+    Exit(X.Data[CurrentOffset]);
+  end;
+
   procedure TNDIter.Advance(X: TMultiArray);
   var
     i, j, sum: longint;
@@ -1190,52 +1210,52 @@ uses
       CurrentVirt[i] := 0;
   end;
 
-  function _Add(a, b: single): single;
+  function _Add(a, b: single): single; inline;
   begin
     Exit(a + b);
   end;
 
-  function _Divide(a, b: single): single;
+  function _Divide(a, b: single): single; inline;
   begin
     Exit(a / b);
   end;
 
-  function _EqualsTo(a, b: single): single;
+  function _EqualsTo(a, b: single): single; inline;
   begin
     Exit(Single(Integer(a = b)));
   end;
 
-  function _GreaterThan(a, b: single): single;
+  function _GreaterThan(a, b: single): single; inline;
   begin
     Exit(Single(Integer(a > b)));
   end;
 
-  function _GreaterEqualThan(a, b: single): single;
+  function _GreaterEqualThan(a, b: single): single; inline;
   begin
     Exit(Single(Integer(a >= b)));
   end;
 
-  function _LessThan(a, b: single): single;
+  function _LessThan(a, b: single): single; inline;
   begin
     Exit(Single(Integer(a < b)));
   end;
 
-  function _LessEqualThan(a, b: single): single;
+  function _LessEqualThan(a, b: single): single; inline;
   begin
     Exit(Single(Integer(a <= b)));
   end;
 
-  function _Max(a, b: single): single;
+  function _Max(a, b: single): single; inline;
   begin
     Exit(math.max(a, b))
   end;
 
-  function _Min(a, b: single): single;
+  function _Min(a, b: single): single; inline;
   begin
     Exit(math.min(a, b))
   end;
 
-  function _Multiply(a, b: single): single;
+  function _Multiply(a, b: single): single; inline;
   begin
     Exit(a * b);
   end;
@@ -1245,12 +1265,12 @@ uses
     Exit(-a);
   end;
 
-  function _Power(base, exponent: single): single;
+  function _Power(base, exponent: single): single; inline;
   begin
     Exit(Power(base, exponent));
   end;
 
-  function _Subtract(a, b: single): single;
+  function _Subtract(a, b: single): single; inline;
   begin
     Exit(a - b);
   end;

@@ -265,7 +265,7 @@ end;
 
 function ArgMax(A: TMultiArray; axis: integer = -1; KeepDims: boolean=False): TMultiArray;
 var
-  i, j: longint;
+  i: longint;
 begin
   if axis = -1 then
     Exit(ArgMax(A.GetVirtualData));
