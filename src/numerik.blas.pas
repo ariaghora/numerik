@@ -34,10 +34,10 @@ const
   CBLAS_CONJ_TRANS = 113;
 
 type
-  TCblasSgemm = procedure(Order: longint; TransA: longint; TransB: longint;
+  TCblasSgemm = function(Order: longint; TransA: longint; TransB: longint;
     M: longint; N: longint; K: longint; alpha: single; A: TSingleVector;
     lda: longint; B: TSingleVector; ldb: longint; beta: single;
-    C: TSingleVector; ldc: longint); cdecl;
+    C: TSingleVector; ldc: longint):longint; cdecl;
   TCblasSaxpy = procedure(N: longint; A: single; X: TSingleVector;
     INCX: longint; Y: TSingleVector; INCY: longint); cdecl;
   TLAPACKESgels = function(MatrixLayout: longint; Trans: char;
@@ -137,7 +137,9 @@ begin
   if cblas_sgemm <> nil then
     Exit(MatMul_BLAS(A.Contiguous, B.Contiguous))
   else
+  begin
     Exit(MatMul_Native(A.Contiguous, B.Contiguous));
+  end;
 end;
 
 function IsBLASAvailable: boolean;

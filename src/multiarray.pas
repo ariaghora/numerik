@@ -474,31 +474,80 @@ uses
       if (FuncName = 'SUB') and (cblas_saxpy <> nil) then
         Exit(Sub_BLAS(A, B));
 
-
-      ItA.Reset(A);
-      ItB.Reset(B);
       Result := AllocateMultiArray(A.Size);
       Result := Result.Reshape(A.Shape); // should be reset strides
       Result.IsContiguous := True;
 
-      for i := 0 to A.Size div 8 - 1 do
+      if not(A.IsContiguous) and not(B.IsContiguous) then
       begin
-        Result.Data[i * 8 + 0] := BFunc(ItA.Next(A), ItB.Next(B));
-        Result.Data[i * 8 + 1] := BFunc(ItA.Next(A), ItB.Next(B));
-        Result.Data[i * 8 + 2] := BFunc(ItA.Next(A), ItB.Next(B));
-        Result.Data[i * 8 + 3] := BFunc(ItA.Next(A), ItB.Next(B));
-        Result.Data[i * 8 + 4] := BFunc(ItA.Next(A), ItB.Next(B));
-        Result.Data[i * 8 + 5] := BFunc(ItA.Next(A), ItB.Next(B));
-        Result.Data[i * 8 + 6] := BFunc(ItA.Next(A), ItB.Next(B));
-        Result.Data[i * 8 + 7] := BFunc(ItA.Next(A), ItB.Next(B));
+        ItA.Reset(A);
+        ItB.Reset(B);
+        for i := 0 to A.Size div 8 - 1 do
+        begin
+          Result.Data[i * 8 + 0] := BFunc(ItA.Next(A), ItB.Next(B));
+          Result.Data[i * 8 + 1] := BFunc(ItA.Next(A), ItB.Next(B));
+          Result.Data[i * 8 + 2] := BFunc(ItA.Next(A), ItB.Next(B));
+          Result.Data[i * 8 + 3] := BFunc(ItA.Next(A), ItB.Next(B));
+          Result.Data[i * 8 + 4] := BFunc(ItA.Next(A), ItB.Next(B));
+          Result.Data[i * 8 + 5] := BFunc(ItA.Next(A), ItB.Next(B));
+          Result.Data[i * 8 + 6] := BFunc(ItA.Next(A), ItB.Next(B));
+          Result.Data[i * 8 + 7] := BFunc(ItA.Next(A), ItB.Next(B));
+        end;
+        for i := (A.Size div 8) * 8 to (A.Size div 8) * 8 + (A.Size mod 8) - 1 do
+          Result.Data[i] := BFunc(ItA.Next(A), ItB.Next(B));
+      end
+      else if (A.IsContiguous) and not(B.IsContiguous) then
+      begin
+        ItB.Reset(B);
+        for i := 0 to A.Size div 8 - 1 do
+        begin
+          Result.Data[i * 8 + 0] := BFunc(A.Data[i * 8 + 0], ItB.Next(B));
+          Result.Data[i * 8 + 1] := BFunc(A.Data[i * 8 + 1], ItB.Next(B));
+          Result.Data[i * 8 + 2] := BFunc(A.Data[i * 8 + 2], ItB.Next(B));
+          Result.Data[i * 8 + 3] := BFunc(A.Data[i * 8 + 3], ItB.Next(B));
+          Result.Data[i * 8 + 4] := BFunc(A.Data[i * 8 + 4], ItB.Next(B));
+          Result.Data[i * 8 + 5] := BFunc(A.Data[i * 8 + 5], ItB.Next(B));
+          Result.Data[i * 8 + 6] := BFunc(A.Data[i * 8 + 6], ItB.Next(B));
+          Result.Data[i * 8 + 7] := BFunc(A.Data[i * 8 + 7], ItB.Next(B));
+        end;
+        for i := (A.Size div 8) * 8 to (A.Size div 8) * 8 + (A.Size mod 8) - 1 do
+          Result.Data[i] := BFunc(A.Data[i], ItB.Next(B));
+      end
+      else if not(A.IsContiguous) and (B.IsContiguous) then
+      begin
+        ItA.Reset(A);
+        for i := 0 to A.Size div 8 - 1 do
+        begin
+          Result.Data[i * 8 + 0] := BFunc(ItA.Next(A), B.Data[i * 8 + 0]);
+          Result.Data[i * 8 + 1] := BFunc(ItA.Next(A), B.Data[i * 8 + 1]);
+          Result.Data[i * 8 + 2] := BFunc(ItA.Next(A), B.Data[i * 8 + 2]);
+          Result.Data[i * 8 + 3] := BFunc(ItA.Next(A), B.Data[i * 8 + 3]);
+          Result.Data[i * 8 + 4] := BFunc(ItA.Next(A), B.Data[i * 8 + 4]);
+          Result.Data[i * 8 + 5] := BFunc(ItA.Next(A), B.Data[i * 8 + 5]);
+          Result.Data[i * 8 + 6] := BFunc(ItA.Next(A), B.Data[i * 8 + 6]);
+          Result.Data[i * 8 + 7] := BFunc(ItA.Next(A), B.Data[i * 8 + 7]);
+        end;
+        for i := (A.Size div 8) * 8 to (A.Size div 8) * 8 + (A.Size mod 8) - 1 do
+          Result.Data[i] := BFunc(ItA.Next(A), B.Data[i]);
+      end
+      else
+      begin
+        for i := 0 to A.Size div 8 - 1 do
+        begin
+          Result.Data[i * 8 + 0] := BFunc(A.Data[i * 8 + 0], B.Data[i * 8 + 0]);
+          Result.Data[i * 8 + 1] := BFunc(A.Data[i * 8 + 1], B.Data[i * 8 + 1]);
+          Result.Data[i * 8 + 2] := BFunc(A.Data[i * 8 + 2], B.Data[i * 8 + 2]);
+          Result.Data[i * 8 + 3] := BFunc(A.Data[i * 8 + 3], B.Data[i * 8 + 3]);
+          Result.Data[i * 8 + 4] := BFunc(A.Data[i * 8 + 4], B.Data[i * 8 + 4]);
+          Result.Data[i * 8 + 5] := BFunc(A.Data[i * 8 + 5], B.Data[i * 8 + 5]);
+          Result.Data[i * 8 + 6] := BFunc(A.Data[i * 8 + 6], B.Data[i * 8 + 6]);
+          Result.Data[i * 8 + 7] := BFunc(A.Data[i * 8 + 7], B.Data[i * 8 + 7]);
+        end;
+        for i := (A.Size div 8) * 8 to (A.Size div 8) * 8 + (A.Size mod 8) - 1 do
+          Result.Data[i] := BFunc(A.Data[i], B.Data[i]);
       end;
-      for i := (A.Size div 8) * 8 to (A.Size div 8) * 8 + (A.Size mod 8) - 1 do
-        Result.Data[i] := BFunc(ItA.Next(A), ItB.Next(B));
 
-      //for i := 0 to A.Size - 1 do
-      //begin
-      //  Result.Data[i] := BFunc(ItA.Next(A), ItB.Next(B));
-      //end;
+
 
       if (PrintDebug or GLOBAL_FUNC_DEBUG) then
         WriteLn('Function ' + FuncName + ' executed in ',
@@ -511,9 +560,22 @@ uses
     i: longint;
   begin
     Result := A.Copy();
-    for i := 0 to High(A.Data) do
-      Result.Data[i] := UFunc(Result.Data[i], Params);
-    Result.ResetIndices;
+
+    for i := 0 to A.Size div 8 - 1 do
+        begin
+          Result.Data[i * 8 + 0] := UFunc(A.Data[i * 8 + 0], Params);
+          Result.Data[i * 8 + 1] := UFunc(A.Data[i * 8 + 1], Params);
+          Result.Data[i * 8 + 2] := UFunc(A.Data[i * 8 + 2], Params);
+          Result.Data[i * 8 + 3] := UFunc(A.Data[i * 8 + 3], Params);
+          Result.Data[i * 8 + 4] := UFunc(A.Data[i * 8 + 4], Params);
+          Result.Data[i * 8 + 5] := UFunc(A.Data[i * 8 + 5], Params);
+          Result.Data[i * 8 + 6] := UFunc(A.Data[i * 8 + 6], Params);
+          Result.Data[i * 8 + 7] := UFunc(A.Data[i * 8 + 7], Params);
+        end;
+        for i := (A.Size div 8) * 8 to (A.Size div 8) * 8 + (A.Size mod 8) - 1 do
+          Result.Data[i] := UFunc(A.Data[i], Params);
+
+    //Result.ResetIndices;
   end;
 
   function DynArrayToVector(A: array of longint): TLongVector;
