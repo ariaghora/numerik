@@ -455,6 +455,9 @@ uses
   begin
     if (PrintDebug or GLOBAL_FUNC_DEBUG) then TimeThen := Now;
 
+    if (A.NDims = 0) and (B.NDims = 0) then
+      Exit(BFunc(A.Data[0], B.Data[0]));
+
     if not(VectorEqual(A.Shape, B.Shape)) then
     begin
       BcastResult := BroadcastArrays(A, B);
@@ -469,6 +472,7 @@ uses
 
       if (FuncName = 'SUB') and (cblas_saxpy <> nil) then
         Exit(Sub_BLAS(A, B));
+
 
       ItA.Reset(A);
       ItB.Reset(B);
@@ -569,7 +573,6 @@ uses
     var
       i, j: integer;
       tmp: TMultiArray;
-      iter: TNDIter;
     begin
       if A.NDims = 0 then
       begin
