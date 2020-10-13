@@ -80,6 +80,8 @@ function RandG(mean, stddev: float; Shape: array of longint): TMultiArray; overl
 function ReduceAlongAxis(A: TMultiArray; ReduceFunc: TReduceFunc; axis: integer;
      KeepDims: Boolean = False): TMultiArray;
 
+{ ----------- Stats ---------------------------------------------------------- }
+function Cov(X, Y: TMultiArray; DDof: longint = 1): TMultiArray;
 
 { ----------- Linear algebra ------------------------------------------------- }
 
@@ -439,6 +441,13 @@ begin
 
   { Sum along axis for arbitrary dimension }
   Exit(ReduceAlongAxis(A, @Add, axis, KeepDims));
+end;
+
+function Cov(X, Y: TMultiArray; DDof: longint = 1): TMultiArray;
+begin
+  X := X - Mean(X, 0);
+  Y := Y - Mean(Y, 0);
+  Exit(X.T.Matmul(Y) / (X.Shape[0] - DDof));
 end;
 
 function PseudoInverse(A: TMultiArray): TMultiArray;
