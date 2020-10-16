@@ -16,6 +16,7 @@ type
   TTestMultiArray = class(TTestCase)
   published
     procedure TestAssignment;
+    procedure TestSmall;
     procedure TestBroadcastMatrixScalar;
     procedure TestBroadcastReshaped;
     procedure TestSlicing2D;
@@ -47,6 +48,12 @@ begin
   Write('Copying array... ');
   N := M.Copy();
   WriteLn(MilliSecondsBetween(Now, t), 'ms');
+end;
+
+procedure TTestMultiArray.TestSmall;
+begin
+  M := [1, 2, 3];
+  AssertTrue(ArrayEqual(M + 1, [2, 3, 4]));
 end;
 
 procedure TTestMultiArray.TestBroadcastMatrixScalar;
