@@ -466,6 +466,7 @@ uses
     FuncName: string = ''): TMultiArray;
   var
     i, Offset: longint;
+    x: single;
     BcastResult: TBroadcastResult;
     TimeThen: TDateTime;
     ItA, ItB: TNDIter;
@@ -473,7 +474,21 @@ uses
     if (PrintDebug or GLOBAL_FUNC_DEBUG) then TimeThen := Now;
 
     if (A.NDims = 0) and (B.NDims = 0) then
-      Exit(BFunc(A.Data[0], B.Data[0]));
+      Exit(BFunc(A.Data[0], B.Data[0]))
+    else if (B.NDims = 0) then
+    begin
+      Result := AllocateMultiArray(A.Size).Reshape(A.Shape);
+      x := B.Data[0];
+      for i := 0 to High(A.Data) do
+        Result.Data[i] := BFunc(A.Data[i], x);
+    end
+    else if (A.NDims = 0) then
+    begin
+      Result := AllocateMultiArray(B.Size).Reshape(B.Shape);
+      x := A.Data[0];
+      for i := 0 to High(B.Data) do
+        Result.Data[i] := BFunc(B.Data[i], x);
+    end;
 
     if not(VectorEqual(A.Shape, B.Shape)) then
     begin
