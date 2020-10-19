@@ -27,7 +27,8 @@ type
 
     procedure TestReduceSimple;
     procedure TestReduceStacked;
-    procedure TestReduceBig;
+    procedure TestReduceBigAxis0;
+    procedure TestReduceBigAxis1;
 
     procedure TestVstack;
   end;
@@ -134,7 +135,7 @@ begin
   AssertTrue(VectorEqual(M.GetVirtualData, [21]));
 end;
 
-procedure TTestMultiArray.TestReduceBig;
+procedure TTestMultiArray.TestReduceBigAxis0;
 var
   i: integer;
   expected: TSingleVector;
@@ -147,6 +148,28 @@ begin
   t := Now;
   WriteLn('Reducing array... ');
   M := Sum(M, 0);
+  WriteLn(MilliSecondsBetween(Now, t), 'ms');
+
+  SetLength(expected, 1000);
+  for i := 0 to 999 do
+    expected[i] := 10000;
+
+  AssertTrue(VectorEqual(M.GetVirtualData, expected));
+end;
+
+procedure TTestMultiArray.TestReduceBigAxis1;
+var
+  i: integer;
+  expected: TSingleVector;
+  t: TDateTime;
+begin
+  WriteLn('Generating a 10000x1000 array... ');
+  M := Random([1000, 10000]);
+  M := M / M;
+
+  t := Now;
+  WriteLn('Reducing array... ');
+  M := Sum(M, 1);
   WriteLn(MilliSecondsBetween(Now, t), 'ms');
 
   SetLength(expected, 1000);

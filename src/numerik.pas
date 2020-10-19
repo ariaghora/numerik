@@ -397,6 +397,7 @@ function Sum(A: TMultiArray; axis: integer = -1; KeepDims: boolean=False): TMult
 var
   outdata: TSingleVector;
   i, j: longint;
+  tmp: TMultiArray;
 begin
   { Specific case for vector (NDims=1) or summation over _ALL_ elements }
   if (axis = -1) or (A.NDims = 1) then
@@ -407,15 +408,8 @@ begin
   begin
     if axis = 0 then { Case 1: column-wise sum }
     begin
-      SetLength(outdata, A.Shape[1]);
-      for i := 0 to A.Shape[1] - 1 do
-      begin
-        outdata[i] := 0;
-        for j := 0 to A.Shape[0] - 1 do
-        begin
-          outdata[i] := outdata[i] + A.Get(A.Strides[1] * i + A.Strides[0] * j);
-        end;
-      end;
+      tmp := Ones([1, A.Shape[0]]);
+      outdata := Matmul(tmp, A);
       if KeepDims then
         Exit(CreateMultiArray(outdata).Reshape([1, A.Shape[1]]))
       else
@@ -423,15 +417,8 @@ begin
     end
     else if axis = 1 then { Case 2: row-wise sum }
     begin
-      SetLength(outdata, A.Shape[0]);
-      for i := 0 to A.Shape[0] - 1 do
-      begin
-        outdata[i] := 0;
-        for j := 0 to A.Shape[1] - 1 do
-        begin
-          outdata[i] := outdata[i] + A.Get(A.Strides[0] * i + A.Strides[1] * j);
-        end;
-      end;
+      tmp := Ones([A.Shape[1], 1]);
+      outdata := Matmul(A, tmp);
       if KeepDims then
         Exit(CreateMultiArray(outdata).Reshape([A.Shape[0], 1]))
       else
