@@ -198,7 +198,7 @@ var
 begin
   SetLength(IterIndices, Length(A.Indices));
   for i := 0 to High(IterIndices) do
-    IterIndices[i] := []; // slicing by [_ALL_, _ALL_, ..., _ALL_]
+    IterIndices[i] := _ALL_; // slicing by [_ALL_, _ALL_, ..., _ALL_]
 
   IterIndices[axis] := [0];
   Result := A.Slice(IterIndices);  // Slice([_ALL_, ..., [0], ..., _ALL_])
@@ -206,7 +206,7 @@ begin
   for i := 1 to A.Shape[axis] - 1 do
   begin
     IterIndices[axis] := [i];
-    Result := ReduceFunc(Result, A.Slice(IterIndices));//Result + A.Slice(IterIndices);
+    Result := ReduceFunc(Result, A.Slice(IterIndices));
   end;
 
   if Not KeepDims then

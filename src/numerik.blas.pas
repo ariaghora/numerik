@@ -76,7 +76,6 @@ uses
 function Add_BLAS(A, B: TMultiArray): TMultiArray;
 begin
   Result := AllocateMultiArray(A.Size, False
-    // do not allocate the memory yet
     ).Reshape(A.Shape);
   Result.Data := nil;
   Result.Data := CopyVector(B.GetVirtualData);
@@ -88,7 +87,6 @@ end;
 function Sub_BLAS(A, B: TMultiArray): TMultiArray;
 begin
   Result := AllocateMultiArray(A.Size, False
-    // do not allocate the memory yet
     ).Reshape(A.Shape);
   Result.Data := nil;
   Result.Data := CopyVector(A.GetVirtualData);
