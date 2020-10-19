@@ -16,6 +16,7 @@ type
   TTestMultiArray = class(TTestCase)
   published
     procedure TestAssignment;
+    procedure TestBFuncThreaded;
     procedure TestSmall;
     procedure TestBroadcastMatrixScalar;
     procedure TestBroadcastReshaped;
@@ -48,6 +49,21 @@ begin
   Write('Copying array... ');
   N := M.Copy();
   WriteLn(MilliSecondsBetween(Now, t), 'ms');
+end;
+
+function _Add(a, b: single): single; inline;
+begin
+  Exit(a + b);
+end;
+
+procedure TTestMultiArray.TestBFuncThreaded;
+var
+  N: TMultiArray;
+begin
+  M := RandG(0, 1, [100]);
+  N := RandG(0, 1, [100]);
+  N := N.Reshape([100, 1]);
+  AssertTrue(ArrayEqual(ApplyBFunc(M, N, @_Add), ApplyBFuncThreaded(M, N, @_Add)));
 end;
 
 procedure TTestMultiArray.TestSmall;
