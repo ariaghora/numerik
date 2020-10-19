@@ -465,7 +465,7 @@ uses
   function ApplyBFunc(A, B: TMultiArray; BFunc: TBFunc; PrintDebug: Boolean = False;
     FuncName: string = ''): TMultiArray;
   var
-    i: longint;
+    i, Offset: longint;
     BcastResult: TBroadcastResult;
     TimeThen: TDateTime;
     ItA, ItB: TNDIter;
@@ -544,14 +544,15 @@ uses
       begin
         for i := 0 to A.Size div 8 - 1 do
         begin
-          Result.Data[i * 8 + 0] := BFunc(A.Data[i * 8 + 0], B.Data[i * 8 + 0]);
-          Result.Data[i * 8 + 1] := BFunc(A.Data[i * 8 + 1], B.Data[i * 8 + 1]);
-          Result.Data[i * 8 + 2] := BFunc(A.Data[i * 8 + 2], B.Data[i * 8 + 2]);
-          Result.Data[i * 8 + 3] := BFunc(A.Data[i * 8 + 3], B.Data[i * 8 + 3]);
-          Result.Data[i * 8 + 4] := BFunc(A.Data[i * 8 + 4], B.Data[i * 8 + 4]);
-          Result.Data[i * 8 + 5] := BFunc(A.Data[i * 8 + 5], B.Data[i * 8 + 5]);
-          Result.Data[i * 8 + 6] := BFunc(A.Data[i * 8 + 6], B.Data[i * 8 + 6]);
-          Result.Data[i * 8 + 7] := BFunc(A.Data[i * 8 + 7], B.Data[i * 8 + 7]);
+          Offset := i * 8;
+          Result.Data[Offset + 0] := BFunc(A.Data[Offset + 0], B.Data[Offset + 0]);
+          Result.Data[Offset + 1] := BFunc(A.Data[Offset + 1], B.Data[Offset + 1]);
+          Result.Data[Offset + 2] := BFunc(A.Data[Offset + 2], B.Data[Offset + 2]);
+          Result.Data[Offset + 3] := BFunc(A.Data[Offset + 3], B.Data[Offset + 3]);
+          Result.Data[Offset + 4] := BFunc(A.Data[Offset + 4], B.Data[Offset + 4]);
+          Result.Data[Offset + 5] := BFunc(A.Data[Offset + 5], B.Data[Offset + 5]);
+          Result.Data[Offset + 6] := BFunc(A.Data[Offset + 6], B.Data[Offset + 6]);
+          Result.Data[Offset + 7] := BFunc(A.Data[Offset + 7], B.Data[Offset + 7]);
         end;
         for i := (A.Size div 8) * 8 to (A.Size div 8) * 8 + (A.Size mod 8) - 1 do
           Result.Data[i] := BFunc(A.Data[i], B.Data[i]);

@@ -65,6 +65,11 @@
         <GenerateDebugInfo Value="False"/>
       </Debugging>
     </Linking>
+    <Other>
+      <CustomOptions Value="-Si
+-CfAVX2
+-OoLOOPUNROLL"/>
+    </Other>
   </CompilerOptions>
   <Debugging>
     <Exceptions>

@@ -413,7 +413,7 @@ begin
         outdata[i] := 0;
         for j := 0 to A.Shape[0] - 1 do
         begin
-          outdata[i] := outdata[i] + A.Get(IndexToStridedOffset([j, i], A.Strides));
+          outdata[i] := outdata[i] + A.Get(A.Strides[1] * i + A.Strides[0] * j);
         end;
       end;
       if KeepDims then
@@ -429,7 +429,7 @@ begin
         outdata[i] := 0;
         for j := 0 to A.Shape[1] - 1 do
         begin
-          outdata[i] := outdata[i] + A.Get(IndexToStridedOffset([i, j], A.Strides));
+          outdata[i] := outdata[i] + A.Get(A.Strides[0] * i + A.Strides[1] * j);
         end;
       end;
       if KeepDims then
