@@ -87,10 +87,23 @@ type
     procedure Reset(X: TMultiArray);
   end;
 
+  TBFuncWorker = class(TThread)
+    itA, itB: TNDIter;
+    fA, fB, fC: TMultiArray;
+    fBFunc: TBFunc;
+    fStartingOffset, fCount: longint;
+    constructor Create(A, B: TMultiArray; var C: TMultiArray; BFunc: TBFunc;
+    StartingOffset, count: longint; CreateSuspended: Boolean; const StackSize: SizeUInt=
+      DefaultStackSize);
+    procedure Execute(); override;
+  end;
+
   function _ALL_: TLongVector;
   function AllocateMultiArray(Size: longint; AllocateData: boolean=true): TMultiArray;
   function Any(X: TMultiArray; Axis: longint = -1): TMultiArray;
   function ApplyBFunc(A, B: TMultiArray; BFunc: TBFunc; PrintDebug: Boolean = False;
+    FuncName: string = ''): TMultiArray;
+  function ApplyBFuncThreaded(A, B: TMultiArray; BFunc: TBFunc; PrintDebug: Boolean = False;
     FuncName: string = ''): TMultiArray;
   function ApplyUFunc(A: TMultiArray; UFunc: TUFunc; Params: array of single): TMultiArray;
   function ArrayEqual(A, B: TMultiArray; Tol: single=0): boolean;
@@ -177,6 +190,9 @@ type
   // 1-dim array to TLongVector
   { @exclude } operator :=(A: TMultiArray) B: TLongVector;
   { @exclude } operator explicit(A: TMultiArray) B: TLongVector;
+
+const
+  MAX_THREAD_NUM = 4;
 
 var
   GLOBAL_FUNC_DEBUG: boolean;
@@ -463,16 +479,10 @@ uses
     begin
       BcastResult := BroadcastArrays(A, B);
 
-      Result := ApplyBFunc(BcastResult.A, BcastResult.B, BFunc, PrintDebug, FuncName);
+      Result := ApplyBFunc(BcastResult.A.Contiguous, BcastResult.B.Contiguous, BFunc, PrintDebug, FuncName);
       Result.IsContiguous:=True;
     end else
     begin
-
-      if (FuncName = 'ADD') and (cblas_saxpy <> nil) then
-        Exit(Add_BLAS(A, B));
-
-      if (FuncName = 'SUB') and (cblas_saxpy <> nil) then
-        Exit(Sub_BLAS(A, B));
 
       Result := AllocateMultiArray(A.Size);
       Result := Result.Reshape(A.Shape); // should be reset strides
@@ -548,6 +558,72 @@ uses
       end;
 
 
+
+      if (PrintDebug or GLOBAL_FUNC_DEBUG) then
+        WriteLn('Function ' + FuncName + ' executed in ',
+                MilliSecondsBetween(TimeThen, Now), ' ms');
+    end;
+  end;
+
+  function ApplyBFuncThreaded(A, B: TMultiArray; BFunc: TBFunc; PrintDebug: Boolean = False;
+    FuncName: string = ''): TMultiArray;
+  var
+    i, NumLeft, NumWorkers: longint;
+    BcastResult: TBroadcastResult;
+    TimeThen: TDateTime;
+    ItA, ItB: TNDIter;
+
+    worker1: TBFuncWorker;
+    workers: array of TBFuncWorker;
+    Strides: TLongVector;
+  begin
+    if (PrintDebug or GLOBAL_FUNC_DEBUG) then TimeThen := Now;
+
+    if (A.NDims = 0) and (B.NDims = 0) then
+      Exit(BFunc(A.Data[0], B.Data[0]));
+
+    if not(VectorEqual(A.Shape, B.Shape)) then
+    begin
+      BcastResult := BroadcastArrays(A, B);
+
+      Result := ApplyBFuncThreaded(BcastResult.A.Contiguous, BcastResult.B.Contiguous,
+        BFunc, PrintDebug, FuncName);
+      Result.IsContiguous:=True;
+    end else
+    begin
+      Result := AllocateMultiArray(A.Size);
+      Result := Result.Reshape(A.Shape); // should be reset strides
+      Result.IsContiguous := True;
+
+      NumWorkers := MAX_THREAD_NUM;
+      SetLength(workers, NumWorkers);
+      for i := 0 to NumWorkers - 1 do
+      begin
+        workers[i] := TBFuncWorker.Create(A, B, Result, BFunc, i * (Result.Size div NumWorkers),
+          Result.Size div NumWorkers, True);
+        workers[i].FreeOnTerminate := False;
+
+        workers[i].itA.Reset(A);
+        workers[i].itB.Reset(B);
+
+        Strides := ShapeToStrides(Result.Shape);
+        workers[i].itA.CurrentVirt := OffsetToIndex(Result, i * (Result.Size div NumWorkers));
+        workers[i].itB.CurrentVirt := OffsetToIndex(Result, i * (Result.Size div NumWorkers));
+
+        if i = NumWorkers - 1 then
+        begin
+          workers[i].fCount := workers[i].fCount + (A.Size mod NumWorkers);
+        end;
+      end;
+
+      for i := 0 to NumWorkers - 1 do
+        workers[i].Start();
+
+      for i := 0 to NumWorkers - 1 do
+        workers[i].WaitFor();
+
+      for i := 0 to NumWorkers - 1 do
+        workers[i].Free;
 
       if (PrintDebug or GLOBAL_FUNC_DEBUG) then
         WriteLn('Function ' + FuncName + ' executed in ',
@@ -998,6 +1074,41 @@ uses
       begin
         SqueezeMultiArrayAt(A, i);
       end;
+  end;
+
+  { TBFuncWorker }
+
+  constructor TBFuncWorker.Create(A, B: TMultiArray; var C: TMultiArray;
+    BFunc: TBFunc; StartingOffset, count: longint; CreateSuspended: Boolean;
+    const StackSize: SizeUInt);
+  begin
+    inherited Create(CreateSuspended, StackSize);
+    fA := A;
+    fB := B;
+    fC := C;
+    fBFunc := BFunc;
+    fStartingOffset := StartingOffset;
+    fCount := Count;
+  end;
+
+  procedure TBFuncWorker.Execute();
+  var
+    i: longint;
+  begin
+    if (fA.IsContiguous) and (fB.IsContiguous) then
+    begin
+      for i := fStartingOffset to fStartingOffset + fCount - 1 do
+      begin
+        fC.Data[i] := fBFunc(fA.Data[i], fB.Data[i]);
+      end;
+    end
+    else
+    begin
+      for i := fStartingOffset to fStartingOffset + fCount - 1 do
+      begin
+        fC.Data[i] := fBFunc(itA.Next(fA), itB.Next(fB));
+      end;
+    end;
   end;
 
   generic function TMultiArray.OffsetToStrided(Offset: longint): longint;
