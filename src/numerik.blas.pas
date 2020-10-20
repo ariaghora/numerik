@@ -34,6 +34,8 @@ const
   CBLAS_CONJ_TRANS = 113;
 
 type
+  TCblasScopy = procedure(N: longint; X: TSingleVector; IncX: longint; Y:
+    TSingleVector; IncY: longint); cdecl;
   TCblasSgemm = function(Order: longint; TransA: longint; TransB: longint;
     M: longint; N: longint; K: longint; alpha: single; A: TSingleVector;
     lda: longint; B: TSingleVector; ldb: longint; beta: single;
@@ -49,6 +51,7 @@ type
     Superb: TSingleVector): longint; cdecl;
 
 var
+  cblas_scopy: TCblasScopy;
   cblas_saxpy: TCblasSaxpy;
   cblas_sgemm: TCblassgemm;
   LAPACKE_sgels: TLAPACKESgels;
@@ -104,8 +107,8 @@ begin
   cblas_sgemm(CBLAS_ROW_MAJOR, CBLAS_NO_TRANS, CBLAS_NO_TRANS,
     A.Shape[0], B.shape[1], B.shape[0], // A.shape[0], B.shape[1], B.shape[0]
     1,                                  // alpha
-    A.GetVirtualData, B.Shape[0],       // A, B.shape[0]
-    B.GetVirtualData, B.Shape[1],       // B, B.shape[1]
+    A.Contiguous.Data, B.Shape[0],       // A, B.shape[0]
+    B.Contiguous.Data, B.Shape[1],       // B, B.shape[1]
     1,                                  // beta
     Result.Data, B.Shape[1]             // C, B.shape[1]
     );
@@ -155,6 +158,7 @@ initialization
   BLASlibHandle := LoadLibrary(BLAS_LIB_NAME);
   LAPACKElibHandle := LoadLibrary(LAPACKE_LIB_NAME);
 
+  cblas_scopy := TCblasScopy(GetProcedureAddress(BLASlibHandle, 'cblas_scopy'));
   cblas_sgemm := TCblassgemm(GetProcedureAddress(BLASlibHandle, 'cblas_sgemm'));
   cblas_saxpy := TCblasSaxpy(GetProcedureAddress(BLASlibHandle, 'cblas_saxpy'));
   LAPACKE_sgels := TLAPACKESgels(GetProcedureAddress(LAPACKElibHandle,
