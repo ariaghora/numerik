@@ -470,8 +470,8 @@ uses
     BcastResult: TBroadcastResult;
     TimeThen: TDateTime;
     ItA, ItB: TNDIter;
+    OutArr: TMultiArray;
   begin
-    if (PrintDebug or GLOBAL_FUNC_DEBUG) then TimeThen := Now;
 
     if (A.NDims = 0) and (B.NDims = 0) then
       Exit(BFunc(A.Data[0], B.Data[0]))
@@ -487,7 +487,7 @@ uses
       Result := AllocateMultiArray(B.Size).Reshape(B.Shape);
       x := A.Data[0];
       for i := 0 to High(B.Data) do
-        Result.Data[i] := BFunc(B.Data[i], x);
+        Result.Data[i] := BFunc(x, B.Data[i]);
     end;
 
     if not(VectorEqual(A.Shape, B.Shape)) then
@@ -502,6 +502,8 @@ uses
       Result := AllocateMultiArray(A.Size);
       Result := Result.Reshape(A.Shape); // should be reset strides
       Result.IsContiguous := True;
+
+      if (PrintDebug or GLOBAL_FUNC_DEBUG) then TimeThen := Now;
 
       if not(A.IsContiguous) and not(B.IsContiguous) then
       begin
@@ -572,8 +574,6 @@ uses
         for i := (A.Size div 8) * 8 to (A.Size div 8) * 8 + (A.Size mod 8) - 1 do
           Result.Data[i] := BFunc(A.Data[i], B.Data[i]);
       end;
-
-
 
       if (PrintDebug or GLOBAL_FUNC_DEBUG) then
         WriteLn('Function ' + FuncName + ' executed in ',
@@ -1480,17 +1480,17 @@ uses
 
   function Maximum(A, B: TMultiArray): TMultiArray;
   begin
-    Exit(ApplyBFunc(A, B, @_Max));
+    Exit(ApplyBFunc(A, B, @_Max, GLOBAL_FUNC_DEBUG, 'MAXIMUM'));
   end;
 
   function Minimum(A, B: TMultiArray): TMultiArray;
   begin
-    Exit(ApplyBFunc(A, B, @_Min));
+    Exit(ApplyBFunc(A, B, @_Min, GLOBAL_FUNC_DEBUG, 'MINIMUM'));
   end;
 
   function Multiply(A, B: TMultiArray): TMultiArray;
   begin
-    Exit(ApplyBFunc(A, B, @_Multiply));
+    Exit(ApplyBFunc(A, B, @_Multiply, GLOBAL_FUNC_DEBUG, 'MULTIPLY'));
   end;
 
   function Power(A, B: TMultiArray): TMultiArray;
