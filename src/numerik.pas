@@ -82,6 +82,7 @@ function ReduceAlongAxis(A: TMultiArray; ReduceFunc: TReduceFunc; axis: integer;
 
 { ----------- Stats ---------------------------------------------------------- }
 function Cov(X, Y: TMultiArray; DDof: longint = 1): TMultiArray;
+function Standardize(X: TMultiArray): TMultiArray;
 
 { ----------- Linear algebra ------------------------------------------------- }
 
@@ -435,6 +436,14 @@ begin
   X := X - Mean(X, 0);
   Y := Y - Mean(Y, 0);
   Exit(X.T.Matmul(Y) / (X.Shape[0] - DDof));
+end;
+
+function Standardize(X: TMultiArray): TMultiArray;
+var
+  Xc: TMultiArray;
+begin
+  Xc := X - Mean(X, 0);
+  Exit(Xc/Sqrt(Mean(Xc.T.Matmul(Xc))));
 end;
 
 function PseudoInverse(A: TMultiArray): TMultiArray;

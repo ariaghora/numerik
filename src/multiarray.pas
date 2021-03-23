@@ -127,7 +127,8 @@ type
   function Range(Start, Stop, step: longint): TLongVector; overload;
   function Range(Start, Stop: longint): TLongVector; overload;
   function Ravel(A: TMultiArray): TMultiArray;
-  function ReadCSV(FileName: string): TMultiArray;
+  function ReadCSV(FileName: string; sl:TStringList): TMultiArray;
+  function ReadCSV(FileName: string): TMultiArray;overload;
   function ShapeToStrides(AShape: TLongVector): TLongVector;
   function Transpose(A: TMultiArray): TMultiArray;
   function Transpose(A: TMultiArray; NewAxis: TLongVector): TMultiArray;
@@ -918,20 +919,17 @@ uses
     Exit(A.GetVirtualData);
   end;
 
-  function ReadCSV(FileName: string): TMultiArray;
+  function ReadCSV(FileName: string; sl: TStringList): TMultiArray;
   var
-    sl: TStringList;
     Offset, RowCnt, ColCnt: integer;
     c, s: string;
     Data: TSingleVector;
   begin
-    sl := TStringList.Create;
-    sl.LoadFromFile(FileName);
-
     RowCnt := sl.Count;
     if RowCnt > 0 then
       ColCnt := Length(sl[0].Split(',')); // Assuming num of cols is consistent
 
+    Data := nil;
     SetLength(Data, RowCnt * ColCnt);
     Offset := 0;
     for s in sl do
@@ -946,6 +944,15 @@ uses
 
     Result := AllocateMultiArray(RowCnt * ColCnt).Reshape([RowCnt, ColCnt]);
     Result.Data := Data;
+  end;
+
+  function ReadCSV(FileName: string): TMultiArray;
+  var
+    sl: TStringList;
+  begin
+    sl := TStringList.Create;
+    sl.LoadFromFile(FileName);
+    Exit(ReadCSV(FileName, sl));
   end;
 
   function ShapeToStrides(AShape: TLongVector): TLongVector;
