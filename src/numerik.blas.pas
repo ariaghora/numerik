@@ -12,12 +12,12 @@ uses
 const
 {$IFDEF UNIX}
   {$IFDEF LINUX }
-  BLAS_LIB_NAME = 'libopenblas.so';
-  LAPACKE_LIB_NAME = 'liblapacke.so';
+      BLAS_LIB_NAME = 'libopenblas.so';
+      LAPACKE_LIB_NAME = 'liblapacke.so';
   {$ENDIF}
   {$IFDEF DARWIN}
-  BLAS_LIB_NAME = 'libopenblas.dylib';
-  LAPACKE_LIB_NAME = 'libopenblas.dylib';
+      BLAS_LIB_NAME = 'libopenblas.dylib';
+      LAPACKE_LIB_NAME = 'libopenblas.dylib';
   {$ENDIF}
 {$ENDIF}
 
