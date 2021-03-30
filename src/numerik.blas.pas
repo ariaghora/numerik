@@ -16,7 +16,8 @@ const
   LAPACKE_LIB_NAME = 'liblapacke.so';
   {$ENDIF}
   {$IFDEF DARWIN}
-  BLASLIB_NAME = 'libopenblas.dylib';
+  BLAS_LIB_NAME = 'libopenblas.dylib';
+  LAPACKE_LIB_NAME = 'libopenblas.dylib';
   {$ENDIF}
 {$ENDIF}
 
